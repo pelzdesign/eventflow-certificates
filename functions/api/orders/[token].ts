@@ -14,6 +14,7 @@ interface OrderRow {
   greeting_text: string | null;
   sender_signature: string | null;
   certificate_id: string | null;
+  certificate_public_token: string | null;
 }
 
 export async function onRequestGet(context: PagesContext): Promise<Response> {
@@ -26,8 +27,10 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
     const row = await env.CERTIFICATES_DB.prepare(`
       SELECT service_title_snapshot, variant_title_snapshot, description_snapshot,
              amount_minor, currency, payment_status, payment_reported_at,
-             certificate_date, recipient_name, greeting_text, sender_signature, certificate_id
-      FROM gift_orders WHERE public_token = ? LIMIT 1
+             certificate_date, recipient_name, greeting_text, sender_signature, certificate_id,
+             c.public_token AS certificate_public_token
+      FROM gift_orders o LEFT JOIN certificates c ON c.id = o.certificate_id
+      WHERE o.public_token = ? LIMIT 1
     `).bind(token).first<OrderRow>();
     if (!row) return jsonResponse({ error: "ORDER_NOT_FOUND" }, 404);
     return jsonResponse({
@@ -44,6 +47,7 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
         greetingText: row.greeting_text,
         senderSignature: row.sender_signature,
         issued: Boolean(row.certificate_id),
+        publicUrl: row.certificate_public_token ? `/certificates/${row.certificate_public_token}` : null,
         canPersonalize: row.payment_status !== "awaiting_payment" && !row.certificate_id,
         canIssue: row.payment_status === "confirmed" && !row.certificate_id,
       },
