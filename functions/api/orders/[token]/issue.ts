@@ -34,7 +34,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
   try {
     const order = await env.CERTIFICATES_DB.prepare(`
       SELECT id, organization_id, service_title_snapshot, variant_title_snapshot,
-             description_snapshot, amount_minor, currency, certificate_date,
+             description_snapshot, amount_minor, currency, payment_status, certificate_date,
              recipient_name, greeting_text, sender_signature, certificate_id, issuance_status
       FROM gift_orders WHERE public_token = ? LIMIT 1
     `).bind(token).first<IssuableOrder>();
