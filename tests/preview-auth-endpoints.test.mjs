@@ -34,8 +34,9 @@ class MemoryD1 {
             id: values[0], organization_id: values[1], public_token: values[2], code: values[3],
             kind: values[4], value_json: values[5], title: values[6], description: values[7],
             recipient_name: values[8], recipient_email: values[9], gift_date: values[10],
-            greeting_text: values[11], sender_signature: values[12], status: values[13],
-            issued_at: values[14], expires_at: values[15], created_by: values[16], version: values[17]
+            greeting_text: values[11], sender_signature: values[12], activation_url: values[13],
+            activation_requested_at: values[14], public_access_revoked_at: values[15], status: values[16],
+            issued_at: values[17], expires_at: values[18], created_by: values[19], version: values[20]
           });
         } else if (query.includes('DELETE FROM demo_login_attempts')) {
           for (const key of db.attempts.keys()) if (key.endsWith(':' + values[0])) db.attempts.delete(key);
