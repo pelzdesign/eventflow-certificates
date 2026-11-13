@@ -10,6 +10,7 @@ interface VariantRow {
   variant_description: string | null;
   amount_minor: number;
   currency: string;
+  activation_url: string | null;
 }
 
 export async function onRequestPost(context: PagesContext): Promise<Response> {
@@ -34,7 +35,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
     const variant = await env.CERTIFICATES_DB.prepare(`
       SELECT s.id AS service_id, s.title AS service_title, s.description AS service_description,
              v.id AS variant_id, v.title AS variant_title, v.description AS variant_description,
-             v.amount_minor, v.currency
+             v.amount_minor, v.currency, s.activation_url
       FROM catalog_variants v
       INNER JOIN catalog_services s ON s.id = v.service_id
       WHERE v.id = ? AND s.organization_id = ?
@@ -51,13 +52,13 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
       INSERT INTO gift_orders (
         id, organization_id, public_token, catalog_service_id, catalog_variant_id,
         service_title_snapshot, variant_title_snapshot, description_snapshot,
-        amount_minor, currency, payment_status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'awaiting_payment', ?, ?)
+        amount_minor, currency, activation_url, payment_status, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'awaiting_payment', ?, ?)
     `).bind(
       id, env.DEMO_ORGANIZATION_ID, token, variant.service_id, variant.variant_id,
       variant.service_title, variant.variant_title,
       variant.variant_description ?? variant.service_description,
-      variant.amount_minor, variant.currency, now, now,
+      variant.amount_minor, variant.currency, variant.activation_url, now, now,
     ).run();
 
     return jsonResponse({
