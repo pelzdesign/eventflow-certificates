@@ -36,7 +36,11 @@ export function htmlResponse(html:string,status=200,extraHeaders:HeadersInit={})
   return new Response(html,{status,headers});
 }
 export function sameOrigin(request:Request):boolean{return assertSameOrigin(request);}
-export const LOGIN_RATE_LIMIT_WINDOW_MS=15*60*1000;\nexport function loginRateLimitWindowStart(now=Date.now()):string{\n  return new Date(Math.floor(now/LOGIN_RATE_LIMIT_WINDOW_MS)*LOGIN_RATE_LIMIT_WINDOW_MS).toISOString();\n}\nexport async function allowLoginAttempt(request:Request,env:CertificatesEnv):Promise<boolean>{
+export const LOGIN_RATE_LIMIT_WINDOW_MS=15*60*1000;
+export function loginRateLimitWindowStart(now=Date.now()):string{
+  return new Date(Math.floor(now/LOGIN_RATE_LIMIT_WINDOW_MS)*LOGIN_RATE_LIMIT_WINDOW_MS).toISOString();
+}
+export async function allowLoginAttempt(request:Request,env:CertificatesEnv):Promise<boolean>{
   const password=env.DEMO_LOGIN_PASSWORD;if(!password)return false;
   const now=Date.now(),windowStart=loginRateLimitWindowStart(now);
   const ip=request.headers.get("CF-Connecting-IP")??"unknown",keyHash=await sha256(`${password}:login:${ip}`),store=sessionStore(env);
