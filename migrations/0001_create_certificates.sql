@@ -1,5 +1,3 @@
-PRAGMA foreign_keys = ON;
-
 CREATE TABLE IF NOT EXISTS certificates (
   id TEXT PRIMARY KEY NOT NULL,
   organization_id TEXT NOT NULL,
