@@ -44,6 +44,8 @@ export interface PublicCertificate {
   giftDate?: string;
   greetingText?: string;
   senderSignature?: string;
+  activationUrl?: string;
+  activationRequestedAt?: string;
   status: CertificateStatus;
   issuedAt: string;
   expiresAt?: string;
