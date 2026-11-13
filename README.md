@@ -1,44 +1,22 @@
-# EventFlow — Digital Certificates
+# EventFlow Certificates
 
-Independent business module for issuing, viewing and redeeming digital certificates within the EventFlow ecosystem.
+Independent digital certificates module for EventFlow. The module owns certificate business logic, templates, public read-only pages, lifecycle and operation history. EventFlow owns user identities, organizations, membership, authentication, roles and permissions.
 
-## Current stage
+## Current implementation
 
-Architecture-approved DEMO foundation. This repository is intentionally separate from the main EventFlow application.
+- Framework-independent certificate domain and application use cases.
+- Replaceable platform-access and repository ports.
+- Isolated Cloudflare Pages Functions + D1 DEMO adapter for server-side issuance and read-only public lookup.
+- Public HTML page at `/certificates/:token`, backed by the public read model and protected against HTML injection.
+- JSON lookup at `/api/public/certificates/:token`.
+- SQL migration for a dedicated DEMO database.
+- Automated unit tests and GitHub Actions validation.
 
-## Boundaries
+The DEMO adapter uses a server-side configured synthetic actor and organization with a secret bearer token. It is not a production authentication system and does not connect to EventFlow production Supabase. The bearer token must never be exposed to browser code. The public certificate page and JSON endpoint are read-only; opening either does not redeem a certificate. Redemption and partial-use rules remain deferred until their product semantics are defined.
 
-- The module owns certificate domain logic, templates, public certificate views and redemption history.
-- EventFlow remains the source of truth for users, organizations, authentication, membership, permissions, cabinet shell and shared platform infrastructure.
-- A certificate belongs to an organization. An event relationship is optional and is not part of the initial model.
-- DEMO identity, authorization and persistence must be isolated behind replaceable ports/adapters.
-- No production Supabase connection, production schema changes, SQL migrations or modifications to the main EventFlow repository are allowed without separate approval.
-- Public certificate access is read-only. Issuing, changing and redeeming certificates require server-side authorization and state-changing logic.
-- Never commit secrets, tokens, passwords or real customer data.
+See [architecture overview](docs/architecture/overview.md), [ADR-001](docs/decisions/ADR-001-demo-boundaries.md), and [Cloudflare Pages DEMO setup](docs/setup/cloudflare-pages-demo.md).
 
-## Development approach
+## Development
 
-The first implementation milestone establishes domain contracts and application use cases before selecting or provisioning a remote DEMO persistence provider. The storage port must support durable, cross-device public links once a persistent adapter is connected.
-
-## Planned capabilities
-
-- Service and monetary gift certificates
-- Organization-scoped issuance and management
-- Public read-only certificate page
-- Partial and full redemption with operation history
-- Multiple templates and multiple organizations/users
-- Replaceable integration with EventFlow platform context and authorization
-
-These are target capabilities, not claims that they are already implemented.
-
-## Repository structure
-
-- `docs/architecture/` — module architecture and boundaries
-- `docs/decisions/` — technical decision records
-- `src/domain/` — framework-independent domain model
-- `src/ports/` — replaceable platform and persistence contracts
-- `src/application/` — use cases
-
-## Status
-
-Initial foundation is under development. No production services are connected.
+- `npm run typecheck` — strict TypeScript checks for application and Pages Functions.
+- `npm test` — build the application and run unit tests.
