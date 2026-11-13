@@ -9,6 +9,7 @@ interface IssuableOrder {
   description_snapshot: string | null;
   amount_minor: number;
   currency: string;
+  payment_status: string;
   certificate_date: string;
   recipient_name: string;
   greeting_text: string;
@@ -54,8 +55,8 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
         !order.greeting_text || !order.sender_signature) {
       return jsonResponse({ error: "ORDER_NOT_READY" }, 409);
     }
-    if (order.payment_status !== undefined) {
-      // Payment is checked again in the atomic SQL below; this branch is intentionally not trusted.
+    if (order.payment_status !== "confirmed") {
+      return jsonResponse({ error: "PAYMENT_NOT_CONFIRMED" }, 409);
     }
 
     const certificateId = crypto.randomUUID();
