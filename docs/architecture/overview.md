@@ -42,10 +42,13 @@ Adapters provide DEMO implementations first. A future EventFlow adapter can impl
 ## 4. Isolated DEMO runtime and persistence
 
 The first server adapter targets Cloudflare Pages Functions with a dedicated D1 database:
-- `functions/api/certificates` issues certificates through the application use case.
-- `functions/api/public/certificates/:token` exposes only the public read model and is read-only.
-- `D1CertificateRepository` is an infrastructure adapter behind `CertificateRepositoryPort`.
-- `migrations/0001_create_certificates.sql` creates the isolated DEMO certificate table and index.
+- `POST /api/certificates` — server-authorized DEMO issuance.
+- `GET /api/public/certificates/:token` — read-only JSON projection for integrations and testing.
+- `GET /certificates/:token` — public read-only HTML certificate page.
+- `D1CertificateRepository` — persistence adapter behind `CertificateRepositoryPort`.
+- `migrations/0001_create_certificates.sql` — isolated DEMO certificate table and index.
+
+The public HTML page reads the same public projection as the JSON endpoint. It does not mutate state, requires no login, escapes certificate-supplied text, sends no-store and restrictive security headers, and marks the page noindex. It deliberately displays only fields included in `PublicCertificate`.
 
 The DEMO access adapter resolves a synthetic user and organization from server-side environment configuration and validates a secret bearer token. The client cannot select the actor or organization. This is a narrow DEMO gate, not a replacement login system and not suitable as production authentication.
 
@@ -58,16 +61,18 @@ A browser-only store or process-memory store is insufficient for public links th
 1. Establish framework-independent domain types and ports.
 2. Implement issuance and public read use cases with server-side access checks.
 3. Implement an isolated persistent DEMO adapter and server endpoints.
-4. Configure a dedicated Preview D1 binding and secret, then verify end-to-end behavior.
-5. Add the cabinet/public UI and templates.
-6. Add redemption operations with atomicity, idempotency and operation history.
-7. Replace DEMO adapters only after EventFlow provides implemented platform contracts.
+4. Add a public read-only HTML certificate page backed by the public read use case.
+5. Configure a dedicated Preview D1 binding and secret, then verify end-to-end behavior.
+6. Add the cabinet after a safe Preview-only browser session mechanism is selected; do not expose the server bearer token to browser code.
+7. Add redemption operations with atomicity, idempotency and operation history after product semantics are defined.
+8. Replace DEMO adapters only after EventFlow provides implemented platform contracts.
 
 ## 6. Explicitly deferred decisions
 
 - Exact service-certificate redemption semantics (single use, units, or another model)
 - Monetary certificate partial-redemption rules, including rounding and currency constraints
 - Template editor capabilities and template versioning
+- Browser-to-server session bridge until a Preview-only approach is selected
 - Provisioning and binding of the dedicated DEMO D1 resource
 - Production EventFlow adapter details
 
