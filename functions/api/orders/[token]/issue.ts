@@ -14,6 +14,7 @@ interface IssuableOrder {
   recipient_name: string;
   greeting_text: string;
   sender_signature: string;
+  activation_url: string | null;
   certificate_id: string | null;
   issuance_status: string;
 }
@@ -35,7 +36,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
     const order = await env.CERTIFICATES_DB.prepare(`
       SELECT id, organization_id, service_title_snapshot, variant_title_snapshot,
              description_snapshot, amount_minor, currency, payment_status, certificate_date,
-             recipient_name, greeting_text, sender_signature, certificate_id, issuance_status
+             recipient_name, greeting_text, sender_signature, activation_url, certificate_id, issuance_status
       FROM gift_orders WHERE public_token = ? LIMIT 1
     `).bind(token).first<IssuableOrder>();
 
@@ -75,9 +76,9 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
         INSERT INTO certificates (
           id, organization_id, public_token, code, kind, value_json, title,
           description, recipient_name, recipient_email, gift_date, greeting_text,
-          sender_signature, status, issued_at, expires_at, created_by, version
+          sender_signature, activation_url, status, issued_at, expires_at, created_by, version
         )
-        SELECT ?, ?, ?, ?, 'service', ?, ?, ?, ?, NULL, ?, ?, ?, 'active', ?, NULL, ?, 1
+        SELECT ?, ?, ?, ?, 'service', ?, ?, ?, ?, NULL, ?, ?, ?, ?, 'active', ?, NULL, ?, 1
         WHERE EXISTS (
           SELECT 1 FROM gift_orders
           WHERE id = ? AND organization_id = ? AND payment_status = 'confirmed'
@@ -89,7 +90,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
         certificateId, order.organization_id, publicToken, code, valueJson,
         order.service_title_snapshot, order.description_snapshot,
         order.recipient_name, order.certificate_date, order.greeting_text,
-        order.sender_signature, now, env.DEMO_USER_ID,
+        order.sender_signature, order.activation_url, now, env.DEMO_USER_ID,
         order.id, order.organization_id,
       ),
       batchDb.prepare(`
