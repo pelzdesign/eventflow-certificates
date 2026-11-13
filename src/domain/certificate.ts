@@ -18,6 +18,9 @@ export interface Certificate {
   description?: string;
   recipientName?: string;
   recipientEmail?: string;
+  giftDate?: string;
+  greetingText?: string;
+  senderSignature?: string;
   status: CertificateStatus;
   issuedAt: string;
   expiresAt?: string;
@@ -35,6 +38,9 @@ export interface PublicCertificate {
   title: string;
   description?: string;
   recipientName?: string;
+  giftDate?: string;
+  greetingText?: string;
+  senderSignature?: string;
   status: CertificateStatus;
   issuedAt: string;
   expiresAt?: string;
