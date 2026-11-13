@@ -106,7 +106,7 @@ function formatDate(value: string): string {
 function formatMinorCurrency(amountMinor: number, currency: string): string {
   try {
     const formatter = new Intl.NumberFormat("ru-RU", { style: "currency", currency });
-    const fractionDigits = formatter.resolvedOptions().maximumFractionDigits;
+    const fractionDigits = formatter.resolvedOptions().maximumFractionDigits ?? 2;
     return formatter.format(amountMinor / (10 ** fractionDigits));
   } catch {
     return `${amountMinor} ${currency}`;
