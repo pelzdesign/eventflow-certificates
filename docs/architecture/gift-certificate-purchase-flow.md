@@ -27,4 +27,4 @@ The VK source was CAPTCHA-limited. Three product cards were discovered, but this
 
 ## Migration
 
-Apply `0003_gift_orders_and_catalog.sql` after migrations 0001 and 0002 in the isolated DEMO database only.
+Apply `0003_gift_orders_and_catalog.sql` after migrations 0001 and 0002, then `0004_gift_certificate_personalization.sql`, in the isolated DEMO database only. The catalog tables are intentionally empty until the specialist confirms the complete service list and prices.
