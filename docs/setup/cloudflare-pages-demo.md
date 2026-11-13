@@ -26,7 +26,7 @@ Create a D1 database exclusively for the certificates DEMO and add a binding nam
 Apply both migrations in order to that dedicated D1 database:
 
 1. `migrations/0001_create_certificates.sql`
-2. `migrations/0002_create_demo_sessions.sql`
+2. `migrations/0002_create_demo_sessions.sql` followed by `migrations/0003_gift_orders_and_catalog.sql` and `migrations/0004_gift_certificate_personalization.sql`
 
 Configure these values in the **Preview environment only**:
 
