@@ -2,21 +2,40 @@
 
 This is a deployment adapter for the certificates module, not a connection to EventFlow production.
 
+## Pages project configuration
+
+Connect the private `PelzA83/eventflow-certificates` repository to a separate Cloudflare Pages project.
+
+- Root directory: repository root.
+- Framework preset: None.
+- Build command: `npm run build`.
+- Build output directory: `public`.
+- Build image/runtime: Node.js 22.
+- Keep the Pages Functions directory at repository root as `functions/`; it must not be moved into the static output directory.
+- The root route `/` redirects to `/login`.
+- Static output contains only crawler/security metadata; application pages and APIs are Pages Functions.
+
+**Preview-only deployment guard:** the project must have automatic production deployments disabled and Preview deployments enabled. Verify this setting before the first build/deployment. Do not run a production deployment, do not configure Production bindings or secrets, and do not merge or push a change that could trigger an enabled Production deployment. If the account/UI does not allow Preview deployments while Production deployments are disabled, stop and request a separate decision rather than enabling Production.
+
+Cloudflare's Pages Preview Access policy protects preview deployment URLs (hash-based and branch aliases); it does not automatically protect the base `<project>.pages.dev` hostname. Keep production deployments disabled and verify that the base hostname does not expose the application. Enable the project's Preview access policy before sharing any Preview URL. Restrict the Access policy to the account owner / explicitly authorized testers. Do not rely on an unguessable URL.
+
 ## Required Preview bindings
 
-The Pages project must have a D1 database created specifically for the certificates DEMO and a binding named `CERTIFICATES_DB`. Apply both migrations in order:
+Create a D1 database exclusively for the certificates DEMO and add a binding named `CERTIFICATES_DB` to the **Preview environment only**.
+
+Apply both migrations in order to that dedicated D1 database:
 
 1. `migrations/0001_create_certificates.sql`
 2. `migrations/0002_create_demo_sessions.sql`
 
-Configure these values in the **Preview** environment only:
+Configure these values in the **Preview environment only**:
 
 - `DEMO_USER_ID` — fixed synthetic actor ID for the isolated demo.
 - `DEMO_ORGANIZATION_ID` — fixed synthetic organization ID owned by the demo.
 - `DEMO_LOGIN_USERNAME` — Preview secret containing the DEMO login.
 - `DEMO_LOGIN_PASSWORD` — Preview secret containing the DEMO password.
 
-Credentials must remain in Cloudflare Pages environment secrets. Never put them in source control, URLs, HTML, or browser code. Do not reuse production credentials.
+Credentials must remain in Cloudflare Pages Preview environment secrets. Never put them in source control, URLs, HTML, browser code, GitHub comments, or reports. Do not reuse production credentials. No Production variables, secrets, or D1 binding are required or authorized.
 
 ## Preview authentication
 
@@ -32,6 +51,7 @@ This is a single-user Preview-only mechanism, not EventFlow production authentic
 
 ## Routes
 
+- `GET /` — redirects to `/login`.
 - `GET /login` — DEMO login form.
 - `POST /api/auth/login` — authenticate and create a session.
 - `POST /api/auth/logout` — revoke the current session.
@@ -45,8 +65,8 @@ The cabinet supports issuing service and monetary certificates, viewing details,
 
 ## Deployment boundary
 
-This repository contains code and migrations only. It does not create Cloudflare resources, configure bindings or secrets, deploy anything, connect to production Supabase, or modify the main EventFlow repository. Keep all DEMO bindings and credentials in Preview. Do not expose Preview externally until rate limiting, Origin checks and security settings have been reviewed in the actual Cloudflare environment.
+This repository contains code and migrations only. It does not create Cloudflare resources, configure bindings or secrets, deploy anything, connect to production Supabase, or modify the main EventFlow repository. Keep all DEMO bindings and credentials in Preview. Do not expose Preview externally until the Preview Access policy, rate limiting, Origin checks and security settings have been reviewed in the actual Cloudflare environment.
 
 ## Local development
 
-Use `wrangler pages dev` with a local D1 binding and local-only variables. Never commit local secret files.
+Use `wrangler pages dev public` with a local D1 binding and local-only variables. Never commit local secret files. Pages Functions remain in the repository-root `functions/` directory.
