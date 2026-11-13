@@ -40,7 +40,11 @@ export interface Certificate {
   version: number;
 }
 
-export type NewCertificate = Omit<Certificate, "id" | "publicToken" | "status" | "version">;
+/** Input accepted from an authorized issuer; identity and lifecycle fields are server-owned. */
+export type NewCertificate = Omit<
+  Certificate,
+  "id" | "publicToken" | "status" | "version" | "createdBy"
+>;
 
 export interface PublicCertificate {
   code: string;
