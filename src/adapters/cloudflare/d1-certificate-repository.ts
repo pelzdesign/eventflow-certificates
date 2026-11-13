@@ -31,6 +31,9 @@ interface CertificateRow {
   description: string | null;
   recipient_name: string | null;
   recipient_email: string | null;
+  gift_date: string | null;
+  greeting_text: string | null;
+  sender_signature: string | null;
   status: CertificateStatus;
   issued_at: string;
   expires_at: string | null;
@@ -57,9 +60,9 @@ export class D1CertificateRepository implements CertificateRepositoryPort {
     await this.database.prepare(`
       INSERT INTO certificates (
         id, organization_id, public_token, code, kind, value_json, title,
-        description, recipient_name, recipient_email, status, issued_at,
-        expires_at, created_by, version
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        description, recipient_name, recipient_email, gift_date, greeting_text, sender_signature,
+        status, issued_at, expires_at, created_by, version
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       certificate.id,
       certificate.organizationId,
@@ -71,6 +74,9 @@ export class D1CertificateRepository implements CertificateRepositoryPort {
       certificate.description ?? null,
       certificate.recipientName ?? null,
       certificate.recipientEmail ?? null,
+      certificate.giftDate ?? null,
+      certificate.greetingText ?? null,
+      certificate.senderSignature ?? null,
       certificate.status,
       certificate.issuedAt,
       certificate.expiresAt ?? null,
@@ -84,11 +90,11 @@ export class D1CertificateRepository implements CertificateRepositoryPort {
   async findByPublicToken(token: PublicToken): Promise<PublicCertificate | null> {
     const row = await this.database.prepare(`
       SELECT code, kind, value_json, title, description, recipient_name,
-             status, issued_at, expires_at
+             gift_date, greeting_text, sender_signature, status, issued_at, expires_at
       FROM certificates WHERE public_token = ? LIMIT 1
     `).bind(token).first<Pick<CertificateRow,
       "code" | "kind" | "value_json" | "title" | "description" |
-      "recipient_name" | "status" | "issued_at" | "expires_at"
+      "recipient_name" | "gift_date" | "greeting_text" | "sender_signature" | "status" | "issued_at" | "expires_at"
     >>();
 
     if (!row) return null;
@@ -102,6 +108,9 @@ export class D1CertificateRepository implements CertificateRepositoryPort {
     };
     if (row.description !== null) certificate.description = row.description;
     if (row.recipient_name !== null) certificate.recipientName = row.recipient_name;
+    if (row.gift_date !== null) certificate.giftDate = row.gift_date;
+    if (row.greeting_text !== null) certificate.greetingText = row.greeting_text;
+    if (row.sender_signature !== null) certificate.senderSignature = row.sender_signature;
     if (row.expires_at !== null) certificate.expiresAt = row.expires_at;
     return certificate;
   }
@@ -140,6 +149,9 @@ function mapCertificateRow(row: CertificateRow): Certificate {
   if (row.description !== null) certificate.description = row.description;
   if (row.recipient_name !== null) certificate.recipientName = row.recipient_name;
   if (row.recipient_email !== null) certificate.recipientEmail = row.recipient_email;
+  if (row.gift_date !== null) certificate.giftDate = row.gift_date;
+  if (row.greeting_text !== null) certificate.greetingText = row.greeting_text;
+  if (row.sender_signature !== null) certificate.senderSignature = row.sender_signature;
   if (row.expires_at !== null) certificate.expiresAt = row.expires_at;
   return certificate;
 }
