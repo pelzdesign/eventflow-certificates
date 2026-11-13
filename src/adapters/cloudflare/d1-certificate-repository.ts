@@ -164,7 +164,7 @@ function mapCertificateRow(row: CertificateRow): Certificate {
   if (typeof row.sender_signature === "string") certificate.senderSignature = row.sender_signature;
   if (typeof row.activation_url === "string") certificate.activationUrl = row.activation_url;
   if (typeof row.activation_requested_at === "string") certificate.activationRequestedAt = row.activation_requested_at;
-  if (row.public_access_revoked_at !== null) certificate.publicAccessRevokedAt = row.public_access_revoked_at;
+  if (typeof row.public_access_revoked_at === "string") certificate.publicAccessRevokedAt = row.public_access_revoked_at;
   if (row.expires_at !== null) certificate.expiresAt = row.expires_at;
   return certificate;
 }
