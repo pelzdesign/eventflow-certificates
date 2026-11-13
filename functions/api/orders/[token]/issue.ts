@@ -1,4 +1,4 @@
-import { demoConfigurationReady, jsonResponse, sameOrigin, type CertificatesEnv } from "../../../_shared.js";
+import { demoConfigurationReady, jsonResponse, sameOrigin, type CertificatesEnv } from "../../_shared.js";
 
 interface PagesContext { request: Request; params: { token?: string }; env: CertificatesEnv; }
 interface IssuableOrder {
