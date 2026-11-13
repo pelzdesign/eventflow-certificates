@@ -26,7 +26,7 @@ The platform's organization model and server-side context contract are not yet i
 2. A certificate does not require an event relationship. An optional event reference may be added later without making it a prerequisite.
 3. The client never establishes a trusted user identity or permission by sending IDs or hiding controls.
 4. Every state-changing operation must resolve the authenticated actor and authorize the requested organization/action on the server.
-5. Public-token access is read-only; viewing a certificate never redeems it.
+5. Public GET access is read-only; viewing a certificate never activates or redeems it. Explicit activation is a separate same-origin POST, and specialist-only actions control use and public-link revocation.
 6. DEMO identity, authorization and persistence are replaceable adapters, not a second permanent platform identity model.
 7. Production Supabase and the main EventFlow repository remain out of scope.
 
@@ -47,15 +47,18 @@ The Preview adapter targets Cloudflare Pages Functions with a dedicated D1 datab
 - `GET /api/certificates` — organization-scoped list, search and status filtering.
 - `POST /api/certificates` — server-authorized DEMO issuance.
 - `GET /api/public/certificates/:token` — read-only JSON projection.
-- `GET /certificates/:token` — public read-only HTML certificate page.
+- `GET /certificates/:token` — public HTML certificate page with a native gift-reveal interaction.
+- `POST /api/public/certificates/:token/activate` — explicit recipient activation request; records the first activation timestamp and redirects to the service-specific contact URL.
+- `POST /api/certificates/:id/redeem` — specialist marks an active certificate as used.
+- `POST /api/certificates/:id/revoke-public-link` — specialist revokes public access without deleting the certificate record.
 
 The Preview login uses one synthetic actor and organization configured server-side. DEMO credentials are stored only as Preview environment secrets. Successful login creates a random opaque session ID; the browser receives only a `__Host-` cookie with `HttpOnly; Secure; SameSite=Strict; Path=/` and no `Domain`. D1 stores only the SHA-256 session-token hash, synthetic actor/organization context and absolute expiry. Sessions last eight hours and are revoked server-side at logout. Login attempts are rate-limited, and mutating requests require an exact same-origin `Origin` header.
 
 The server resolves actor and organization from the validated session. The browser cannot assign itself a user or organization ID, and no bearer API token is sent to browser code. This is a replaceable Preview-only adapter, not EventFlow production authentication.
 
-The cabinet supports listing, issuing service and monetary certificates, viewing certificate details, copying public links, searching by code/title/recipient and filtering by status. The list endpoint reads at most the 100 most recently issued records; search and status filtering apply only within that bounded result set. Pagination is not implemented. Editing, cancellation, redemption, partial use, ledger/history and organization switching remain excluded.
+The cabinet supports listing and issuing certificates, viewing details, copying links, manual payment confirmation, marking a certificate as used, and revoking its public link. It also shows the first recipient activation timestamp. The list endpoint reads at most the 100 most recently issued records; search and status filtering apply only within that bounded result set. Pagination, editing, cancellation, partial use, ledger/history and organization switching remain excluded.
 
-The public HTML page reads the public projection. It does not mutate state, requires no login, escapes certificate-supplied text, sends no-store and restrictive security headers, and marks the page noindex.
+The public HTML GET reads the public projection and does not mutate state. A native disclosure provides the gift reveal. If the service has a configured contact URL, the recipient can submit an explicit activation POST; this records the first activation timestamp and redirects to that HTTP(S) destination. A used certificate remains viewable as a keepsake. A revoked public token is excluded from the read model. Pages escape certificate text, send no-store and restrictive security headers, and are noindex.
 
 Cloudflare D1 binding and encrypted Pages secrets must be configured separately in Preview. No Cloudflare resource has been created or connected by this code change. The D1 adapter is not live until a dedicated D1 resource and binding are configured.
 
@@ -66,7 +69,7 @@ Cloudflare D1 binding and encrypted Pages secrets must be configured separately 
 3. Implement isolated persistent DEMO adapters and public endpoints.
 4. Implement Preview-only browser session and minimum cabinet.
 5. Configure a dedicated Preview D1 binding and secrets only after separate user approval, then verify end-to-end behavior.
-6. Add redemption operations with atomicity, idempotency and operation history after product semantics are defined.
+6. Extend redemption to partial-use/ledger semantics only after product rules are defined.
 7. Replace DEMO adapters only after EventFlow provides implemented platform contracts.
 
 ## 6. Explicitly deferred decisions
