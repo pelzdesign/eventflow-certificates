@@ -53,7 +53,7 @@ The Preview login uses one synthetic actor and organization configured server-si
 
 The server resolves actor and organization from the validated session. The browser cannot assign itself a user or organization ID, and no bearer API token is sent to browser code. This is a replaceable Preview-only adapter, not EventFlow production authentication.
 
-The cabinet supports listing, issuing service and monetary certificates, viewing certificate details, copying public links, searching by code/title/recipient and filtering by status. Editing, cancellation, redemption, partial use, ledger/history and organization switching remain excluded.
+The cabinet supports listing, issuing service and monetary certificates, viewing certificate details, copying public links, searching by code/title/recipient and filtering by status. The list endpoint reads at most the 100 most recently issued records; search and status filtering apply only within that bounded result set. Pagination is not implemented. Editing, cancellation, redemption, partial use, ledger/history and organization switching remain excluded.
 
 The public HTML page reads the public projection. It does not mutate state, requires no login, escapes certificate-supplied text, sends no-store and restrictive security headers, and marks the page noindex.
 
