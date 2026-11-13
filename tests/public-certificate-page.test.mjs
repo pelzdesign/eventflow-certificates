@@ -34,7 +34,7 @@ test('public page escapes all certificate-supplied HTML', () => {
     description: 'A & B',
     recipientName: "'><script>alert(2)</script>",
   });
-  assert.match(html, /&lt;script&gt;alert(&quot;title&quot;)&lt;\/script&gt;/);
+  assert.ok(html.includes('&lt;script&gt;alert(&quot;title&quot;)&lt;/script&gt;'));
   assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
   assert.ok(html.includes('&lt;svg onload=alert(1)&gt;'));
   assert.ok(html.includes('A &amp; B'));
