@@ -33,8 +33,9 @@ class MemoryD1 {
           db.certificates.push({
             id: values[0], organization_id: values[1], public_token: values[2], code: values[3],
             kind: values[4], value_json: values[5], title: values[6], description: values[7],
-            recipient_name: values[8], recipient_email: values[9], status: values[10],
-            issued_at: values[11], expires_at: values[12], created_by: values[13], version: values[14]
+            recipient_name: values[8], recipient_email: values[9], gift_date: values[10],
+            greeting_text: values[11], sender_signature: values[12], status: values[13],
+            issued_at: values[14], expires_at: values[15], created_by: values[16], version: values[17]
           });
         } else if (query.includes('DELETE FROM demo_login_attempts')) {
           for (const key of db.attempts.keys()) if (key.endsWith(':' + values[0])) db.attempts.delete(key);
