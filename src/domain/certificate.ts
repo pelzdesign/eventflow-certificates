@@ -21,6 +21,9 @@ export interface Certificate {
   giftDate?: string;
   greetingText?: string;
   senderSignature?: string;
+  activationUrl?: string;
+  activationRequestedAt?: string;
+  publicAccessRevokedAt?: string;
   status: CertificateStatus;
   issuedAt: string;
   expiresAt?: string;
