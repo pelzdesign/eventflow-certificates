@@ -35,31 +35,40 @@ The platform's organization model and server-side context contract are not yet i
 The application layer depends on ports:
 - `PlatformAccessPort` — resolves the authenticated actor and verifies organization-scoped permissions.
 - `CertificateRepositoryPort` — persists and retrieves certificate aggregates.
-- `IdGenerator`, `PublicTokenGenerator`, `Clock` — deterministic infrastructure dependencies for testability.
+- `IdGeneratorPort`, `PublicTokenGeneratorPort`, `ClockPort` — deterministic infrastructure dependencies for testability.
 
-Adapters will provide DEMO implementations first. A future EventFlow adapter can implement the same platform port after the platform contract is implemented and agreed.
+Adapters provide DEMO implementations first. A future EventFlow adapter can implement the same platform port after the platform contract is implemented and agreed.
 
-## 4. DEMO persistence
+## 4. Isolated DEMO runtime and persistence
 
-A browser-only store or process-memory store is insufficient for public links that must work across devices and survive restarts. A remote persistent DEMO adapter is therefore required before the public DEMO can be considered complete.
+The first server adapter targets Cloudflare Pages Functions with a dedicated D1 database:
+- `functions/api/certificates` issues certificates through the application use case.
+- `functions/api/public/certificates/:token` exposes only the public read model and is read-only.
+- `D1CertificateRepository` is an infrastructure adapter behind `CertificateRepositoryPort`.
+- `migrations/0001_create_certificates.sql` creates the isolated DEMO certificate table and index.
 
-The persistence provider has deliberately not been provisioned or connected in this foundation commit. The attached Cloudflare Pages setup excerpt describes a deployment workflow, but does not by itself establish a selected database, server runtime, or security contract for this module.
+The DEMO access adapter resolves a synthetic user and organization from server-side environment configuration and validates a secret bearer token. The client cannot select the actor or organization. This is a narrow DEMO gate, not a replacement login system and not suitable as production authentication.
+
+Cloudflare D1 binding and encrypted Pages secrets must be configured separately in the Preview environment. No Cloudflare resource has been created or connected by this code change. The Pages Functions source follows Cloudflare's documented `/functions` routing and D1 binding model: https://developers.cloudflare.com/pages/functions/get-started/ and https://developers.cloudflare.com/pages/functions/bindings/.
+
+A browser-only store or process-memory store is insufficient for public links that must work across devices and survive restarts. The D1 adapter is the persistent DEMO path, but it is not live until a dedicated D1 resource and binding are configured.
 
 ## 5. Initial implementation sequence
 
 1. Establish framework-independent domain types and ports.
 2. Implement issuance and public read use cases with server-side access checks.
-3. Add a persistent isolated DEMO adapter and server endpoints.
-4. Add the cabinet/public UI and templates.
-5. Add redemption operations with atomicity, idempotency and operation history.
-6. Replace DEMO adapters only after EventFlow provides implemented platform contracts.
+3. Implement an isolated persistent DEMO adapter and server endpoints.
+4. Configure a dedicated Preview D1 binding and secret, then verify end-to-end behavior.
+5. Add the cabinet/public UI and templates.
+6. Add redemption operations with atomicity, idempotency and operation history.
+7. Replace DEMO adapters only after EventFlow provides implemented platform contracts.
 
 ## 6. Explicitly deferred decisions
 
 - Exact service-certificate redemption semantics (single use, units, or another model)
 - Monetary certificate partial-redemption rules, including rounding and currency constraints
 - Template editor capabilities and template versioning
-- DEMO persistence provider provisioning and deployment configuration
+- Provisioning and binding of the dedicated DEMO D1 resource
 - Production EventFlow adapter details
 
 These are not silently inferred by the initial code foundation.
