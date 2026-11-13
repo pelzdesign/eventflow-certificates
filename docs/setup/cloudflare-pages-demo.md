@@ -29,6 +29,7 @@ Apply all migrations in order to that dedicated D1 database:
 2. `migrations/0002_create_demo_sessions.sql`
 3. `migrations/0003_gift_orders_and_catalog.sql`
 4. `migrations/0004_gift_certificate_personalization.sql`
+5. `migrations/0005_public_certificate_lifecycle.sql`
 
 Configure these values in the **Preview environment only**:
 
@@ -62,6 +63,9 @@ This is a single-user Preview-only mechanism, not EventFlow production authentic
 - `POST /api/certificates` — issue a certificate; actor and organization are resolved server-side.
 - `GET /certificates/:token` — public read-only HTML page.
 - `GET /api/public/certificates/:token` — public read-only JSON projection.
+- `POST /api/public/certificates/:token/activate` — explicit recipient activation; records the first activation timestamp and redirects to the service-specific contact URL.
+- `POST /api/certificates/:id/redeem` — specialist marks an active certificate as used.
+- `POST /api/certificates/:id/revoke-public-link` — specialist revokes public access while retaining the certificate record.
 - `GET /buy` and `GET /api/catalog` — public gift catalogue and active service variants.
 - `POST /api/orders` — create a buyer order with a server-side price snapshot.
 - `GET /order/:token` and `GET /api/orders/:token` — buyer order page and public order status.
@@ -70,7 +74,7 @@ This is a single-user Preview-only mechanism, not EventFlow production authentic
 - `GET /api/orders/admin` and `POST /api/orders/:id/confirm-payment` — authenticated specialist order inbox and manual payment confirmation.
 - `POST /api/orders/:token/issue` — issue only after server-side payment confirmation and completed personalization.
 
-The cabinet supports issuing service and monetary certificates, viewing details, copying public links, manually confirming gift-order payments, searching by code/title/recipient and filtering by certificate status. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The cabinet displays this limit explicitly. Pagination is not implemented. Edit, cancel, redeem, partial use, ledger/history and organization-management actions remain excluded.
+The cabinet supports issuing service and monetary certificates, viewing details, copying public links, manually confirming gift-order payments, marking certificates as used, revoking public links, and viewing recipient activation timestamps. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The cabinet displays this limit explicitly. Pagination is not implemented. Edit, cancel, redeem, partial use, ledger/history and organization-management actions remain excluded.
 
 ## Deployment boundary
 
