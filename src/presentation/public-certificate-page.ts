@@ -26,6 +26,15 @@ export function renderPublicCertificatePage(certificate: PublicCertificate): str
   const recipient = certificate.recipientName
     ? `<p class="recipient"><span>Получатель</span>${escapeHtml(certificate.recipientName)}</p>`
     : "";
+  const greeting = certificate.greetingText
+    ? `<p class="greeting">${escapeHtml(certificate.greetingText)}</p>`
+    : "";
+  const signature = certificate.senderSignature
+    ? `<p class="signature">${escapeHtml(certificate.senderSignature)}</p>`
+    : "";
+  const giftDate = certificate.giftDate
+    ? `<p class="date-row"><span>Дата подарка</span><time datetime="${escapeHtml(certificate.giftDate)}">${escapeHtml(formatDate(certificate.giftDate))}</time></p>`
+    : "";
   const expiry = certificate.expiresAt
     ? `<p class="date-row"><span>Действует до</span><time datetime="${escapeHtml(certificate.expiresAt)}">${escapeHtml(formatDate(certificate.expiresAt))}</time></p>`
     : "";
@@ -54,6 +63,8 @@ export function renderPublicCertificatePage(certificate: PublicCertificate): str
     .value{margin:0;text-align:center;font-family:Georgia,serif;font-size:clamp(19px,4vw,25px);line-height:1.45}
     .description{margin:16px 0 0;text-align:center;color:var(--muted);font-size:14px;line-height:1.65}
     .recipient{margin:28px 0 0;text-align:center;font-size:16px}
+    .greeting{margin:24px auto 0;max-width:420px;text-align:center;white-space:pre-wrap;font-family:Georgia,serif;font-size:16px;line-height:1.7}
+    .signature{margin:20px 0 0;text-align:right;font-family:Georgia,serif;font-style:italic;font-size:16px}
     .recipient span{display:block;margin-bottom:6px;color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
     .dates{margin-top:32px;padding-top:20px;border-top:1px solid var(--line)}
     .date-row{display:flex;justify-content:space-between;gap:16px;margin:8px 0;font-size:12px}
@@ -72,8 +83,11 @@ export function renderPublicCertificatePage(certificate: PublicCertificate): str
       ${value}
       ${description}
       ${recipient}
+      ${greeting}
+      ${signature}
       <div class="dates">
         <p class="date-row"><span>Выдан</span><time datetime="${escapeHtml(certificate.issuedAt)}">${escapeHtml(formatDate(certificate.issuedAt))}</time></p>
+        ${giftDate}
         ${expiry}
       </div>
     </section>
