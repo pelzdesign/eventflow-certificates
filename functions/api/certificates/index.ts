@@ -52,7 +52,8 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
 function toCabinetRecord(c:Certificate){
   return {id:c.id,code:c.code,kind:c.kind,value:c.value,title:c.title,description:c.description??null,
     recipientName:c.recipientName??null,recipientEmail:c.recipientEmail??null,status:c.status,issuedAt:c.issuedAt,
-    expiresAt:c.expiresAt??null,publicUrl:`/certificates/${c.publicToken}`};
+    expiresAt:c.expiresAt??null,activationRequestedAt:c.activationRequestedAt??null,
+    publicAccessRevokedAt:c.publicAccessRevokedAt??null,publicUrl:`/certificates/${c.publicToken}`};
 }
 function parseDraft(value:unknown,organizationId:string):NewCertificate{
   if(!isRecord(value))throw new Error("INVALID_CERTIFICATE_BODY");
