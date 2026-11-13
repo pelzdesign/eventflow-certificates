@@ -81,3 +81,30 @@ test('public page escapes gift personalization fields', () => {
   assert.ok(html.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
   assert.doesNotMatch(html, /<img src=x|<script>/);
 });
+
+
+test('public certificate opens through a gift reveal and offers a deliberate activation action', () => {
+  const html = renderPublicCertificatePage({
+    ...baseCertificate,
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'a'.repeat(64));
+  assert.match(html, /Открыть подарок/);
+  assert.match(html, /Для вас приготовили особенный подарок/);
+  assert.match(html, /Активировать подарок/);
+  assert.match(html, /method="post"/);
+  assert.match(html, /\/api\/public\/certificates\//);
+  assert.doesNotMatch(html, /14\s?880|руб\.?/i);
+});
+
+test('repeated activation keeps a way to contact the specialist and used gifts remain memorable', () => {
+  const activated = renderPublicCertificatePage({
+    ...baseCertificate,
+    activationUrl: 'https://vk.me/example_specialist',
+    activationRequestedAt: '2026-11-14T10:00:00.000Z',
+  }, 'b'.repeat(64));
+  assert.match(activated, /Написать специалисту/);
+  const used = renderPublicCertificatePage({ ...baseCertificate, status: 'redeemed' }, 'b'.repeat(64));
+  assert.match(used, /Подарок использован/);
+  assert.match(used, /Этот подарок уже подарил свои впечатления/);
+  assert.doesNotMatch(used, /Активировать подарок/);
+});
