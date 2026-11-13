@@ -8,7 +8,7 @@ Independent digital certificates module for EventFlow. The module owns certifica
 - Replaceable platform-access and repository ports.
 - Isolated Cloudflare Pages Functions + D1 DEMO adapter for issuance and public lookup.
 - Preview-only browser login using an HttpOnly session cookie backed by hashed D1 session records.
-- Minimal certificate cabinet for listing, issuing, viewing and copying public links, with search and status filtering.
+- Minimal certificate cabinet for listing, issuing, viewing and copying public links, with search and status filtering over the latest 100 records.
 - Public HTML page at `/certificates/:token`, backed by the public read model and protected against HTML injection.
 - SQL migrations for a dedicated DEMO database.
 - Automated unit tests and GitHub Actions validation.
