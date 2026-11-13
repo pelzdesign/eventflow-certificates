@@ -6,7 +6,7 @@ class FakeStatement {
   constructor(database, sql) { this.database = database; this.sql = sql; this.values = []; }
   bind(...values) { this.values = values; return this; }
   async run() { this.database.last = { sql: this.sql, values: this.values }; return { success: true, meta: { changes: 1 } }; }
-  async first() { return this.database.row ?? null; }
+  async first() { this.database.last = { sql: this.sql, values: this.values }; return this.database.row ?? null; }
   async all() { return { success: true, results: this.database.rows ?? [] }; }
 }
 class FakeDatabase {
