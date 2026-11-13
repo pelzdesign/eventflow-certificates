@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "declaration": false,
+    "outDir": "../dist-functions",
+    "rootDir": "..",
+    "skipLibCheck": true
+  },
+  "include": ["./**/*.ts", "../src/**/*.ts"]
+}
