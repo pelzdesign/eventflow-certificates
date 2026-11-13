@@ -29,6 +29,7 @@ test('D1 repository creates active records with server-generated lifecycle field
   assert.equal(db.last.values[0], 'server-id');
   assert.equal(db.last.values[1], 'org-demo');
   assert.equal(db.last.values[19], 'trusted-user');
+  assert.equal(db.last.values.length, 21);
 });
 
 test('public repository projection does not expose organization, issuer or recipient email', async () => {
@@ -40,6 +41,7 @@ test('public repository projection does not expose organization, issuer or recip
   };
   const repository = new D1CertificateRepository(db, { newId: () => 'id' }, { now: () => new Date() });
   const publicRecord = await repository.findByPublicToken('public-token');
+  assert.match(db.last.sql, /public_access_revoked_at IS NULL/);
   assert.deepEqual(publicRecord, {
     code: 'C-001', kind: 'service', value: { kind: 'service', description: 'Consultation' },
     title: 'Consultation', status: 'active', issuedAt: '2026-11-13T12:00:00.000Z', recipientName: 'Guest',
