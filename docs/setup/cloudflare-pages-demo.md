@@ -24,7 +24,7 @@ Credentials must remain in Cloudflare Pages environment secrets. Never put them 
 - Successful login creates a random opaque session ID and sets a `__Host-` cookie with `HttpOnly; Secure; SameSite=Strict; Path=/`, without a `Domain` attribute.
 - D1 stores only the SHA-256 hash of the session ID, synthetic actor/organization context and absolute expiry.
 - Sessions expire after 8 hours. Logout revokes the server-side session and clears the cookie.
-- Login attempts are limited to 5 per 15-minute window per Cloudflare client IP. The IP is hashed with the configured password before persistence; raw IP addresses are not stored.
+- Login attempts are limited to 5 per fixed, UTC epoch-aligned 15-minute bucket per Cloudflare client IP. The bucket starts at `00`, `15`, `30` or `45` minutes past each hour; the counter resets immediately at the next boundary (this is not a rolling 15-minute window). A sixth attempt in the same bucket is rejected. The IP is hashed with the configured password before persistence; raw IP addresses are not stored.
 - Mutating requests require an exact same-origin `Origin` header. SameSite is not treated as the only CSRF defense.
 - The server resolves actor and organization from the validated session. Browser-supplied IDs are never trusted.
 
@@ -41,7 +41,7 @@ This is a single-user Preview-only mechanism, not EventFlow production authentic
 - `GET /certificates/:token` — public read-only HTML page.
 - `GET /api/public/certificates/:token` — public read-only JSON projection.
 
-The cabinet supports issuing service and monetary certificates, viewing details, copying public links, searching by code/title/recipient and filtering by status. Edit, cancel, redeem, partial use, ledger/history and organization-management actions remain excluded.
+The cabinet supports issuing service and monetary certificates, viewing details, copying public links, searching by code/title/recipient and filtering by status. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The cabinet displays this limit explicitly. Pagination is not implemented. Edit, cancel, redeem, partial use, ledger/history and organization-management actions remain excluded.
 
 ## Deployment boundary
 
