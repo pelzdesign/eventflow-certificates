@@ -65,6 +65,12 @@ test('revoked, expired and inactive certificates cannot be activated', async () 
   const used = await activate(context(db));
   assert.equal(used.status, 409);
   assert.equal(db.updates, 0);
+
+  db.row.status = 'active';
+  db.row.expires_at = '2020-01-01T00:00:00.000Z';
+  const expired = await activate(context(db));
+  assert.equal(expired.status, 409);
+  assert.equal(db.updates, 0);
 });
 
 test('unsafe activation destinations are rejected', async () => {
