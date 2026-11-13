@@ -28,7 +28,7 @@ test('D1 repository creates active records with server-generated lifecycle field
   assert.match(db.last.sql, /INSERT INTO certificates/);
   assert.equal(db.last.values[0], 'server-id');
   assert.equal(db.last.values[1], 'org-demo');
-  assert.equal(db.last.values[16], 'trusted-user');
+  assert.equal(db.last.values[19], 'trusted-user');
 });
 
 test('public repository projection does not expose organization, issuer or recipient email', async () => {
