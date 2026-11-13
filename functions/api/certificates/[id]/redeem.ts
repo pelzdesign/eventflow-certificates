@@ -17,7 +17,6 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
     const result = await env.CERTIFICATES_DB.prepare(`
       UPDATE certificates SET status = 'redeemed', version = version + 1
       WHERE id = ? AND organization_id = ? AND status = 'active'
-        AND public_access_revoked_at IS NULL
         AND (expires_at IS NULL OR expires_at > ?)
     `).bind(params.id ?? "", session.organizationId, new Date().toISOString()).run();
     if ((result.meta?.changes ?? 0) === 1) return jsonResponse({ status: "redeemed" });
