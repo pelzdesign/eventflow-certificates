@@ -75,7 +75,7 @@ export async function onRequestPut(context: PagesContext): Promise<Response> {
   const greetingText = typeof body.greetingText === "string" ? body.greetingText.trim() : "";
   const senderSignature = typeof body.senderSignature === "string" ? body.senderSignature.trim() : "";
   const parsedDate = new Date(`${certificateDate}T00:00:00.000Z`);
-  const validDate = /^\\d{4}-\\d{2}-\\d{2}$/.test(certificateDate) &&
+  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(certificateDate) &&
     !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === certificateDate;
 
   if (!validDate ||
