@@ -20,61 +20,10 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
   const { env, params } = context;
   if (!demoConfigurationReady(env)) return jsonResponse({ error: "DEMO_NOT_CONFIGURED" }, 503);
   const token = params.token ?? "";
-  if (!/^[a-f0-9]{64}$/.test(token)) return jsonResponse({ error: "ORDER_NOT_FOUND" }, 404);
-
-  try {
-    const row = await env.CERTIFICATES_DB.prepare(`
-      SELECT service_title_snapshot, variant_title_snapshot, description_snapshot,
-             amount_minor, currency, payment_status, payment_reported_at,
-             certificate_date, recipient_name, greeting_text, sender_signature, certificate_id
-      FROM gift_orders WHERE public_token = ? LIMIT 1
-    `).bind(token).first<OrderRow>();
-    if (!row) return jsonResponse({ error: "ORDER_NOT_FOUND" }, 404);
-    return jsonResponse({
-      order: {
-        serviceTitle: row.service_title_snapshot,
-        variantTitle: row.variant_title_snapshot,
-        description: row.description_snapshot,
-        amountMinor: row.amount_minor,
-        currency: row.currency,
-        paymentStatus: row.payment_status,
-        paymentReportedAt: row.payment_reported_at,
-        certificateDate: row.certificate_date,
-        recipientName: row.recipient_name,
-        greetingText: row.greeting_text,
-        senderSignature: row.sender_signature,
-        issued: Boolean(row.certificate_id),
-        canPersonalize: row.payment_status !== "awaiting_payment" && !row.certificate_id,
-        canIssue: row.payment_status === "confirmed" && !row.certificate_id,
-      },
-    });
-  } catch {
-    return jsonResponse({ error: "ORDER_READ_FAILED" }, 500);
-  }
-}
-
-export async function onRequestPut(context: PagesContext): Promise<Response> {
-  const { request, env, params } = context;
-  if (!demoConfigurationReady(env)) return jsonResponse({ error: "DEMO_NOT_CONFIGURED" }, 503);
-  if (!sameOrigin(request)) return jsonResponse({ error: "ORIGIN_NOT_ALLOWED" }, 403);
-  const token = params.token ?? "";
-  if (!/^[a-f0-9]{64}$/.test(token)) return jsonResponse({ error: "ORDER_NOT_FOUND" }, 404);
-
-  let body: unknown;
-  try {
-    const raw = await request.text();
-    if (raw.length > 8000) return jsonResponse({ error: "REQUEST_TOO_LARGE" }, 413);
-    body = JSON.parse(raw);
-  } catch {
-    return jsonResponse({ error: "INVALID_JSON" }, 400);
-  }
-  if (!isRecord(body)) return jsonResponse({ error: "INVALID_ORDER_DETAILS" }, 400);
-
-  const certificateDate = typeof body.certificateDate === "string" ? body.certificateDate : "";
-  const recipientName = typeof body.recipientName === "string" ? body.recipientName.trim() : "";
-  const greetingText = typeof body.greetingText === "string" ? body.greetingText.trim() : "";
-  const senderSignature = typeof body.senderSignature === "string" ? body.senderSignature.trim() : "";
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(certificateDate) ||
+  const parsedDate = new Date(`${certificateDate}T00:00:00.000Z`);
+  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(certificateDate) &&
+    !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === certificateDate;
+  if (!validDate ||
       !recipientName || recipientName.length > 180 ||
       !greetingText || greetingText.length > 2000 ||
       !senderSignature || senderSignature.length > 180) {
