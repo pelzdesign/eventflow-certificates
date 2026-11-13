@@ -23,10 +23,12 @@ Cloudflare's Pages Preview Access policy protects preview deployment URLs (hash-
 
 Create a D1 database exclusively for the certificates DEMO and add a binding named `CERTIFICATES_DB` to the **Preview environment only**.
 
-Apply both migrations in order to that dedicated D1 database:
+Apply all migrations in order to that dedicated D1 database:
 
 1. `migrations/0001_create_certificates.sql`
-2. `migrations/0002_create_demo_sessions.sql` followed by `migrations/0003_gift_orders_and_catalog.sql` and `migrations/0004_gift_certificate_personalization.sql`
+2. `migrations/0002_create_demo_sessions.sql`
+3. `migrations/0003_gift_orders_and_catalog.sql`
+4. `migrations/0004_gift_certificate_personalization.sql`
 
 Configure these values in the **Preview environment only**:
 
@@ -60,8 +62,15 @@ This is a single-user Preview-only mechanism, not EventFlow production authentic
 - `POST /api/certificates` — issue a certificate; actor and organization are resolved server-side.
 - `GET /certificates/:token` — public read-only HTML page.
 - `GET /api/public/certificates/:token` — public read-only JSON projection.
+- `GET /buy` and `GET /api/catalog` — public gift catalogue and active service variants.
+- `POST /api/orders` — create a buyer order with a server-side price snapshot.
+- `GET /order/:token` and `GET /api/orders/:token` — buyer order page and public order status.
+- `POST /api/orders/:token/payment-reported` — buyer reports payment; personalization becomes available, but the certificate is not issued.
+- `PUT /api/orders/:token` — save buyer personalization.
+- `GET /api/orders/admin` and `POST /api/orders/:id/confirm-payment` — authenticated specialist order inbox and manual payment confirmation.
+- `POST /api/orders/:token/issue` — issue only after server-side payment confirmation and completed personalization.
 
-The cabinet supports issuing service and monetary certificates, viewing details, copying public links, searching by code/title/recipient and filtering by status. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The cabinet displays this limit explicitly. Pagination is not implemented. Edit, cancel, redeem, partial use, ledger/history and organization-management actions remain excluded.
+The cabinet supports issuing service and monetary certificates, viewing details, copying public links, manually confirming gift-order payments, searching by code/title/recipient and filtering by certificate status. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The cabinet displays this limit explicitly. Pagination is not implemented. Edit, cancel, redeem, partial use, ledger/history and organization-management actions remain excluded.
 
 ## Deployment boundary
 
@@ -70,3 +79,6 @@ This repository contains code and migrations only. It does not create Cloudflare
 ## Local development
 
 Use `wrangler pages dev public` with a local D1 binding and local-only variables. Never commit local secret files. Pages Functions remain in the repository-root `functions/` directory.
+
+
+The gift catalogue tables are intentionally empty after migration. Do not expose an empty or partial catalog as a finished offer: populate and activate services only after the specialist confirms the complete price list, descriptions and fixed tariff variants. Payment is manual in this DEMO; the buyer's "I paid" action is only a report and never confirms receipt of funds. The specialist's authenticated confirmation is required before the server-side issuance endpoint can create a certificate.
