@@ -39,7 +39,10 @@ export function renderPublicCertificatePage(certificate: PublicCertificate, publ
     ? `<p class="date-row"><span>Действует до</span><time datetime="${escapeHtml(certificate.expiresAt)}">${escapeHtml(formatDate(certificate.expiresAt))}</time></p>`
     : "";
 
-  const activation = certificate.status === "active" && certificate.activationUrl && publicToken
+  const certificateExpired = Boolean(certificate.expiresAt && new Date(certificate.expiresAt).getTime() <= Date.now());
+  const displayStatus = certificateExpired ? "Истёк" : STATUS_LABELS[certificate.status];
+  const displayStatusClass = certificateExpired ? "status-muted" : STATUS_CLASSES[certificate.status];
+  const activation = certificate.status === "active" && !certificateExpired && certificate.activationUrl && publicToken
     ? `<section class="activation">
         <p class="activation-note">${certificate.activationRequestedAt ? "Вы уже начали активацию подарка. Можно продолжить общение со специалистом." : "Чтобы воспользоваться подарком, свяжитесь со специалистом."}</p>
         <form method="post" action="/api/public/certificates/${escapeHtml(publicToken)}/activate">
@@ -113,7 +116,7 @@ export function renderPublicCertificatePage(certificate: PublicCertificate, publ
         <section class="card" aria-label="Информация о сертификате">
           <h1>${escapeHtml(certificate.title)}</h1>
           <p class="code">№ ${escapeHtml(certificate.code)}</p>
-          <p class="status ${STATUS_CLASSES[certificate.status]}">${STATUS_LABELS[certificate.status]}</p>
+          <p class="status ${displayStatusClass}">${displayStatus}</p>
           ${value}
           ${description}
           ${recipient}
