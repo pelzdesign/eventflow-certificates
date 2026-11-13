@@ -2,28 +2,51 @@
 
 This is a deployment adapter for the certificates module, not a connection to EventFlow production.
 
-## Required Pages bindings
+## Required Preview bindings
 
-The Pages project must have a D1 database created specifically for the certificates DEMO and a binding named `CERTIFICATES_DB`. Apply `migrations/0001_create_certificates.sql` to that DEMO database before deploying the API.
+The Pages project must have a D1 database created specifically for the certificates DEMO and a binding named `CERTIFICATES_DB`. Apply both migrations in order:
 
-Configure these values in the **Preview** environment first:
+1. `migrations/0001_create_certificates.sql`
+2. `migrations/0002_create_demo_sessions.sql`
+
+Configure these values in the **Preview** environment only:
 
 - `DEMO_USER_ID` — fixed synthetic actor ID for the isolated demo.
 - `DEMO_ORGANIZATION_ID` — fixed synthetic organization ID owned by the demo.
-- `DEMO_API_TOKEN` — encrypted Pages secret; never put it in source control or browser code.
+- `DEMO_LOGIN_USERNAME` — Preview secret containing the DEMO login.
+- `DEMO_LOGIN_PASSWORD` — Preview secret containing the DEMO password.
 
-The current adapter intentionally supports only `certificate:issue` for the one configured demo organization. It is not a general login system and must not be exposed as production authentication. Requests with no valid bearer token are rejected. The organization ID and actor ID are resolved from server-side environment configuration; the request body cannot choose either identity.
+Credentials must remain in Cloudflare Pages environment secrets. Never put them in source control, URLs, HTML, or browser code. Do not reuse production credentials.
 
-## Endpoints
+## Preview authentication
 
-- `POST /api/certificates` — issue a certificate. Send `Authorization: Bearer <DEMO_API_TOKEN>` and a JSON draft containing `code`, `kind`, `value`, `title`, and optional description/recipient/expiry fields. Server-owned ID, public token, status, issuer and issue time are not accepted from the client.
-- `GET /certificates/:token` — public read-only HTML page. The issuance response returns this URL as `publicUrl`.
-- `GET /api/public/certificates/:token` — read-only JSON projection for integrations and testing. Neither endpoint redeems or otherwise mutates a certificate.
+- `POST /api/auth/login` validates configured credentials server-side.
+- Successful login creates a random opaque session ID and sets a `__Host-` cookie with `HttpOnly; Secure; SameSite=Strict; Path=/`, without a `Domain` attribute.
+- D1 stores only the SHA-256 hash of the session ID, synthetic actor/organization context and absolute expiry.
+- Sessions expire after 8 hours. Logout revokes the server-side session and clears the cookie.
+- Login attempts are limited to 5 per fixed, UTC epoch-aligned 15-minute bucket per Cloudflare client IP. The bucket starts at `00`, `15`, `30` or `45` minutes past each hour; the counter resets immediately at the next boundary (this is not a rolling 15-minute window). A sixth attempt in the same bucket is rejected. The IP is hashed with the configured password before persistence; raw IP addresses are not stored.
+- Mutating requests require an exact same-origin `Origin` header. SameSite is not treated as the only CSRF defense.
+- The server resolves actor and organization from the validated session. Browser-supplied IDs are never trusted.
+
+This is a single-user Preview-only mechanism, not EventFlow production authentication. Public registration, password recovery, multi-user administration and organization switching are intentionally absent.
+
+## Routes
+
+- `GET /login` — DEMO login form.
+- `POST /api/auth/login` — authenticate and create a session.
+- `POST /api/auth/logout` — revoke the current session.
+- `GET /cabinet` — protected cabinet UI.
+- `GET /api/certificates` — authenticated list, search and status filter for the current DEMO organization.
+- `POST /api/certificates` — issue a certificate; actor and organization are resolved server-side.
+- `GET /certificates/:token` — public read-only HTML page.
+- `GET /api/public/certificates/:token` — public read-only JSON projection.
+
+The cabinet supports issuing service and monetary certificates, viewing details, copying public links, searching by code/title/recipient and filtering by status. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The cabinet displays this limit explicitly. Pagination is not implemented. Edit, cancel, redeem, partial use, ledger/history and organization-management actions remain excluded.
 
 ## Deployment boundary
 
-Cloudflare Pages Functions require a Pages project and an already-created binding resource. This repository contains the adapter and migration only; it does not create a Cloudflare account resource, configure a live Pages project, add secrets, or deploy anything. Keep the first binding and secret in Preview, not Production. A production environment must not reuse the demo token, user or organization.
+This repository contains code and migrations only. It does not create Cloudflare resources, configure bindings or secrets, deploy anything, connect to production Supabase, or modify the main EventFlow repository. Keep all DEMO bindings and credentials in Preview. Do not expose Preview externally until rate limiting, Origin checks and security settings have been reviewed in the actual Cloudflare environment.
 
 ## Local development
 
-Use `wrangler pages dev` with a local D1 binding and local-only `.dev.vars`. Never commit `.dev.vars`. The Pages Functions source is typechecked separately from the framework-independent application code.
+Use `wrangler pages dev` with a local D1 binding and local-only variables. Never commit local secret files.

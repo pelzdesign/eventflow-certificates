@@ -6,13 +6,14 @@ Independent digital certificates module for EventFlow. The module owns certifica
 
 - Framework-independent certificate domain and application use cases.
 - Replaceable platform-access and repository ports.
-- Isolated Cloudflare Pages Functions + D1 DEMO adapter for server-side issuance and read-only public lookup.
+- Isolated Cloudflare Pages Functions + D1 DEMO adapter for issuance and public lookup.
+- Preview-only browser login using an HttpOnly session cookie backed by hashed D1 session records.
+- Minimal certificate cabinet for listing, issuing, viewing and copying public links, with search and status filtering over the latest 100 records.
 - Public HTML page at `/certificates/:token`, backed by the public read model and protected against HTML injection.
-- JSON lookup at `/api/public/certificates/:token`.
-- SQL migration for a dedicated DEMO database.
+- SQL migrations for a dedicated DEMO database.
 - Automated unit tests and GitHub Actions validation.
 
-The DEMO adapter uses a server-side configured synthetic actor and organization with a secret bearer token. It is not a production authentication system and does not connect to EventFlow production Supabase. The bearer token must never be exposed to browser code. The public certificate page and JSON endpoint are read-only; opening either does not redeem a certificate. Redemption and partial-use rules remain deferred until their product semantics are defined.
+The Preview login uses one synthetic actor and organization configured server-side. It is not EventFlow production authentication and does not connect to production Supabase. The browser never receives a bearer API token or trusted actor/organization IDs. The public certificate page and JSON endpoint are read-only; opening either does not redeem a certificate. Redemption and partial-use rules remain deferred until product semantics are defined.
 
 See [architecture overview](docs/architecture/overview.md), [ADR-001](docs/decisions/ADR-001-demo-boundaries.md), and [Cloudflare Pages DEMO setup](docs/setup/cloudflare-pages-demo.md).
 

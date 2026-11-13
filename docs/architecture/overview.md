@@ -39,40 +39,41 @@ The application layer depends on ports:
 
 Adapters provide DEMO implementations first. A future EventFlow adapter can implement the same platform port after the platform contract is implemented and agreed.
 
-## 4. Isolated DEMO runtime and persistence
+## 4. Isolated Preview DEMO runtime
 
-The first server adapter targets Cloudflare Pages Functions with a dedicated D1 database:
+The Preview adapter targets Cloudflare Pages Functions with a dedicated D1 database:
+- `POST /api/auth/login` and `POST /api/auth/logout` — temporary Preview-only login/session lifecycle.
+- `GET /cabinet` and `GET /login` — module-owned cabinet and login pages.
+- `GET /api/certificates` — organization-scoped list, search and status filtering.
 - `POST /api/certificates` — server-authorized DEMO issuance.
-- `GET /api/public/certificates/:token` — read-only JSON projection for integrations and testing.
+- `GET /api/public/certificates/:token` — read-only JSON projection.
 - `GET /certificates/:token` — public read-only HTML certificate page.
-- `D1CertificateRepository` — persistence adapter behind `CertificateRepositoryPort`.
-- `migrations/0001_create_certificates.sql` — isolated DEMO certificate table and index.
 
-The public HTML page reads the same public projection as the JSON endpoint. It does not mutate state, requires no login, escapes certificate-supplied text, sends no-store and restrictive security headers, and marks the page noindex. It deliberately displays only fields included in `PublicCertificate`.
+The Preview login uses one synthetic actor and organization configured server-side. DEMO credentials are stored only as Preview environment secrets. Successful login creates a random opaque session ID; the browser receives only a `__Host-` cookie with `HttpOnly; Secure; SameSite=Strict; Path=/` and no `Domain`. D1 stores only the SHA-256 session-token hash, synthetic actor/organization context and absolute expiry. Sessions last eight hours and are revoked server-side at logout. Login attempts are rate-limited, and mutating requests require an exact same-origin `Origin` header.
 
-The DEMO access adapter resolves a synthetic user and organization from server-side environment configuration and validates a secret bearer token. The client cannot select the actor or organization. This is a narrow DEMO gate, not a replacement login system and not suitable as production authentication.
+The server resolves actor and organization from the validated session. The browser cannot assign itself a user or organization ID, and no bearer API token is sent to browser code. This is a replaceable Preview-only adapter, not EventFlow production authentication.
 
-Cloudflare D1 binding and encrypted Pages secrets must be configured separately in the Preview environment. No Cloudflare resource has been created or connected by this code change. The Pages Functions source follows Cloudflare's documented `/functions` routing and D1 binding model: https://developers.cloudflare.com/pages/functions/get-started/ and https://developers.cloudflare.com/pages/functions/bindings/.
+The cabinet supports listing, issuing service and monetary certificates, viewing certificate details, copying public links, searching by code/title/recipient and filtering by status. The list endpoint reads at most the 100 most recently issued records; search and status filtering apply only within that bounded result set. Pagination is not implemented. Editing, cancellation, redemption, partial use, ledger/history and organization switching remain excluded.
 
-A browser-only store or process-memory store is insufficient for public links that must work across devices and survive restarts. The D1 adapter is the persistent DEMO path, but it is not live until a dedicated D1 resource and binding are configured.
+The public HTML page reads the public projection. It does not mutate state, requires no login, escapes certificate-supplied text, sends no-store and restrictive security headers, and marks the page noindex.
 
-## 5. Initial implementation sequence
+Cloudflare D1 binding and encrypted Pages secrets must be configured separately in Preview. No Cloudflare resource has been created or connected by this code change. The D1 adapter is not live until a dedicated D1 resource and binding are configured.
+
+## 5. Next implementation sequence
 
 1. Establish framework-independent domain types and ports.
 2. Implement issuance and public read use cases with server-side access checks.
-3. Implement an isolated persistent DEMO adapter and server endpoints.
-4. Add a public read-only HTML certificate page backed by the public read use case.
-5. Configure a dedicated Preview D1 binding and secret, then verify end-to-end behavior.
-6. Add the cabinet after a safe Preview-only browser session mechanism is selected; do not expose the server bearer token to browser code.
-7. Add redemption operations with atomicity, idempotency and operation history after product semantics are defined.
-8. Replace DEMO adapters only after EventFlow provides implemented platform contracts.
+3. Implement isolated persistent DEMO adapters and public endpoints.
+4. Implement Preview-only browser session and minimum cabinet.
+5. Configure a dedicated Preview D1 binding and secrets only after separate user approval, then verify end-to-end behavior.
+6. Add redemption operations with atomicity, idempotency and operation history after product semantics are defined.
+7. Replace DEMO adapters only after EventFlow provides implemented platform contracts.
 
 ## 6. Explicitly deferred decisions
 
 - Exact service-certificate redemption semantics (single use, units, or another model)
 - Monetary certificate partial-redemption rules, including rounding and currency constraints
 - Template editor capabilities and template versioning
-- Browser-to-server session bridge until a Preview-only approach is selected
 - Provisioning and binding of the dedicated DEMO D1 resource
 - Production EventFlow adapter details
 

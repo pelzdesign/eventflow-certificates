@@ -16,11 +16,14 @@ The certificates module must be developed independently without duplicating plat
 2. Define a narrow server-side platform access port. It must resolve the actor from a trusted server session and verify organization-scoped permissions.
 3. Keep DEMO identity and authorization in replaceable adapters. Do not create permanent module-owned users, roles or organizations.
 4. Keep persistence behind a repository port. A browser-only or in-memory store is not accepted as the final public DEMO persistence mechanism.
-5. Do not provision external services or connect production infrastructure as part of this decision.
+5. Use a temporary Preview-only login for the isolated DEMO: server-side credentials, an opaque random session ID in a `__Host-` HttpOnly/Secure/SameSite=Strict cookie, a hashed session token in D1, an eight-hour absolute expiry, server-side revocation, login rate limiting and same-origin checks for mutating requests.
+6. Keep the Preview session adapter behind the existing `PlatformAccessPort`. The application and domain layers must not depend on cookies or the login mechanism.
+7. Do not provision external services or connect production infrastructure as part of this decision.
 
 ## Consequences
 
 - Application use cases can be tested without Supabase or Cloudflare.
 - DEMO and future platform adapters can be replaced independently of certificate business logic.
-- Public cross-device links remain blocked until an isolated persistent server-side adapter is implemented.
+- The cabinet can be tested without exposing a bearer API token to browser code.
+- Public cross-device links require the isolated persistent D1 adapter and an explicitly configured binding.
 - Redemption details remain subject to explicit domain rules; they must not be guessed in infrastructure code.
