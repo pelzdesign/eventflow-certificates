@@ -39,10 +39,12 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
 
     await env.CERTIFICATES_DB.prepare(`
       UPDATE certificates
-      SET activation_requested_at = COALESCE(activation_requested_at, ?), version = version + 1
+      SET activation_requested_at = COALESCE(activation_requested_at, ?),
+          version = CASE WHEN activation_requested_at IS NULL THEN version + 1 ELSE version END
       WHERE public_token = ? AND status = 'active' AND public_access_revoked_at IS NULL
         AND (expires_at IS NULL OR expires_at > ?)
     `).bind(now, token, now).run();
+    if ((result.meta?.changes ?? 0) !== 1) return jsonResponse({ error: "CERTIFICATE_NOT_AVAILABLE" }, 409);
 
     return new Response(null, {
       status: 303,
