@@ -33,7 +33,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
       repository,
       tokens: { newToken: () => crypto.randomUUID().replaceAll("-", "") },
     });
-    return jsonResponse({ certificate: { id: issued.id, code: issued.code, status: issued.status, issuedAt: issued.issuedAt, publicUrl: `/api/public/certificates/${issued.publicToken}` } }, 201);
+    return jsonResponse({ certificate: { id: issued.id, code: issued.code, status: issued.status, issuedAt: issued.issuedAt, publicUrl: `/certificates/${issued.publicToken}` } }, 201);
   } catch (error) {
     const code = error instanceof Error ? error.message : "INTERNAL_ERROR";
     if (code === "AUTHENTICATION_REQUIRED") return jsonResponse({ error: code }, 401);
