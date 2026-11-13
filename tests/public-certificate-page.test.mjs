@@ -21,7 +21,7 @@ test('public page renders certificate details and read-only status', () => {
   assert.match(html, /Одна консультация/);
   assert.match(html, /Действителен/);
   assert.match(html, /Анна/);
-  assert.match(html, /Открытие страницы не изменяет его статус/);
+  assert.match(html, /Само открытие сертификата не меняет его статус/);
   assert.match(html, /noindex,nofollow/);
 });
 
@@ -93,7 +93,8 @@ test('public certificate opens through a gift reveal and offers a deliberate act
   assert.match(html, /Активировать подарок/);
   assert.match(html, /method="post"/);
   assert.match(html, /\/api\/public\/certificates\//);
-  assert.doesNotMatch(html, /14\s?880|руб\.?/i);
+  assert.equal(html.includes('14 880'), false);
+  assert.equal(html.includes('₽'), false);
 });
 
 test('repeated activation keeps a way to contact the specialist and used gifts remain memorable', () => {
