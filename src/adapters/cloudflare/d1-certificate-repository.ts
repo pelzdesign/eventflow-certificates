@@ -66,7 +66,7 @@ export class D1CertificateRepository implements CertificateRepositoryPort {
         description, recipient_name, recipient_email, gift_date, greeting_text, sender_signature,
         activation_url, activation_requested_at, public_access_revoked_at,
         status, issued_at, expires_at, created_by, version
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       certificate.id,
       certificate.organizationId,
