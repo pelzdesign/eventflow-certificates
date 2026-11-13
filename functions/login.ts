@@ -5,6 +5,6 @@ const PAGE = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta n
 const form=document.querySelector('#login'),button=document.querySelector('#submit'),message=document.querySelector('#message');form.addEventListener('submit',async e=>{e.preventDefault();button.disabled=true;message.textContent='';try{const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:form.username.value,password:form.password.value})});const data=await response.json();if(!response.ok)throw new Error(data.error==='TOO_MANY_ATTEMPTS'?'Слишком много попыток. Попробуйте через 15 минут.':'Неверный логин или пароль.');location.assign('/cabinet')}catch(error){message.textContent=error.message||'Не удалось войти.';button.disabled=false}});
 </script></body></html>`;
 export async function onRequestGet(context: PagesContext): Promise<Response> {
-  if (!demoConfigurationReady(context.env)) return htmlResponse("<!doctype html><html lang=\\"ru\\"><meta charset=\\"utf-8\\"><title>DEMO не настроен</title><h1>DEMO ещё не настроен</h1><p>Preview environment variables and the D1 binding are required.</p></html>", 503);
+  if (!demoConfigurationReady(context.env)) return htmlResponse(`<!doctype html><html lang="ru"><meta charset="utf-8"><title>DEMO не настроен</title><h1>DEMO ещё не настроен</h1><p>Preview environment variables and the D1 binding are required.</p></html>`, 503);
   return htmlResponse(PAGE);
 }
