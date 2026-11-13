@@ -21,10 +21,19 @@
 - Mutations require exact same-origin Origin validation.
 - No payment provider, automatic bank verification, redemption, partial redemption or refund workflow is included.
 
+## Recipient certificate lifecycle
+
+- Each catalogue service may store an `activation_url`. The order snapshots it, and issuance copies it to the certificate so later catalogue edits do not change an existing gift.
+- The public page is noindex and uses a native, keyboard-accessible disclosure interaction for the gift reveal. Viewing the page remains read-only.
+- The recipient's explicit **«Активировать подарок»** action sends a same-origin POST. The server records the first `activation_requested_at` timestamp and redirects to the snapshotted HTTP(S) contact URL. Repeated activation remains possible and does not redeem the certificate.
+- Contact destinations are service-specific, not hard-coded to Tatyana. The catalogue is still empty until the specialist confirms all services, prices and descriptions; an activation URL must be configured on each relevant service before it can be activated.
+- A specialist can mark an active certificate as used (`redeemed`) or revoke its public link. Used certificates remain viewable as keepsake pages; revoked links are excluded from the public read model and return not found.
+- Public links use the existing random 256-bit token and remain available indefinitely unless explicitly revoked. No automatic link expiry or data deletion is introduced by this phase.
+
 ## Catalogue completeness
 
 The VK source was CAPTCHA-limited. Three product cards were discovered, but this is not verified as the complete price list. Do not activate catalogue entries or claim completeness until the specialist confirms all services, variants, prices and descriptions. Known prices and provisional descriptions are documented separately in the price-list artifact.
 
 ## Migration
 
-Apply `0003_gift_orders_and_catalog.sql` after migrations 0001 and 0002, then `0004_gift_certificate_personalization.sql`, in the isolated DEMO database only. The catalog tables are intentionally empty until the specialist confirms the complete service list and prices.
+Apply migrations in order in the isolated DEMO database only: `0001_create_certificates.sql`, `0002_create_demo_sessions.sql`, `0003_gift_orders_and_catalog.sql`, `0004_gift_certificate_personalization.sql`, then `0005_public_certificate_lifecycle.sql`. The catalog tables are intentionally empty until the specialist confirms the complete service list and prices.
