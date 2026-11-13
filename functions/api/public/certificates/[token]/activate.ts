@@ -37,7 +37,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
       return jsonResponse({ error: "ACTIVATION_CONTACT_INVALID" }, 500);
     }
 
-    await env.CERTIFICATES_DB.prepare(`
+    const result = await env.CERTIFICATES_DB.prepare(`
       UPDATE certificates
       SET activation_requested_at = COALESCE(activation_requested_at, ?),
           version = CASE WHEN activation_requested_at IS NULL THEN version + 1 ELSE version END
