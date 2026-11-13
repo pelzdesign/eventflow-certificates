@@ -17,7 +17,8 @@ The current adapter intentionally supports only `certificate:issue` for the one 
 ## Endpoints
 
 - `POST /api/certificates` — issue a certificate. Send `Authorization: Bearer <DEMO_API_TOKEN>` and a JSON draft containing `code`, `kind`, `value`, `title`, and optional description/recipient/expiry fields. Server-owned ID, public token, status, issuer and issue time are not accepted from the client.
-- `GET /api/public/certificates/:token` — read-only public projection. It does not redeem or otherwise mutate a certificate.
+- `GET /certificates/:token` — public read-only HTML page. The issuance response returns this URL as `publicUrl`.
+- `GET /api/public/certificates/:token` — read-only JSON projection for integrations and testing. Neither endpoint redeems or otherwise mutates a certificate.
 
 ## Deployment boundary
 
