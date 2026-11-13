@@ -108,9 +108,9 @@ export class D1CertificateRepository implements CertificateRepositoryPort {
     };
     if (row.description !== null) certificate.description = row.description;
     if (row.recipient_name !== null) certificate.recipientName = row.recipient_name;
-    if (row.gift_date !== null) certificate.giftDate = row.gift_date;
-    if (row.greeting_text !== null) certificate.greetingText = row.greeting_text;
-    if (row.sender_signature !== null) certificate.senderSignature = row.sender_signature;
+    if (typeof row.gift_date === "string") certificate.giftDate = row.gift_date;
+    if (typeof row.greeting_text === "string") certificate.greetingText = row.greeting_text;
+    if (typeof row.sender_signature === "string") certificate.senderSignature = row.sender_signature;
     if (row.expires_at !== null) certificate.expiresAt = row.expires_at;
     return certificate;
   }
@@ -149,9 +149,9 @@ function mapCertificateRow(row: CertificateRow): Certificate {
   if (row.description !== null) certificate.description = row.description;
   if (row.recipient_name !== null) certificate.recipientName = row.recipient_name;
   if (row.recipient_email !== null) certificate.recipientEmail = row.recipient_email;
-  if (row.gift_date !== null) certificate.giftDate = row.gift_date;
-  if (row.greeting_text !== null) certificate.greetingText = row.greeting_text;
-  if (row.sender_signature !== null) certificate.senderSignature = row.sender_signature;
+  if (typeof row.gift_date === "string") certificate.giftDate = row.gift_date;
+  if (typeof row.greeting_text === "string") certificate.greetingText = row.greeting_text;
+  if (typeof row.sender_signature === "string") certificate.senderSignature = row.sender_signature;
   if (row.expires_at !== null) certificate.expiresAt = row.expires_at;
   return certificate;
 }
