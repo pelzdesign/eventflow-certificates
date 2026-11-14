@@ -21,9 +21,9 @@ interface IssuableOrder {
 interface ExistingCertificate { public_token: string; }
 
 /**
- * Issuance is a single D1 batch: the certificate insert is conditional on the
- * order still being confirmed/unissued, and the order is linked in the same
- * transaction. Repeated requests return the already-issued public URL.
+ * Issuance is a single D1 batch: the INSERT reads the current personalization
+ * directly from the order row inside the transaction, and the order is linked
+ * in the same batch. Repeated requests return the already-issued public URL.
  */
 export async function onRequestPost(context: PagesContext): Promise<Response> {
   const { request, env, params } = context;
@@ -78,19 +78,17 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
           description, recipient_name, recipient_email, gift_date, greeting_text,
           sender_signature, activation_url, status, issued_at, expires_at, created_by, version
         )
-        SELECT ?, ?, ?, ?, 'service', ?, ?, ?, ?, NULL, ?, ?, ?, ?, 'active', ?, NULL, ?, 1
-        WHERE EXISTS (
-          SELECT 1 FROM gift_orders
-          WHERE id = ? AND organization_id = ? AND payment_status = 'confirmed'
-            AND certificate_id IS NULL AND issuance_status = 'not_started'
-            AND certificate_date IS NOT NULL AND recipient_name IS NOT NULL
-            AND greeting_text IS NOT NULL AND sender_signature IS NOT NULL
-        )
+        SELECT ?, ?, ?, ?, 'service', ?, ?, ?, recipient_name, NULL,
+               certificate_date, greeting_text, sender_signature, ?, 'active', ?, NULL, ?, 1
+        FROM gift_orders
+        WHERE id = ? AND organization_id = ? AND payment_status = 'confirmed'
+          AND certificate_id IS NULL AND issuance_status = 'not_started'
+          AND certificate_date IS NOT NULL AND recipient_name IS NOT NULL
+          AND greeting_text IS NOT NULL AND sender_signature IS NOT NULL
       `).bind(
         certificateId, order.organization_id, publicToken, code, valueJson,
         order.service_title_snapshot, order.description_snapshot,
-        order.recipient_name, order.certificate_date, order.greeting_text,
-        order.sender_signature, order.activation_url, now, env.DEMO_USER_ID,
+        order.activation_url, now, env.DEMO_USER_ID,
         order.id, order.organization_id,
       ),
       batchDb.prepare(`
