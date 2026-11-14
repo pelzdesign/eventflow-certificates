@@ -5,6 +5,7 @@ export type CertificatePermission =
   | "certificate:read"
   | "certificate:edit"
   | "certificate:redeem"
+  | "certificate:revoke_public_link"
   | "certificate:cancel";
 
 export interface AuthenticatedActor {
