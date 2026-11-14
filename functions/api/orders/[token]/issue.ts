@@ -96,7 +96,10 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
         SET certificate_id = ?, issuance_status = 'issued', updated_at = ?
         WHERE id = ? AND organization_id = ? AND payment_status = 'confirmed'
           AND certificate_id IS NULL AND issuance_status = 'not_started'
-      `).bind(certificateId, now, order.id, order.organization_id),
+          AND EXISTS (
+            SELECT 1 FROM certificates WHERE id = ? AND public_token = ?
+          )
+      `).bind(certificateId, now, order.id, order.organization_id, certificateId, publicToken),
     ]);
 
     if ((results[1]?.meta?.changes ?? 0) === 1) {
