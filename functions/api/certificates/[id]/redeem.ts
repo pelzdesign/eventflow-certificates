@@ -12,7 +12,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
   }
   try {
     await new DemoPlatformAccess(request, env).assertOrganizationPermission({
-      actor: { userId: session.userId }, organizationId: session.organizationId, permission: "certificate:issue",
+      actor: { userId: session.userId }, organizationId: session.organizationId, permission: "certificate:redeem",
     });
     const result = await env.CERTIFICATES_DB.prepare(`
       UPDATE certificates SET status = 'redeemed', version = version + 1
