@@ -74,7 +74,7 @@ This is a single-user Preview-only mechanism, not EventFlow production authentic
 - `GET /api/orders/admin` and `POST /api/orders/:id/confirm-payment` — authenticated specialist order inbox and manual payment confirmation.
 - `POST /api/orders/:token/issue` — issue only after server-side payment confirmation and completed personalization.
 
-The cabinet supports issuing service and monetary certificates, viewing details, copying public links, manually confirming gift-order payments, marking certificates as used, revoking public links, and viewing recipient activation timestamps. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering are applied only within that 100-record set, not across older history. The cabinet displays this limit explicitly. Pagination is not implemented. Edit, cancel, redeem, partial use, ledger/history and organization-management actions remain excluded.
+The cabinet supports issuing service and monetary certificates, viewing details, copying public links, manually confirming gift-order payments, marking a certificate as used, revoking its public link, and viewing recipient activation timestamps. The list endpoint reads at most the 100 most recently issued certificates for the organization; search and status filtering apply only within that bounded result set, not across older history. The cabinet displays this limit explicitly. Pagination, editing, cancellation, partial use, ledger/history and organization-management actions remain excluded.
 
 ## Deployment boundary
 
@@ -83,6 +83,5 @@ This repository contains code and migrations only. It does not create Cloudflare
 ## Local development
 
 Use `wrangler pages dev public` with a local D1 binding and local-only variables. Never commit local secret files. Pages Functions remain in the repository-root `functions/` directory.
-
 
 The gift catalogue tables are intentionally empty after migration. Do not expose an empty or partial catalog as a finished offer: populate and activate services only after the specialist confirms the complete price list, descriptions and fixed tariff variants. Payment is manual in this DEMO; the buyer's "I paid" action is only a report and never confirms receipt of funds. The specialist's authenticated confirmation is required before the server-side issuance endpoint can create a certificate.
