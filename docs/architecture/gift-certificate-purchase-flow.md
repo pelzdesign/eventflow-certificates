@@ -16,10 +16,10 @@
 - The server derives organization from the selected active catalog variant and the order.
 - The price and service description are copied into the order at creation time.
 - Reporting payment is not confirmation. Only an authenticated specialist session can confirm payment.
-- Issuance is impossible until payment is confirmed and required personalization fields are valid. This check is server-side and must be atomic/idempotent.
+- Issuance is impossible until payment is confirmed and required personalization fields are valid. This check is server-side and must be atomic/idempotent; the certificate insert reads the current personalization directly from the order row within the same D1 batch that links the issued certificate.
 - The public order endpoint exposes only the order's buyer-facing snapshot and personalization fields; never expose internal IDs, organization ID, session data or admin notes.
 - Mutations require exact same-origin Origin validation.
-- No payment provider, automatic bank verification, redemption, partial redemption or refund workflow is included.
+- No payment provider, automatic bank verification, partial redemption or refund workflow is included. Full single-use marking is a separate specialist-only lifecycle action.
 
 ## Recipient certificate lifecycle
 
