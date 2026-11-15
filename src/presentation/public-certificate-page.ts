@@ -50,8 +50,8 @@ export function renderPublicCertificatePage(
   const activation = activationAvailable
     ? options.previewMode
       ? `<section class="activation" aria-label="Связь со специалистом">
-          <p class="activation-note">В готовом сертификате получатель сможет связаться со специалистом прямо отсюда.</p>
-          <a class="activation-link" href="${escapeHtml(certificate.activationUrl ?? "")}" target="_blank" rel="noopener">Связаться со специалистом</a>
+          <p class="activation-note">В настоящем сертификате это действие отправит запрос на активацию подарка. В этом ознакомительном просмотре ссылка открывает контакт специалиста.</p>
+          <a class="activation-link" href="${escapeHtml(certificate.activationUrl ?? "")}" target="_blank" rel="noopener">${escapeHtml(story?.activationActionLabel ?? "Активировать подарок")}</a>
         </section>`
       : `<section class="activation" aria-label="Активация подарка">
           <p class="activation-note">${certificate.activationRequestedAt
