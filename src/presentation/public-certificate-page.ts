@@ -249,7 +249,6 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
           <p class="service-description">${escapeHtml(story.serviceText)}</p>
           <p class="eyebrow">В состав подарка входит</p>
           <ul class="inclusions">${inclusions}</ul>
-          ${input.description ? `<p class="service-description">${input.description}</p>` : ""}
         </div>
         <div class="certificate-meta">
           <div class="certificate-meta-top">
