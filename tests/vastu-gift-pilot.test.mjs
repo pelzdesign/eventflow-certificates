@@ -81,7 +81,14 @@ test('Vastu public certificate uses the brand profile without exposing the purch
   }, 'a'.repeat(64), VASTU_BRAND_PROFILE);
 
   assert.match(html, /PelzDesign \| пространство по васту/);
-  assert.match(html, /Дом, который поддерживает/);\n  assert.match(html, /Подарок, который помогает по-новому почувствовать свой дом/);\n  assert.match(html, /Место, где начинается ваша жизнь/);\n  assert.match(html, /Персональная Васту-карта/);\n  assert.match(html, /Голосовой разбор/);\n  assert.match(html, /Практические рекомендации/);\n  assert.match(html, /Этот подарок для/);\n  assert.match(html, /href=\"#gift-story\"/);
+  assert.match(html, /Дом, который поддерживает/);
+  assert.match(html, /Подарок, который помогает по-новому почувствовать свой дом/);
+  assert.match(html, /Место, где начинается ваша жизнь/);
+  assert.match(html, /Персональная Васту-карта/);
+  assert.match(html, /Голосовой разбор/);
+  assert.match(html, /Практические рекомендации/);
+  assert.match(html, /Этот подарок для/);
+  assert.match(html, /href=\"#gift-story\"/);
   assert.match(html, /персональная карта Васту в PDF/);
   assert.match(html, /Активировать подарок/);
   assert.doesNotMatch(html, /4\s?900/);
