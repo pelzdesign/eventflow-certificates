@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { bootstrapVastuCatalog, onRequestPost } from '../dist-functions/functions/api/catalog-bootstrap.js';
 import { VASTU_BRAND_PROFILE, VASTU_DEMO_CATALOG_ITEM } from '../dist-functions/functions/vastu-brand.js';
+import { normalizeOrderPersonalization } from '../dist-functions/functions/api/orders/[token].js';
+import { VASTU_DEMO_PERSONALIZATION } from '../dist-functions/functions/vastu-brand.js';
 import { renderPublicCertificatePage } from '../dist/presentation/public-certificate-page.js';
 
 class BootstrapDb {
@@ -131,4 +133,43 @@ test('brand-neutral certificate rendering remains available without a custom gif
   assert.match(html, /Подарочный сертификат/);
   assert.match(html, /Консультация/);
   assert.doesNotMatch(html, /Дом, который поддерживает/);
+});
+
+
+test('DEMO order starts with a ready-made, editable Vastu gift example', () => {
+  assert.equal(VASTU_DEMO_PERSONALIZATION.recipientName, 'Илья и Анна');
+  assert.match(VASTU_DEMO_PERSONALIZATION.greetingText, /Пусть ваш дом будет местом/);
+  assert.equal(VASTU_DEMO_PERSONALIZATION.senderSignature, 'С теплом, ваши друзья');
+});
+
+test('gift personalization fields are optional and can all be cleared before issuance', () => {
+  assert.deepEqual(normalizeOrderPersonalization({
+    certificateDate: '',
+    recipientName: '',
+    greetingText: '',
+    senderSignature: '',
+  }), {
+    certificateDate: null,
+    recipientName: null,
+    greetingText: null,
+    senderSignature: null,
+  });
+});
+
+test('gift personalization still validates supplied values and field limits', () => {
+  assert.equal(normalizeOrderPersonalization({ certificateDate: 'not-a-date' }), null);
+  assert.equal(normalizeOrderPersonalization({ recipientName: 'x'.repeat(181) }), null);
+  assert.equal(normalizeOrderPersonalization({ greetingText: 'x'.repeat(2001) }), null);
+  assert.equal(normalizeOrderPersonalization({ senderSignature: 'x'.repeat(181) }), null);
+  assert.deepEqual(normalizeOrderPersonalization({
+    certificateDate: '2026-11-16',
+    recipientName: 'Анна',
+    greetingText: 'С праздником!',
+    senderSignature: 'Илья',
+  }), {
+    certificateDate: '2026-11-16',
+    recipientName: 'Анна',
+    greetingText: 'С праздником!',
+    senderSignature: 'Илья',
+  });
 });
