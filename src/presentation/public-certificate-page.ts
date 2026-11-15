@@ -100,6 +100,7 @@ export function renderPublicCertificatePage(
     </details>
   `;
 
+  const skipLink = story ? '<a class="skip-link" href="#gift-story">Перейти к истории подарка</a>' : "";
   const storyContent = story ? renderGiftStory({
     story,
     brandName,
@@ -269,7 +270,7 @@ export function renderPublicCertificatePage(
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#gift-story">Перейти к истории подарка</a>
+  ${skipLink}
   <main>
     ${storyContent}
     <footer><strong>${brandName}</strong>${providerName ? ` · Услугу оказывает ${providerName}.` : "."} Эта страница работает на платформе EventFlow Certificates и сохраняет историю вашего подарка. ${story ? "Просмотр сертификата не активирует и не погашает его." : "Само открытие сертификата не меняет его статус."}</footer>
