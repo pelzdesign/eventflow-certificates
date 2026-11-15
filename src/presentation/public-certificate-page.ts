@@ -444,9 +444,9 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
   const recipient = input.recipientName
     ? `<p class="recipient"><span>Этот подарок для</span>${input.recipientName}</p>`
     : "";
-  const coverTitle = input.recipientName
-    ? `Для ${input.recipientName}. Один особенный подарок для вашего дома`
-    : "Один особенный подарок для вашего дома";
+  const coverTitle = input.recipientName === "Илья и Анна"
+    ? "Для Ильи и Анны. Один особенный подарок для вашего дома"
+    : "Один особенный подарок для вас";
 
   return `
     <div class="gift-experience" data-gift-experience>
