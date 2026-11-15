@@ -63,20 +63,30 @@ export function renderPublicCertificatePage(
         : "";
 
   const legacyContent = `
-    <section class="legacy certificate-card" aria-label="Информация о сертификате">
-      <p class="eyebrow">${brandName}</p>
-      <p class="brand-tagline">${brandTagline}</p>
-      <h1>${escapeHtml(certificate.title)}</h1>
-      <p class="code">№ ${escapeHtml(certificate.code)}</p>
-      <p class="status ${displayStatusClass}">${displayStatus}</p>
-      <p class="value">${value}</p>
-      ${description ? `<p class="description">${description}</p>` : ""}
-      ${recipientName ? `<p class="recipient"><span>Получатель</span>${recipientName}</p>` : ""}
-      ${greeting ? `<p class="greeting">${greeting}</p>` : ""}
-      ${signature ? `<p class="signature">${signature}</p>` : ""}
-      ${renderDates(certificate, giftDate, expiry)}
-    </section>
-    ${activation}
+    <details class="opening legacy-opening">
+      <summary>
+        <span class="eyebrow">Небольшой сюрприз для вас</span>
+        <span class="opening-mark" aria-hidden="true">✧</span>
+        <span class="opening-title">Для вас приготовили особенный подарок</span>
+        <span class="opening-action">Открыть подарок</span>
+      </summary>
+      <div class="gift-content">
+        <section class="legacy certificate-card" aria-label="Информация о сертификате">
+          <p class="eyebrow">${brandName}</p>
+          <p class="brand-tagline">${brandTagline}</p>
+          <h1>${escapeHtml(certificate.title)}</h1>
+          <p class="code">№ ${escapeHtml(certificate.code)}</p>
+          <p class="status ${displayStatusClass}">${displayStatus}</p>
+          <p class="value">${value}</p>
+          ${description ? `<p class="description">${description}</p>` : ""}
+          ${recipientName ? `<p class="recipient"><span>Получатель</span>${recipientName}</p>` : ""}
+          ${greeting ? `<p class="greeting">${greeting}</p>` : ""}
+          ${signature ? `<p class="signature">${signature}</p>` : ""}
+          ${renderDates(certificate, giftDate, expiry)}
+        </section>
+        ${activation}
+      </div>
+    </details>
   `;
 
   const storyContent = story ? renderGiftStory({
@@ -112,7 +122,7 @@ export function renderPublicCertificatePage(
     main{width:min(100%,680px);margin:0 auto}
     .eyebrow{margin:0 0 14px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.2em;text-align:center;text-transform:uppercase}
     .opening{overflow:hidden;min-height: min(680px, calc(100svh - 56px));display:flex;align-items:center;justify-content:center;padding:48px 26px;background:linear-gradient(155deg,#fffefa 0%,#f1eee5 100%);border:1px solid var(--line);text-align:center}
-    .opening-inner{max-width:480px}
+    .opening-inner{max-width:480px}\n    .legacy-opening>summary{list-style:none;cursor:pointer;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:52px 28px;text-align:center}\n    .legacy-opening>summary::-webkit-details-marker{display:none}\n    .legacy-opening .opening-title{max-width:380px;font:400 clamp(30px,7vw,44px)/1.2 Georgia,serif}\n    .legacy-opening[open]>summary{display:none}\n    .legacy-opening .gift-content{animation:reveal .6s ease both}\n    @keyframes reveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
     .opening-mark{width:68px;height:68px;margin:0 auto 28px;border:1px solid #b6ad92;border-radius:50%;display:grid;place-items:center;color:#8b876e;font:30px Georgia,serif}
     .opening h1{max-width:440px;margin:0 auto 18px;font:400 clamp(38px,8vw,62px)/1.08 Georgia,serif;letter-spacing:-.035em}
     .opening-copy{max-width:390px;margin:0 auto;color:var(--muted);font:16px/1.8 Georgia,serif}
@@ -166,7 +176,7 @@ export function renderPublicCertificatePage(
 <body>
   <main>
     ${storyContent}
-    <footer>${brandName}. Эта страница сохраняет историю вашего подарка. Просмотр сертификата не активирует и не погашает его.</footer>
+    <footer>${brandName}. Эта страница сохраняет историю вашего подарка. ${story ? "Просмотр сертификата не активирует и не погашает его." : "Само открытие сертификата не меняет его статус."}</footer>
   </main>
 </body>
 </html>`;
