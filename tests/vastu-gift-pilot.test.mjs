@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { bootstrapVastuCatalog, onRequestPost } from '../dist-functions/functions/api/catalog-bootstrap.js';
 import { VASTU_BRAND_PROFILE, VASTU_DEMO_CATALOG_ITEM } from '../dist-functions/functions/vastu-brand.js';
 import { normalizeOrderPersonalization } from '../dist-functions/functions/api/orders/[token].js';
+import { onRequestGet as renderDemoPreview } from '../dist-functions/functions/demo-preview.js';
 import { VASTU_DEMO_PERSONALIZATION } from '../dist-functions/functions/vastu-brand.js';
 import { renderPublicCertificatePage } from '../dist/presentation/public-certificate-page.js';
 
@@ -172,4 +173,18 @@ test('gift personalization still validates supplied values and field limits', ()
     greetingText: 'С праздником!',
     senderSignature: 'Илья',
   });
+});
+
+
+test('instant Vastu demo preview is read-only and creates no activation or payment action', async () => {
+  const response = await renderDemoPreview({});
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Дом, который поддерживает/);
+  assert.match(html, /Илья и Анна/);
+  assert.match(html, /Связаться со специалистом/);
+  assert.match(html, /https:\/\/vk\.me\/pelts_tatyana_vastu/);
+  assert.doesNotMatch(html, /method="post"/);
+  assert.doesNotMatch(html, /4\s?900/);
+  assert.doesNotMatch(html, /Истёк/);
 });
