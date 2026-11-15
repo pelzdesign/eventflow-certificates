@@ -206,6 +206,41 @@ export function renderPublicCertificatePage(
     .activation-note,.used-note{color:var(--muted);font-size:12px;line-height:1.7}
     .activation button{margin-top:14px;padding:16px 26px;border:0;border-radius:2px;background:var(--accent);color:var(--accent-ink);font:600 11px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
     .used-note{margin:28px auto 0;padding:16px;border-top:1px solid var(--line)}
+    /* Final Vastu story art direction overrides the neutral certificate defaults. */
+    .opening{min-height:min(820px,calc(100svh - 28px));margin:14px auto 26px;border-radius:28px;box-shadow:0 28px 90px #40392312;background:radial-gradient(ellipse at 50% 34%,#fffefa 0%,#f5f1e7 54%,#e9e6da 100%)}
+    .opening:before,.opening:after{content:"";position:absolute;pointer-events:none;border:1px solid #bdb59c55;border-radius:50%}
+    .opening:before{inset:18px}.opening:after{inset:28px;border-style:dashed;opacity:.45}
+    .opening-inner{position:relative;z-index:1;max-width:560px}
+    .hero-art{width:min(100%,390px);height:190px;margin:0 auto 12px;display:grid;place-items:center}
+    .hero-art svg{width:100%;height:100%;overflow:visible}
+    .hero-art .orbit{transform-origin:210px 130px;animation:orbit 36s linear infinite}
+    .hero-art .house-line{fill:none;stroke:#78856e;stroke-width:1.35}
+    .hero-art .fine-line{fill:none;stroke:#b7ad91;stroke-width:1}
+    @keyframes orbit{to{transform:rotate(360deg)}}
+    .opening-mark{display:none}
+    .opening h1{max-width:540px}
+    .opening-copy{max-width:430px}
+    .opening-action{border-radius:99px;padding:16px 30px;transition:background .25s,color .25s,transform .25s}
+    .opening-action:hover{background:var(--accent);color:var(--accent-ink);transform:translateY(-2px)}
+    .story-section:first-child{background:linear-gradient(180deg,#fffdf8a8,transparent);border-radius:28px 28px 0 0}
+    .story-section:nth-child(2){background:linear-gradient(180deg,#e9e7dc80,transparent)}
+    .story-section h2{max-width:620px}
+    .story-copy{max-width:600px}
+    .chapter-index{margin:0 0 22px;color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.22em;text-align:center}
+    .personal-message{position:relative;max-width:560px;margin:48px auto 0;padding:38px 34px;background:linear-gradient(145deg,#fffefa,#f6f1e6);border:1px solid #d9d1bf;border-radius:4px 18px 18px 18px;box-shadow:0 18px 44px #4039230d}
+    .personal-message:before{content:"";position:absolute;top:0;left:34px;width:48px;height:3px;background:var(--accent)}
+    .service-panel{max-width:760px;border-radius:24px;padding:clamp(30px,6vw,64px);background:linear-gradient(145deg,#fffefa,#f7f4ec);box-shadow:0 28px 70px #30281912}
+    .inclusions{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:36px}
+    .inclusions li{padding:24px 18px;border:1px solid var(--line);border-radius:14px;background:#fffefa}
+    .inclusions li:before{content:"✧";display:block;margin-bottom:16px;color:var(--accent);font:22px Georgia,serif}
+    .inclusions h3{font-size:17px;line-height:1.35}
+    .inclusions p{font-size:12px}
+    .certificate-meta{max-width:760px;border-radius:18px;padding:26px 30px;background:#fffdf8d9}
+    .story-section.closing{margin-top:20px;padding:clamp(56px,9vw,92px) clamp(18px,6vw,58px);background:linear-gradient(145deg,#58694f,#344637);border-radius:26px;color:#fffdf7}
+    .closing .eyebrow,.closing .story-copy{color:#e7e8dd}
+    .closing .closing-mark{color:#e2d7b8}
+    .closing .activation button{background:#f5f0e4;color:#3d4d3b;border-radius:99px;padding:18px 32px;transition:transform .2s,box-shadow .2s}
+    .closing .activation button:hover{transform:translateY(-2px);box-shadow:0 12px 28px #17251c44}
     .legacy{padding:clamp(28px,7vw,56px);background:var(--paper);border:1px solid var(--line);box-shadow:0 18px 60px #30281912}
     .legacy h1{margin:0 0 12px;text-align:center;font:400 clamp(28px,6vw,42px)/1.15 Georgia,serif}
     .legacy .brand-tagline,.legacy .description{color:var(--muted);text-align:center;font-size:13px;line-height:1.7}
