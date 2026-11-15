@@ -48,20 +48,20 @@ export function renderPublicCertificatePage(
     && Boolean(certificate.activationUrl && (publicToken || options.previewMode));
   const activation = activationAvailable
     ? options.previewMode
-      ? \`<section class="activation">
+      ? `<section class="activation">
           <p class="activation-note">В готовом сертификате получатель сможет связаться со специалистом прямо отсюда.</p>
-          <a class="activation-link" href="\${escapeHtml(certificate.activationUrl ?? "")}" target="_blank" rel="noopener">Связаться со специалистом</a>
-        </section>\`
-      : \`<section class="activation">
-          <p class="activation-note">\${certificate.activationRequestedAt
+          <a class="activation-link" href="${escapeHtml(certificate.activationUrl ?? "")}" target="_blank" rel="noopener">Связаться со специалистом</a>
+        </section>`
+      : `<section class="activation">
+          <p class="activation-note">${certificate.activationRequestedAt
             ? "Вы уже начали активацию подарка. Можно продолжить общение со специалистом."
             : "Чтобы воспользоваться подарком, свяжитесь со специалистом."}</p>
-          <form method="post" action="/api/public/certificates/\${escapeHtml(publicToken ?? "")}/activate">
-            <button type="submit">\${certificate.activationRequestedAt
+          <form method="post" action="/api/public/certificates/${escapeHtml(publicToken ?? "")}/activate">
+            <button type="submit">${certificate.activationRequestedAt
               ? "Написать специалисту"
               : escapeHtml(story?.activationActionLabel ?? "Активировать подарок")}</button>
           </form>
-        </section>\`
+        </section>`
     : certificate.status === "redeemed"
       ? '<p class="used-note">Этот подарок уже подарил свои впечатления. Спасибо, что воспользовались им!</p>'
       : certificateExpired
