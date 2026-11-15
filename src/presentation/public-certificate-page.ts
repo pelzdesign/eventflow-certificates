@@ -118,8 +118,45 @@ export function renderPublicCertificatePage(
     :root{color-scheme:light;--ink:${escapeHtml(brand.theme.ink)};--muted:${escapeHtml(brand.theme.muted)};--paper:${escapeHtml(brand.theme.surface)};--line:${escapeHtml(brand.theme.line)};--accent:${escapeHtml(brand.theme.accent)};--accent-ink:${escapeHtml(brand.theme.accentInk)};--page:${escapeHtml(brand.theme.page)}}
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;min-height:100vh;padding:28px 16px 56px;background:var(--page);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
-    main{width:min(100%,680px);margin:0 auto}
+    body{margin:0;min-height:100vh;padding:0 18px 64px;background:radial-gradient(ellipse at 50% 0%,#fffdf7 0%,var(--page) 62%);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+    main{width:min(100%,920px);margin:0 auto}
+    .hero-art{width:min(100%,390px);height:190px;margin:0 auto 12px;display:grid;place-items:center}
+    .hero-art svg{width:100%;height:100%;overflow:visible}
+    .hero-art .orbit{transform-origin:210px 130px;animation:orbit 36s linear infinite}
+    .hero-art .house-line{fill:none;stroke:#78856e;stroke-width:1.35}
+    .hero-art .fine-line{fill:none;stroke:#b7ad91;stroke-width:1}
+    @keyframes orbit{to{transform:rotate(360deg)}}
+    .chapter-index{margin:0 0 22px;color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.22em;text-align:center}
+    .story-section{position:relative}
+    .story-section:first-child{background:linear-gradient(180deg,#fffdf8a8,transparent);border-radius:28px 28px 0 0}
+    .story-section:nth-child(2){background:linear-gradient(180deg,#e9e7dc80,transparent)}
+    .story-section.closing{margin-top:20px;padding:clamp(56px,9vw,92px) clamp(18px,6vw,58px);background:linear-gradient(145deg,#58694f,#344637);border-radius:26px;color:#fffdf7}
+    .closing .eyebrow,.closing .story-copy{color:#e7e8dd}
+    .opening{position:relative;min-height:min(820px,calc(100svh - 28px));margin:14px auto 26px;border-radius:28px;box-shadow:0 28px 90px #40392312;background:radial-gradient(ellipse at 50% 34%,#fffefa 0%,#f5f1e7 54%,#e9e6da 100%)}
+    .opening:before,.opening:after{content:"";position:absolute;pointer-events:none;border:1px solid #bdb59c55;border-radius:50%}
+    .opening:before{inset:18px}.opening:after{inset:28px;border-style:dashed;opacity:.45}
+    .opening-inner{position:relative;z-index:1;max-width:560px}
+    .opening-mark{display:none}
+    .opening h1{max-width:540px}
+    .opening-copy{max-width:430px}
+    .brand-caption{letter-spacing:.18em}
+    .opening-action{border-radius:99px;padding:16px 30px;transition:background .25s,color .25s,transform .25s}
+    .opening-action:hover{background:var(--accent);color:var(--accent-ink);transform:translateY(-2px)}
+    .story-section h2{max-width:620px}
+    .story-copy{max-width:600px}
+    .personal-message{position:relative;max-width:560px;margin:48px auto 0;padding:38px 34px;background:linear-gradient(145deg,#fffefa,#f6f1e6);border:1px solid #d9d1bf;border-radius:4px 18px 18px 18px;box-shadow:0 18px 44px #4039230d}
+    .personal-message:before{content:"";position:absolute;top:0;left:34px;width:48px;height:3px;background:var(--accent)}
+    .service-panel{max-width:760px;border-radius:24px;padding:clamp(30px,6vw,64px);background:linear-gradient(145deg,#fffefa,#f7f4ec);box-shadow:0 28px 70px #30281912}
+    .inclusions{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:36px}
+    .inclusions li{padding:24px 18px;border:1px solid var(--line);border-radius:14px;background:#fffefa}
+    .inclusions li:before{content:"✧";display:block;margin-bottom:16px;color:var(--accent);font:22px Georgia,serif}
+    .inclusions h3{font-size:17px;line-height:1.35}
+    .inclusions p{font-size:12px}
+    .certificate-meta{max-width:760px;border-radius:18px;padding:26px 30px;background:#fffdf8d9}
+    .closing .closing-mark{color:#e2d7b8}
+    .closing .activation button{background:#f5f0e4;color:#3d4d3b;border-radius:99px;padding:18px 32px;transition:transform .2s,box-shadow .2s}
+    .closing .activation button:hover{transform:translateY(-2px);box-shadow:0 12px 28px #17251c44}
+    footer{padding:24px 10px 0}
     .eyebrow{margin:0 0 14px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.2em;text-align:center;text-transform:uppercase}
     .opening{overflow:hidden;min-height: min(680px, calc(100svh - 56px));display:flex;align-items:center;justify-content:center;padding:48px 26px;background:linear-gradient(155deg,#fffefa 0%,#f1eee5 100%);border:1px solid var(--line);text-align:center}
     .opening-inner{max-width:480px}
@@ -177,7 +214,8 @@ export function renderPublicCertificatePage(
     .legacy .signature{margin:20px 0 0;text-align:right;font:italic 16px Georgia,serif}
     footer{margin:28px 0 0;color:var(--muted);font-size:10px;line-height:1.6;text-align:center}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-    @media(max-width:460px){body{padding:12px 10px 36px}.opening{min-height:calc(100svh - 24px)}.certificate-meta{padding:18px}.date-row{font-size:10px}}
+    @media(max-width:640px){body{padding:0 10px 42px}.opening{min-height:calc(100svh - 20px);margin:10px auto 18px;padding:48px 18px}.hero-art{height:150px}.story-section{padding:58px 16px}.inclusions{grid-template-columns:1fr}.inclusions li{display:grid;grid-template-columns:32px 1fr;column-gap:12px}.inclusions li:before{grid-row:span 2;margin:0}.certificate-meta{padding:20px}.closing.story-section{padding:58px 20px;border-radius:18px}.date-row{font-size:10px}}
+    @media(prefers-reduced-motion:reduce){.hero-art .orbit{animation:none}.opening-action,.closing .activation button{transition:none}}
   </style>
 </head>
 <body>
@@ -226,7 +264,23 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
     <section class="opening" aria-labelledby="gift-opening-title">
       <div class="opening-inner">
         <p class="eyebrow">${escapeHtml(story.openingEyebrow)}</p>
-        <div class="opening-mark" aria-hidden="true">✧</div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 420 260" role="presentation">
+            <g class="orbit">
+              <circle cx="210" cy="130" r="112" class="fine-line" stroke-dasharray="2 8"/>
+              <path d="M210 8v18M210 234v18M88 130h18M314 130h18" class="fine-line"/>
+              <path d="M210 22l5 13h-10zM210 238l5-13h-10zM102 130l13-5v10zM318 130l-13-5v10z" fill="#9b906f"/>
+            </g>
+            <circle cx="210" cy="130" r="84" fill="#f7f3e9" stroke="#c8bea4"/>
+            <path d="M150 78h120v104H150z" class="house-line"/>
+            <path d="M210 78v104M150 130h120M180 78v52M240 130v52M180 130v52M240 78v52" class="fine-line"/>
+            <path d="M150 78l60-34 60 34" class="house-line"/>
+            <path d="M194 182v-31h32v31M150 105h30v25h-30M240 105h30v25h-30" class="house-line"/>
+            <circle cx="210" cy="130" r="12" fill="#78856e"/>
+            <circle cx="210" cy="130" r="4" fill="#f7f3e9"/>
+            <path d="M210 115v-15M210 160v-15M195 130h-15M240 130h-15" class="fine-line"/>
+          </svg>
+        </div>
         <h1 id="gift-opening-title">${escapeHtml(story.openingTitle)}</h1>
         <p class="opening-copy">${escapeHtml(story.openingText)}</p>
         <p class="brand-caption">${brandName} · ${brandTagline}</p>
@@ -235,12 +289,14 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
     </section>
     <div class="story" id="gift-story">
       <section class="story-section">
+        <p class="chapter-index">01 — О ВАШЕМ ПРОСТРАНСТВЕ</p>
         <p class="eyebrow">${escapeHtml(story.storyEyebrow)}</p>
         <h2>${escapeHtml(story.storyTitle)}</h2>
         <p class="story-copy">${escapeHtml(story.storyText)}</p>
         ${personalMessage}
       </section>
       <section class="story-section">
+        <p class="chapter-index">02 — ЧТО ВНУТРИ ПОДАРКА</p>
         <div class="service-panel">
           <p class="eyebrow">${escapeHtml(story.serviceEyebrow)}</p>
           <h2>${escapeHtml(story.serviceTitle)}</h2>
@@ -260,6 +316,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
         </div>
       </section>
       <section class="story-section closing">
+        <p class="chapter-index">03 — ПЕРВЫЙ ШАГ</p>
         <p class="eyebrow">${escapeHtml(story.closingEyebrow)}</p>
         <div class="closing-mark" aria-hidden="true">✧</div>
         <h2>${escapeHtml(story.closingTitle)}</h2>
