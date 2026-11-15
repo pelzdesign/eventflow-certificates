@@ -122,7 +122,7 @@ export async function onRequestPut(context: PagesContext): Promise<Response> {
         ).bind(v.title, v.description, v.amountMinor, v.currency, v.isActive ? 1 : 0, now, v.id, service.id)),
   ];
   try {
-    await env.CERTIFICATES_DB.batch(statements);
+    for (const statement of statements) await statement.run();
     return jsonResponse({ services: await readCatalog(env, organizationId) });
   } catch {
     return jsonResponse({ error: "CATALOG_SAVE_FAILED" }, 500);
