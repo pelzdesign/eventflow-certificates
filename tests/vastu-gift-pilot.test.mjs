@@ -93,7 +93,7 @@ test('Vastu public certificate uses the brand profile without exposing the purch
   assert.match(html, /Голосовой разбор/);
   assert.match(html, /Практические рекомендации/);
   assert.match(html, /Этот подарок для/);
-  assert.match(html, /href=\"#gift-story\"/);
+  assert.match(html, /href=\"#gift-stage-3\"/);
   assert.match(html, /Индивидуальная карта вашего пространства в PDF/);
   assert.match(html, /Активировать подарок/);
   assert.doesNotMatch(html, /4\s?900/);
@@ -184,7 +184,8 @@ test('instant Vastu demo preview is read-only and creates no activation or payme
   const html = await response.text();
   assert.match(html, /Дом, который поддерживает/);
   assert.match(html, /Илья и Анна/);
-  assert.match(html, /Связаться со специалистом/);
+  assert.match(html, /Активировать подарок/);
+  assert.match(html, /контакт специалиста/);
   assert.match(html, /https:\/\/vk\.me\/pelts_tatyana_vastu/);
   assert.doesNotMatch(html, /method="post"/);
   assert.doesNotMatch(html, /4\s?900/);
