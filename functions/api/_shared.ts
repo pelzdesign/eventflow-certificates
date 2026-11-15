@@ -21,6 +21,7 @@ export class DemoPlatformAccess implements PlatformAccessPort{
     const allowed=input.permission==="certificate:issue"||
       input.permission==="certificate:read"||
       input.permission==="certificate:redeem"||
+      input.permission==="certificate:edit"||
       input.permission==="certificate:revoke_public_link";
     if(!s||!allowed||s.userId!==input.actor.userId||s.userId!==this.env.DEMO_USER_ID||
       s.organizationId!==this.env.DEMO_ORGANIZATION_ID||input.organizationId!==s.organizationId)throw new Error("ORGANIZATION_ACCESS_DENIED");
