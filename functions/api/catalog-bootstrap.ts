@@ -24,12 +24,12 @@ export async function bootstrapVastuCatalog(
   await database.batch([
     database.prepare(`
       INSERT OR IGNORE INTO catalog_services (
-        id, organization_id, slug, title, description, category,
+        id, organization_id, slug, title, description, activation_url, category,
         is_active, sort_order, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, 'Васту', 1, 10, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, 'Васту', 1, 10, ?, ?)
     `).bind(
       item.serviceId, organizationId, item.serviceSlug, item.serviceTitle,
-      item.serviceDescription, now, now,
+      item.serviceDescription, item.activationUrl, now, now,
     ),
     database.prepare(`
       INSERT OR IGNORE INTO catalog_variants (
