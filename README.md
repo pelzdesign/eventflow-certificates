@@ -8,7 +8,7 @@ Independent digital certificates module for EventFlow. The module owns certifica
 - Replaceable platform-access and repository ports.
 - Isolated Cloudflare Pages Functions + D1 DEMO adapter for issuance and public lookup.
 - Preview-only browser login using an HttpOnly session cookie backed by hashed D1 session records.
-- Certificate cabinet for listing and issuing certificates, plus a gift-order inbox with manual payment confirmation.
+- Seller cabinet for incoming gift orders, manual payment confirmation, certificate lifecycle actions, and a first catalog manager for editing the existing service and variants.
 - Public service catalogue and buyer order flow: order creation, payment reporting, pre-confirmation personalization, and server-gated certificate issuance.
 - First isolated brand pilot: **PelzDesign | пространство по васту**, with a replaceable brand profile and an idempotent DEMO bootstrap for the provisional Vastu express-review service.
 - Gift-date, greeting and sender signature are stored on the certificate and shown after an accessible gift-opening interaction.
