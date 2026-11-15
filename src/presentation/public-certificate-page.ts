@@ -449,7 +449,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
     : "Один особенный подарок для вас";
 
   return `
-    <div class="gift-experience" data-gift-experience>
+    <div class="gift-experience" data-gift-experience role="region" aria-label="История подарка">
       <nav class="gift-progress" aria-label="Этапы открытия подарка">
         <ol>
           <li class="is-current" data-progress-step="0"><span>01</span><span>Приглашение</span></li>
