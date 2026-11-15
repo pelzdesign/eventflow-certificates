@@ -52,6 +52,64 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
   }
 }
 
+export async function onRequestPost(context: PagesContext): Promise<Response> {
+  const { env, request } = context;
+  if (!sameOrigin(request)) return jsonResponse({ error: "ORIGIN_NOT_ALLOWED" }, 403);
+  const access = await authorize(request, env);
+  if (access.error) return access.error;
+
+  let body: unknown;
+  try {
+    const raw = await request.text();
+    if (raw.length > 8000) return jsonResponse({ error: "REQUEST_TOO_LARGE" }, 413);
+    body = JSON.parse(raw);
+  } catch {
+    return jsonResponse({ error: "INVALID_JSON" }, 400);
+  }
+
+  if (!isRecord(body) ||
+      typeof body.title !== "string" || !body.title.trim() || body.title.trim().length > 160 ||
+      (body.description !== undefined && body.description !== null && typeof body.description !== "string") ||
+      (typeof body.description === "string" && body.description.length > 2000) ||
+      (body.category !== undefined && body.category !== null && (typeof body.category !== "string" || body.category.length > 80)) ||
+      !isRecord(body.initialVariant) ||
+      typeof body.initialVariant.title !== "string" || !body.initialVariant.title.trim() || body.initialVariant.title.trim().length > 120 ||
+      (body.initialVariant.description !== undefined && body.initialVariant.description !== null && typeof body.initialVariant.description !== "string") ||
+      (typeof body.initialVariant.description === "string" && body.initialVariant.description.length > 2000) ||
+      !Number.isSafeInteger(body.initialVariant.amountMinor) || Number(body.initialVariant.amountMinor) <= 0 ||
+      Number(body.initialVariant.amountMinor) > 999999999 ||
+      typeof body.initialVariant.currency !== "string" || !/^[A-Z]{3}$/.test(body.initialVariant.currency)) {
+    return jsonResponse({ error: "INVALID_SERVICE_DATA" }, 400);
+  }
+
+  const organizationId = access.session!.organizationId;
+  const serviceId = crypto.randomUUID();
+  const variantId = crypto.randomUUID();
+  const now = new Date().toISOString();
+  const slug = "service-" + serviceId.slice(0, 8);
+  const description = typeof body.description === "string" ? body.description.trim() || null : null;
+  const category = typeof body.category === "string" ? body.category.trim() || null : null;
+  const variantDescription = typeof body.initialVariant.description === "string"
+    ? body.initialVariant.description.trim() || null : null;
+
+  try {
+    // Keep the service unpublished until its first valid variant has been inserted.
+    await env.CERTIFICATES_DB.prepare(
+      "INSERT INTO catalog_services (id, organization_id, slug, title, description, category, activation_url, is_active, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?)",
+    ).bind(serviceId, organizationId, slug, body.title.trim(), description, category, "https://vk.me/pelts_tatyana_vastu", now, now).run();
+    await env.CERTIFICATES_DB.prepare(
+      "INSERT INTO catalog_variants (id, service_id, title, description, amount_minor, currency, is_active, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, 1, 0, ?, ?)",
+    ).bind(variantId, serviceId, body.initialVariant.title.trim(), variantDescription,
+      Number(body.initialVariant.amountMinor), body.initialVariant.currency, now, now).run();
+    await env.CERTIFICATES_DB.prepare(
+      "UPDATE catalog_services SET is_active = 1, updated_at = ? WHERE id = ? AND organization_id = ?",
+    ).bind(now, serviceId, organizationId).run();
+    return jsonResponse({ services: await readCatalog(env, organizationId), createdServiceId: serviceId }, 201);
+  } catch {
+    return jsonResponse({ error: "CATALOG_CREATE_FAILED" }, 500);
+  }
+}
+
 export async function onRequestPut(context: PagesContext): Promise<Response> {
   const { env, request } = context;
   if (!sameOrigin(request)) return jsonResponse({ error: "ORIGIN_NOT_ALLOWED" }, 403);
