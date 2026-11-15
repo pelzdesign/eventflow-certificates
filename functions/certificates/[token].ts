@@ -1,6 +1,7 @@
 import { readPublicCertificate } from "../../src/application/read-public-certificate.js";
 import { D1CertificateRepository } from "../../src/adapters/cloudflare/d1-certificate-repository.js";
 import { renderPublicCertificatePage } from "../../src/presentation/public-certificate-page.js";
+import { VASTU_BRAND_PROFILE } from "../vastu-brand.js";
 import type { CertificatesEnv } from "../api/_shared.js";
 
 interface PagesContext {
@@ -23,7 +24,7 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
     );
     const certificate = await readPublicCertificate(token, { repository });
     if (!certificate) return htmlResponse(NOT_FOUND_PAGE, 404);
-    return htmlResponse(renderPublicCertificatePage(certificate, token), 200);
+    return htmlResponse(renderPublicCertificatePage(certificate, token, VASTU_BRAND_PROFILE), 200);
   } catch {
     return htmlResponse(ERROR_PAGE, 500);
   }
