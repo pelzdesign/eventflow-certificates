@@ -304,6 +304,7 @@ export function renderPublicCertificatePage(
     .envelope-actions [data-next-stage][hidden]{display:none}
     .story-art{margin:34px auto 12px;color:var(--accent);font:54px Georgia,serif}
     .story-stage .story-copy{font-size:17px}
+    .story-subtitle{margin:0 auto 22px;color:var(--muted);font:italic 16px/1.6 Georgia,serif}
     .contents-stage{align-items:flex-start}
     .contents-stage .service-panel{margin:0 auto}
     .contents-stage .certificate-meta{margin:22px auto 0}
