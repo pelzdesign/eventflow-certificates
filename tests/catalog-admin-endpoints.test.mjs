@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { onRequestGet, onRequestPut } from '../dist-functions/functions/api/catalog/admin.js';
+import { onRequestGet, onRequestPost, onRequestPut } from '../dist-functions/functions/api/catalog/admin.js';
 
 function setup() {
   return {
@@ -36,4 +36,35 @@ test('seller catalog updates reject foreign origins before processing a write', 
   });
   assert.equal(response.status, 403);
   assert.deepEqual(await response.json(), { error: 'ORIGIN_NOT_ALLOWED' });
+});
+
+test('seller service creation rejects foreign origins before processing a write', async () => {
+  const { env } = setup();
+  const response = await onRequestPost({
+    request: new Request('https://preview.example/api/catalog/admin', {
+      method: 'POST',
+      headers: { Origin: 'https://attacker.example', 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    }),
+    env
+  });
+  assert.equal(response.status, 403);
+  assert.deepEqual(await response.json(), { error: 'ORIGIN_NOT_ALLOWED' });
+});
+
+test('seller service creation requires an authenticated seller session', async () => {
+  const { env } = setup();
+  const response = await onRequestPost({
+    request: new Request('https://preview.example/api/catalog/admin', {
+      method: 'POST',
+      headers: { Origin: 'https://preview.example', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Новая услуга',
+        initialVariant: { title: 'Стандарт', amountMinor: 500000, currency: 'RUB' }
+      })
+    }),
+    env
+  });
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: 'AUTHENTICATION_REQUIRED' });
 });
