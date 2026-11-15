@@ -4,7 +4,7 @@ This is a deployment adapter for the certificates module, not a connection to Ev
 
 ## Pages project configuration
 
-Connect the private `PelzA83/eventflow-certificates` repository to a separate Cloudflare Pages project.
+Connect the private `pelzdesign/eventflow-certificates` repository to a separate Cloudflare Pages project.
 
 - Root directory: repository root.
 - Framework preset: None.
