@@ -126,7 +126,7 @@ export function normalizeOrderPersonalization(
 
   if (certificateDate) {
     const parsedDate = new Date(`${certificateDate}T00:00:00.000Z`);
-    const validDate = /^\\d{4}-\\d{2}-\\d{2}$/.test(certificateDate) &&
+    const validDate = /^\d{4}-\d{2}-\d{2}$/.test(certificateDate) &&
       !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === certificateDate;
     if (!validDate) return null;
   }
