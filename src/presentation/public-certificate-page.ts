@@ -100,7 +100,7 @@ export function renderPublicCertificatePage(
     </details>
   `;
 
-  const skipLink = story ? '<a class="skip-link" href="#gift-story">Перейти к истории подарка</a>' : "";
+  const skipLink = story ? '<a class="skip-link" href="#gift-stage-3" data-skip-to-story>Перейти к истории подарка</a>' : "";
   const storyContent = story ? renderGiftStory({
     story,
     brandName,
@@ -267,6 +267,56 @@ export function renderPublicCertificatePage(
     @media print{body{padding:0;background:#fff}.opening,.story-section.closing,.service-panel,.certificate-meta{box-shadow:none;break-inside:avoid}.opening{min-height:auto;padding:48px 20px}.hero-art .orbit{animation:none}a{color:inherit;text-decoration:none}.activation button{display:none}footer{padding-bottom:0}}
     @media(max-width:640px){body{padding:0 10px 42px}.opening{min-height:calc(100svh - 20px);margin:10px auto 18px;padding:48px 18px}.hero-art{height:150px}.story-section{padding:58px 16px}.inclusions{grid-template-columns:1fr}.inclusions li{display:grid;grid-template-columns:32px 1fr;column-gap:12px}.inclusions li:before{grid-row:span 2;margin:0}.certificate-meta{padding:20px}.closing.story-section{padding:58px 20px;border-radius:18px}.date-row{font-size:10px}}
     @media(prefers-reduced-motion:reduce){.hero-art .orbit{animation:none}.opening-action,.closing .activation button,.closing .activation-link{transition:none}}
+
+    /* Sequential gift-opening experience: one deliberate stage at a time. */
+    .gift-experience{max-width:820px;margin:0 auto}
+    .gift-progress{position:sticky;top:0;z-index:10;padding:14px 10px 12px;background:#f3f0e8ed;backdrop-filter:blur(12px)}
+    .gift-progress ol{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:650px;margin:0 auto;padding:0;list-style:none}
+    .gift-progress li{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--muted);font-size:9px;letter-spacing:.06em;text-transform:uppercase;text-align:center}
+    .gift-progress li:before{content:"";display:block;width:100%;height:3px;border-radius:9px;background:#d8d4c8}
+    .gift-progress li.is-current,.gift-progress li.is-complete{color:var(--ink)}
+    .gift-progress li.is-current:before,.gift-progress li.is-complete:before{background:var(--accent)}
+    .gift-progress li span:first-child{font-weight:700}
+    .gift-progress-count{margin:8px 0 0;color:var(--muted);font-size:10px;text-align:center}
+    .gift-stage{min-height:min(760px,calc(100svh - 92px));display:flex;align-items:center;justify-content:center;margin:14px auto 28px;padding:clamp(30px,6vw,64px) clamp(16px,5vw,44px);border:1px solid var(--line);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,#fffefa 0%,#f4f1e8 72%);box-shadow:0 24px 70px #4039230d}
+    .gift-stage[hidden]{display:none!important}
+    .gift-experience.is-enhanced [data-gift-stage]:not(.is-active){display:none}
+    .gift-stage.is-active{animation:stage-arrive .42s ease both}
+    @keyframes stage-arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .stage-inner{width:min(100%,650px);margin:0 auto;text-align:center}
+    .gift-stage h2{max-width:620px;margin:0 auto 20px;font:400 clamp(30px,6vw,46px)/1.18 Georgia,serif;letter-spacing:-.025em}
+    .stage-intro{max-width:430px;margin:0 auto;color:var(--muted);font:15px/1.8 Georgia,serif}
+    .stage-actions,.stage-navigation{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:30px}
+    .primary-action,.opening-action{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:15px 28px;border:0;border-radius:99px;background:var(--accent);color:var(--accent-ink);font:600 11px Arial,sans-serif;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;cursor:pointer}
+    .text-action{padding:12px 16px;border:0;background:transparent;color:var(--muted);font:12px Arial,sans-serif;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+    .primary-action:hover,.opening-action:hover{filter:brightness(.96);transform:translateY(-1px)}
+    .envelope-scene{height:190px;display:grid;place-items:center;margin:34px auto 18px;perspective:900px}
+    .envelope{position:relative;width:min(280px,78vw);height:160px;border:1px solid #c9bea5;border-radius:5px;background:#e9e1cf;box-shadow:0 18px 38px #40392318}
+    .envelope-pocket{position:absolute;inset:0;background:linear-gradient(145deg,#e7dfcd,#d9ceb7);clip-path:polygon(0 0,50% 62%,100% 0,100% 100%,0 100%);z-index:3}
+    .envelope-flap{position:absolute;inset:0;background:#f3ecdc;clip-path:polygon(0 0,100% 0,50% 66%);transform-origin:50% 0;transition:transform .8s ease;z-index:4;backface-visibility:hidden}
+    .envelope-letter{position:absolute;left:9%;right:9%;top:12px;height:128px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:1px solid #d8cfbd;background:#fffdf7;color:#7b806d;font:italic 16px Georgia,serif;transition:transform .85s ease;z-index:2}
+    .envelope.is-open .envelope-flap{transform:rotateX(180deg);z-index:1}
+    .envelope.is-open .envelope-letter{transform:translateY(-78px);z-index:5}
+    .letter-copy{max-width:520px;margin:10px auto 0;padding:26px 28px;border:1px solid #ded6c5;border-radius:3px 16px 16px 16px;background:#fffdf8;box-shadow:0 16px 42px #4039230c;opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
+    .letter-copy.is-visible{opacity:1;transform:translateY(0)}
+    .letter-copy .greeting{margin:0;color:var(--ink);font:17px/1.8 Georgia,serif;white-space:pre-wrap}
+    .letter-copy .signature{margin:18px 0 0;text-align:right;color:var(--muted);font:italic 15px Georgia,serif}
+    .envelope-actions [data-next-stage][hidden]{display:none}
+    .story-art{margin:34px auto 12px;color:var(--accent);font:54px Georgia,serif}
+    .story-stage .story-copy{font-size:17px}
+    .contents-stage{align-items:flex-start}
+    .contents-stage .service-panel{margin:0 auto}
+    .contents-stage .certificate-meta{margin:22px auto 0}
+    .closing-stage{background:linear-gradient(145deg,#58694f,#344637);color:#fffdf7;border-color:#58694f}
+    .closing-stage .closing{padding:0;background:transparent}
+    .closing-stage .eyebrow,.closing-stage .story-copy{color:#e7e8dd}
+    .closing-stage .closing-mark{color:#e2d7b8}
+    .closing-stage .activation button,.closing-stage .activation-link{background:#f5f0e4;color:#3d4d3b;border-radius:99px;padding:18px 32px}
+    .stage-footnote{max-width:470px;margin:30px auto 0;color:#e7e8dd;font-size:11px;line-height:1.7}
+    .closing-stage .text-action{color:#f5f0e4}
+    @media(prefers-reduced-motion:reduce){.gift-stage.is-active{animation:none}.envelope-flap,.envelope-letter,.letter-copy{transition:none}.primary-action,.opening-action{transition:none}}
+    @media(max-width:640px){.gift-progress{padding:10px 2px}.gift-progress li{font-size:8px}.gift-stage{min-height:calc(100svh - 90px);margin:8px auto 18px;padding:38px 18px;border-radius:20px}.envelope-scene{height:170px}.letter-copy{padding:22px 18px}.contents-stage{align-items:flex-start}}
+
   </style>
 </head>
 <body>
@@ -275,6 +325,89 @@ export function renderPublicCertificatePage(
     ${storyContent}
     <footer><strong>${brandName}</strong>${providerName ? ` · Услугу оказывает ${providerName}.` : "."} Эта страница работает на платформе EventFlow Certificates и сохраняет историю вашего подарка. ${story ? "Просмотр сертификата не активирует и не погашает его." : "Само открытие сертификата не меняет его статус."}</footer>
   </main>
+
+  <script>
+    (() => {
+      const experience = document.querySelector("[data-gift-experience]");
+      if (!experience) return;
+      const stages = Array.from(experience.querySelectorAll("[data-gift-stage]"));
+      const progress = Array.from(experience.querySelectorAll("[data-progress-step]"));
+      const count = experience.querySelector(".gift-progress-count");
+      let current = 0;
+      experience.classList.add("is-enhanced");
+
+      function showStage(index, moveFocus = true) {
+        current = Math.max(0, Math.min(stages.length - 1, index));
+        stages.forEach((stage, i) => {
+          const active = i === current;
+          stage.classList.toggle("is-active", active);
+          stage.hidden = !active;
+          stage.setAttribute("aria-hidden", active ? "false" : "true");
+        });
+        progress.forEach((item, i) => {
+          item.classList.toggle("is-current", i === current);
+          item.classList.toggle("is-complete", i < current);
+          if (i === current) item.setAttribute("aria-current", "step");
+          else item.removeAttribute("aria-current");
+        });
+        if (count) count.textContent = "Этап " + (current + 1) + " из " + stages.length;
+        if (moveFocus) {
+          const heading = stages[current].querySelector("h1,h2");
+          if (heading) {
+            if (!heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
+            heading.focus({ preventScroll: true });
+          } else stages[current].focus({ preventScroll: true });
+        }
+        window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }
+
+      function revealLetter(animate) {
+        const envelope = experience.querySelector("[data-envelope]");
+        const letter = experience.querySelector("#letter-copy");
+        const openButton = experience.querySelector("[data-open-envelope]");
+        const skipButton = experience.querySelector("[data-skip-envelope]");
+        const nextButton = experience.querySelector(".envelope-actions [data-next-stage]");
+        if (envelope) envelope.classList.add("is-open");
+        if (letter) {
+          if (!animate) letter.style.transition = "none";
+          letter.classList.add("is-visible");
+          if (!animate) requestAnimationFrame(() => { letter.style.transition = ""; });
+        }
+        if (openButton) openButton.hidden = true;
+        if (skipButton) skipButton.hidden = true;
+        if (nextButton) nextButton.hidden = false;
+      }
+
+      experience.addEventListener("click", (event) => {
+        const target = event.target.closest("button,a");
+        if (!target) return;
+        if (target.matches("[data-next-stage]")) {
+          event.preventDefault();
+          if (current === 1 && !experience.querySelector("#letter-copy")?.classList.contains("is-visible")) return;
+          showStage(current + 1);
+        } else if (target.matches("[data-prev-stage]")) {
+          event.preventDefault();
+          showStage(current - 1);
+        } else if (target.matches("[data-open-envelope]")) {
+          event.preventDefault();
+          revealLetter(true);
+        } else if (target.matches("[data-skip-envelope]")) {
+          event.preventDefault();
+          revealLetter(false);
+        } else if (target.matches("[data-skip-to-story]")) {
+          event.preventDefault();
+          showStage(2);
+        }
+      });
+      const skipLink = document.querySelector("[data-skip-to-story]");
+      if (skipLink) skipLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        showStage(2);
+      });
+      showStage(0, false);
+    })();
+  </script>
+
 </body>
 </html>`;
 }
@@ -299,83 +432,141 @@ interface GiftStoryRenderInput {
 function renderGiftStory(input: GiftStoryRenderInput): string {
   const { story, brandName, brandTagline, certificate } = input;
   const inclusions = story.inclusions.map((item) =>
-    `<li><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p></li>`
+    \`<li><h3>\${escapeHtml(item.title)}</h3><p>\${escapeHtml(item.description)}</p></li>\`
   ).join("");
   const personalMessage = input.greeting || input.signature
-    ? `<section class="personal-message">
-        <h3>${escapeHtml(story.personalMessageTitle)}</h3>
-        ${input.greeting ? `<p class="greeting">${input.greeting}</p>` : ""}
-        ${input.signature ? `<p class="signature">${input.signature}</p>` : ""}
-      </section>`
-    : "";
+    ? \`<div class="letter-copy" id="letter-copy">
+        <p class="eyebrow">\${escapeHtml(story.personalMessageTitle)}</p>
+        \${input.greeting ? \`<p class="greeting">\${input.greeting}</p>\` : ""}
+        \${input.signature ? \`<p class="signature">\${input.signature}</p>\` : ""}
+      </div>\`
+    : \`<div class="letter-copy" id="letter-copy"><p class="eyebrow">\${escapeHtml(story.personalMessageTitle)}</p><p class="greeting">Для вас приготовили особенный подарок.</p></div>\`;
   const recipient = input.recipientName
-    ? `<p class="recipient"><span>Этот подарок для</span>${input.recipientName}</p>`
+    ? \`<p class="recipient"><span>Этот подарок для</span>\${input.recipientName}</p>\`
     : "";
+  const coverTitle = input.recipientName
+    ? \`Для \${input.recipientName}. Один особенный подарок для вашего дома\`
+    : "Один особенный подарок для вашего дома";
 
-  return `
-    <section class="opening" aria-labelledby="gift-opening-title">
-      <div class="opening-inner">
-        <p class="eyebrow">${escapeHtml(story.openingEyebrow)}</p>
-        <div class="hero-art" aria-hidden="true">
-          <svg viewBox="0 0 420 260" role="presentation">
-            <g class="orbit">
-              <circle cx="210" cy="130" r="112" class="fine-line" stroke-dasharray="2 8"/>
-              <path d="M210 8v18M210 234v18M88 130h18M314 130h18" class="fine-line"/>
-              <path d="M210 22l5 13h-10zM210 238l5-13h-10zM102 130l13-5v10zM318 130l-13-5v10z" fill="#9b906f"/>
-            </g>
-            <circle cx="210" cy="130" r="84" fill="#f7f3e9" stroke="#c8bea4"/>
-            <path d="M150 78h120v104H150z" class="house-line"/>
-            <path d="M210 78v104M150 130h120M180 78v52M240 130v52M180 130v52M240 78v52" class="fine-line"/>
-            <path d="M150 78l60-34 60 34" class="house-line"/>
-            <path d="M194 182v-31h32v31M150 105h30v25h-30M240 105h30v25h-30" class="house-line"/>
-            <circle cx="210" cy="130" r="12" fill="#78856e"/>
-            <circle cx="210" cy="130" r="4" fill="#f7f3e9"/>
-            <path d="M210 115v-15M210 160v-15M195 130h-15M240 130h-15" class="fine-line"/>
-          </svg>
-        </div>
-        <h1 id="gift-opening-title">${escapeHtml(story.openingTitle)}</h1>
-        <p class="opening-copy">${escapeHtml(story.openingText)}</p>
-        <p class="brand-caption">${brandName} · ${brandTagline}</p>
-        <a class="opening-action" href="#gift-story">${escapeHtml(story.openingAction)}</a>
-      </div>
-    </section>
-    <div class="story" id="gift-story" role="region" aria-label="История подарка" tabindex="-1">
-      <section class="story-section">
-        <p class="chapter-index">01 — О ВАШЕМ ПРОСТРАНСТВЕ</p>
-        <p class="eyebrow">${escapeHtml(story.storyEyebrow)}</p>
-        <h2>${escapeHtml(story.storyTitle)}</h2>
-        <p class="story-copy">${escapeHtml(story.storyText)}</p>
-        ${personalMessage}
-      </section>
-      <section class="story-section">
-        <p class="chapter-index">02 — ЧТО ВНУТРИ ПОДАРКА</p>
-        <div class="service-panel">
-          <p class="eyebrow">${escapeHtml(story.serviceEyebrow)}</p>
-          <h2>${escapeHtml(story.serviceTitle)}</h2>
-          <p class="service-name">${escapeHtml(certificate.title)}</p>
-          <p class="service-variant">${input.value}</p>
-          <p class="service-description">${escapeHtml(story.serviceText)}</p>
-          <p class="eyebrow">В состав подарка входит</p>
-          <ul class="inclusions">${inclusions}</ul>
-        </div>
-        <div class="certificate-meta">
-          <div class="certificate-meta-top">
-            <p class="code">СЕРТИФИКАТ № ${escapeHtml(certificate.code)}</p>
-            <span class="status ${input.displayStatusClass}">${escapeHtml(input.displayStatus)}</span>
+  return \`
+    <div class="gift-experience" data-gift-experience>
+      <nav class="gift-progress" aria-label="Этапы открытия подарка">
+        <ol>
+          <li class="is-current" data-progress-step="0"><span>01</span><span>Приглашение</span></li>
+          <li data-progress-step="1"><span>02</span><span>Открытие</span></li>
+          <li data-progress-step="2"><span>03</span><span>История</span></li>
+          <li data-progress-step="3"><span>04</span><span>Подарок</span></li>
+          <li data-progress-step="4"><span>05</span><span>Активация</span></li>
+        </ol>
+        <p class="gift-progress-count" aria-live="polite">Этап 1 из 5</p>
+      </nav>
+
+      <section class="opening gift-stage is-active" data-gift-stage="0" id="gift-stage-1" aria-labelledby="gift-opening-title" tabindex="-1">
+        <div class="opening-inner">
+          <p class="eyebrow">\${escapeHtml(story.openingEyebrow)}</p>
+          <div class="hero-art" aria-hidden="true">
+            <svg viewBox="0 0 420 260" role="presentation">
+              <g class="orbit">
+                <circle cx="210" cy="130" r="112" class="fine-line" stroke-dasharray="2 8"/>
+                <path d="M210 8v18M210 234v18M88 130h18M314 130h18" class="fine-line"/>
+                <path d="M210 22l5 13h-10zM210 238l5-13h-10zM102 130l13-5v10zM318 130l-13-5v10z" fill="#9b906f"/>
+              </g>
+              <circle cx="210" cy="130" r="84" fill="#f7f3e9" stroke="#c8bea4"/>
+              <path d="M150 78h120v104H150z" class="house-line"/>
+              <path d="M210 78v104M150 130h120M180 78v52M240 130v52M180 130v52M240 78v52" class="fine-line"/>
+              <path d="M150 78l60-34 60 34" class="house-line"/>
+              <path d="M194 182v-31h32v31M150 105h30v25h-30M240 105h30v25h-30" class="house-line"/>
+              <circle cx="210" cy="130" r="12" fill="#78856e"/>
+              <circle cx="210" cy="130" r="4" fill="#f7f3e9"/>
+              <path d="M210 115v-15M210 160v-15M195 130h-15M240 130h-15" class="fine-line"/>
+            </svg>
           </div>
-          ${recipient}
-          ${renderDates(certificate, input.giftDate, input.expiry)}
+          <h1 id="gift-opening-title">\${escapeHtml(coverTitle)}</h1>
+          <p class="opening-copy">\${escapeHtml(story.openingText)}</p>
+          <p class="brand-caption">\${brandName} · \${brandTagline}</p>
+          <button class="opening-action" type="button" data-next-stage>Открыть подарок</button>
         </div>
       </section>
-      <section class="story-section closing">
-        <p class="chapter-index">03 — ПЕРВЫЙ ШАГ</p>
-        <p class="eyebrow">${escapeHtml(story.closingEyebrow)}</p>
-        <div class="closing-mark" aria-hidden="true">✧</div>
-        <h2>${escapeHtml(story.closingTitle)}</h2>
-        <p class="story-copy">${escapeHtml(story.closingText)}</p>
-        ${input.activation}
+
+      <section class="gift-stage envelope-stage" data-gift-stage="1" id="gift-stage-2" aria-labelledby="envelope-title" tabindex="-1">
+        <div class="stage-inner">
+          <p class="chapter-index">ВАШ ПОДАРОК НАЧИНАЕТСЯ С НЕСКОЛЬКИХ СЛОВ</p>
+          <h2 id="envelope-title">Для вас есть послание</h2>
+          <p class="stage-intro">Прежде чем узнать, что скрывает подарок, откройте письмо от того, кто его подготовил.</p>
+          <div class="envelope-scene">
+            <div class="envelope" data-envelope aria-hidden="true">
+              <div class="envelope-letter"><span>С теплом</span><span>✧</span></div>
+              <div class="envelope-pocket"></div>
+              <div class="envelope-flap"></div>
+            </div>
+          </div>
+          \${personalMessage}
+          <div class="stage-actions envelope-actions">
+            <button class="primary-action" type="button" data-open-envelope>Открыть конверт</button>
+            <button class="text-action" type="button" data-skip-envelope>Показать письмо без анимации</button>
+            <button class="primary-action" type="button" data-next-stage hidden>Перейти дальше</button>
+          </div>
+          <div class="stage-navigation"><button type="button" class="text-action" data-prev-stage>Назад</button></div>
+        </div>
       </section>
-    </div>`;
+
+      <section class="gift-stage story-stage" data-gift-stage="2" id="gift-stage-3" aria-labelledby="story-title" tabindex="-1">
+        <div class="stage-inner">
+          <p class="chapter-index">03 — ИСТОРИЯ ПОДАРКА</p>
+          <p class="eyebrow">\${escapeHtml(story.storyEyebrow)}</p>
+          <h2 id="story-title">\${escapeHtml(story.storyTitle)}</h2>
+          <p class="story-copy">\${escapeHtml(story.storyText)}</p>
+          <div class="story-art" aria-hidden="true">✧</div>
+          <p class="brand-caption">\${brandName} · \${brandTagline}</p>
+          <div class="stage-navigation">
+            <button type="button" class="text-action" data-prev-stage>Назад</button>
+            <button type="button" class="primary-action" data-next-stage>Узнать, что внутри</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="gift-stage contents-stage" data-gift-stage="3" id="gift-stage-4" aria-labelledby="contents-title" tabindex="-1">
+        <div class="stage-inner">
+          <p class="chapter-index">04 — ЧТО ВНУТРИ ПОДАРКА</p>
+          <div class="service-panel">
+            <p class="eyebrow">\${escapeHtml(story.serviceEyebrow)}</p>
+            <h2 id="contents-title">\${escapeHtml(story.serviceTitle)}</h2>
+            <p class="service-name">\${escapeHtml(certificate.title)}</p>
+            <p class="service-variant">\${input.value}</p>
+            <p class="service-description">\${escapeHtml(story.serviceText)}</p>
+            <p class="eyebrow">В состав подарка входит</p>
+            <ul class="inclusions">\${inclusions}</ul>
+          </div>
+          <div class="certificate-meta">
+            <div class="certificate-meta-top">
+              <p class="code">СЕРТИФИКАТ № \${escapeHtml(certificate.code)}</p>
+              <span class="status \${input.displayStatusClass}">\${escapeHtml(input.displayStatus)}</span>
+            </div>
+            \${recipient}
+            \${renderDates(certificate, input.giftDate, input.expiry)}
+          </div>
+          <div class="stage-navigation">
+            <button type="button" class="text-action" data-prev-stage>Назад</button>
+            <button type="button" class="primary-action" data-next-stage>Как воспользоваться подарком</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="gift-stage closing-stage" data-gift-stage="4" id="gift-stage-5" aria-labelledby="activation-title" tabindex="-1">
+        <div class="stage-inner closing">
+          <p class="chapter-index">05 — ПЕРВЫЙ ШАГ</p>
+          <p class="eyebrow">\${escapeHtml(story.closingEyebrow)}</p>
+          <div class="closing-mark" aria-hidden="true">✧</div>
+          <h2 id="activation-title">\${escapeHtml(story.closingTitle)}</h2>
+          <p class="story-copy">\${escapeHtml(story.closingText)}</p>
+          \${input.activation}
+          <p class="stage-footnote">Открытие истории подарка не активирует сертификат. Активация — отдельный шаг; сама услуга будет оказана специалистом после согласования с вами.</p>
+          <div class="stage-navigation">
+            <button type="button" class="text-action" data-prev-stage>Назад</button>
+          </div>
+        </div>
+      </section>
+    </div>\`;
 }
 
 function renderDates(certificate: PublicCertificate, giftDate: string, expiry: string): string {
