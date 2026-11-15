@@ -1,4 +1,5 @@
 import { demoConfigurationReady, jsonResponse, sameOrigin, type CertificatesEnv } from "../_shared.js";
+import { VASTU_DEMO_PERSONALIZATION } from "../../vastu-brand.js";
 
 interface PagesContext { request: Request; env: CertificatesEnv; }
 interface VariantRow {
@@ -52,13 +53,18 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
       INSERT INTO gift_orders (
         id, organization_id, public_token, catalog_service_id, catalog_variant_id,
         service_title_snapshot, variant_title_snapshot, description_snapshot,
-        amount_minor, currency, activation_url, payment_status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'awaiting_payment', ?, ?)
+        amount_minor, currency, activation_url, payment_status,
+        certificate_date, recipient_name, greeting_text, sender_signature,
+        created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'awaiting_payment', ?, ?, ?, ?, ?, ?)
     `).bind(
       id, env.DEMO_ORGANIZATION_ID, token, variant.service_id, variant.variant_id,
       variant.service_title, variant.variant_title,
       variant.variant_description ?? variant.service_description,
-      variant.amount_minor, variant.currency, variant.activation_url, now, now,
+      variant.amount_minor, variant.currency, variant.activation_url,
+      now.slice(0, 10), VASTU_DEMO_PERSONALIZATION.recipientName,
+      VASTU_DEMO_PERSONALIZATION.greetingText, VASTU_DEMO_PERSONALIZATION.senderSignature,
+      now, now,
     ).run();
 
     return jsonResponse({
