@@ -68,3 +68,59 @@ test('seller service creation requires an authenticated seller session', async (
   assert.equal(response.status, 401);
   assert.deepEqual(await response.json(), { error: 'AUTHENTICATION_REQUIRED' });
 });
+
+test('authenticated seller can create an organization-scoped service with its first active variant', async () => {
+  const token = 'valid-demo-session-token';
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token));
+  const tokenHash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+  const writes = [];
+  const env = {
+    DEMO_USER_ID: 'demo-user',
+    DEMO_ORGANIZATION_ID: 'demo-org',
+    DEMO_LOGIN_USERNAME: 'demo',
+    DEMO_LOGIN_PASSWORD: 'demo-password',
+    CERTIFICATES_DB: {
+      prepare(sql) {
+        const statement = { sql, values: [] };
+        statement.bind = (...values) => { statement.values = values; return statement; };
+        statement.first = async () => sql.includes('FROM demo_sessions')
+          ? { token_hash: tokenHash, user_id: 'demo-user', organization_id: 'demo-org', expires_at: new Date(Date.now() + 60_000).toISOString() }
+          : null;
+        statement.all = async () => ({ results: [] });
+        statement.run = async () => { writes.push({ sql, values: statement.values }); return { success: true }; };
+        return statement;
+      }
+    }
+  };
+  const response = await onRequestPost({
+    request: new Request('https://preview.example/api/catalog/admin', {
+      method: 'POST',
+      headers: {
+        Origin: 'https://preview.example',
+        Cookie: '__Host-ef-cert-session=' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: 'Индивидуальная консультация',
+        description: 'Персональная работа со специалистом',
+        category: 'Консультации',
+        initialVariant: {
+          title: 'Стандартная консультация',
+          description: 'Одна встреча',
+          amountMinor: 500000,
+          currency: 'RUB'
+        }
+      })
+    }),
+    env
+  });
+  assert.equal(response.status, 201);
+  assert.equal(writes.length, 3);
+  assert.match(writes[0].sql, /INSERT INTO catalog_services/);
+  assert.equal(writes[0].values[1], 'demo-org');
+  assert.equal(writes[0].values[7], 0);
+  assert.match(writes[1].sql, /INSERT INTO catalog_variants/);
+  assert.equal(writes[1].values[4], 500000);
+  assert.equal(writes[1].values[5], 'RUB');
+  assert.match(writes[2].sql, /UPDATE catalog_services SET is_active = 1/);
+});
