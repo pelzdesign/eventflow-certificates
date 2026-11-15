@@ -109,3 +109,73 @@ test('repeated activation keeps a way to contact the specialist and used gifts r
   assert.match(used, /Этот подарок уже подарил свои впечатления/);
   assert.doesNotMatch(used, /Активировать подарок/);
 });
+
+
+test('public certificate explains cancelled, expired and contact-unavailable states', () => {
+  const cancelled = renderPublicCertificatePage({
+    ...baseCertificate,
+    status: 'cancelled',
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'c'.repeat(64));
+  assert.match(cancelled, /Этот сертификат отменён/);
+  assert.doesNotMatch(cancelled, /Активировать подарок/);
+
+  const expired = renderPublicCertificatePage({
+    ...baseCertificate,
+    status: 'expired',
+    expiresAt: undefined,
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'd'.repeat(64));
+  assert.match(expired, /Срок действия сертификата завершён/);
+  assert.doesNotMatch(expired, /Активировать подарок/);
+
+  const noContact = renderPublicCertificatePage({
+    ...baseCertificate,
+    activationUrl: undefined,
+  }, 'e'.repeat(64));
+  assert.match(noContact, /обратитесь к организации, которая его выдала/);
+  assert.doesNotMatch(noContact, /Активировать подарок/);
+});
+
+test('brand story includes keyboard navigation, focus visibility and print-friendly output', () => {
+  const html = renderPublicCertificatePage({
+    ...baseCertificate,
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'f'.repeat(64), {
+    displayName: 'Тестовый бренд',
+    tagline: 'Подарок с историей',
+    giftStory: {
+      openingEyebrow: 'Подарок',
+      openingTitle: 'Дом, который поддерживает',
+      openingText: 'История подарка.',
+      openingAction: 'Открыть подарок',
+      storyEyebrow: 'О доме',
+      storyTitle: 'Место для жизни',
+      storyText: 'Текст истории.',
+      personalMessageTitle: 'Отправитель',
+      serviceEyebrow: 'Ваш подарок',
+      serviceTitle: 'Разбор дома',
+      serviceText: 'Описание.',
+      inclusions: [{ title: 'Карта', description: 'PDF' }],
+      closingEyebrow: 'Первый шаг',
+      closingTitle: 'Пусть дома будет хорошо',
+      closingText: 'Свяжитесь со специалистом.',
+      activationActionLabel: 'Активировать подарок',
+    },
+    theme: {
+      page: '#f3f0e8', surface: '#fffdf8', ink: '#303329',
+      muted: '#77796e', line: '#e4dfd2', accent: '#68765d',
+      accentInk: '#ffffff',
+    },
+  });
+  assert.match(html, /class="skip-link" href="#gift-story"/);
+  assert.match(html, /a:focus-visible,button:focus-visible/);
+  assert.match(html, /@media print/);
+  assert.match(html, /aria-label="История подарка"/);
+  assert.doesNotMatch(html, /Личный кабинет/);
+});
+
+test('neutral certificate without a custom story does not render a broken skip link', () => {
+  const html = renderPublicCertificatePage(baseCertificate);
+  assert.doesNotMatch(html, /class="skip-link"/);
+});
