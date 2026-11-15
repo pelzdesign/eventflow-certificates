@@ -25,6 +25,8 @@ test('Vastu pilot catalogue bootstrap inserts one service and one variant for th
   await bootstrapVastuCatalog(db, 'demo-org', '2026-11-15T12:00:00.000Z');
   assert.equal(db.statements.length, 2);
   assert.match(db.statements[0].sql, /INSERT OR IGNORE INTO catalog_services/);
+  assert.match(db.statements[0].sql, /activation_url/);
+  assert.equal(db.statements[0].values[5], VASTU_DEMO_CATALOG_ITEM.activationUrl);
   assert.match(db.statements[1].sql, /INSERT OR IGNORE INTO catalog_variants/);
   assert.equal(db.statements[0].values[1], 'demo-org');
   assert.equal(db.statements[1].values[4], 490000);
