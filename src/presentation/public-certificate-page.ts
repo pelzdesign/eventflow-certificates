@@ -1,4 +1,5 @@
 import type { PublicCertificate } from "../domain/certificate.js";
+import { DEFAULT_BRAND_PROFILE, type BrandProfile } from "./brand-profile.js";
 
 const STATUS_LABELS: Record<PublicCertificate["status"], string> = {
   active: "Действителен",
@@ -15,7 +16,13 @@ const STATUS_CLASSES: Record<PublicCertificate["status"], string> = {
 };
 
 /** Render a public, read-only certificate page. All record-supplied text is escaped. */
-export function renderPublicCertificatePage(certificate: PublicCertificate, publicToken?: string): string {
+export function renderPublicCertificatePage(
+  certificate: PublicCertificate,
+  publicToken?: string,
+  brand: BrandProfile = DEFAULT_BRAND_PROFILE,
+): string {
+  const brandName = escapeHtml(brand.displayName);
+  const brandTagline = escapeHtml(brand.tagline);
   const value = certificate.value.kind === "service"
     ? `<p class="value">${escapeHtml(certificate.value.description)}</p>`
     : `<p class="value">${escapeHtml(formatMinorCurrency(certificate.value.amountMinor, certificate.value.currency))}</p>`;
@@ -61,11 +68,11 @@ export function renderPublicCertificatePage(certificate: PublicCertificate, publ
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#f5f2ec">
-  <title>${escapeHtml(certificate.title)} — сертификат ${escapeHtml(certificate.code)}</title>
+  <title>${escapeHtml(certificate.title)} — ${brandName}</title>
   <style>
-    :root{color-scheme:light;--ink:#24231f;--muted:#77736b;--paper:#fffefa;--line:#e9e4da;--accent:#526b57}
+    :root{color-scheme:light;--ink:${escapeHtml(brand.theme.ink)};--muted:${escapeHtml(brand.theme.muted)};--paper:${escapeHtml(brand.theme.surface)};--line:${escapeHtml(brand.theme.line)};--accent:${escapeHtml(brand.theme.accent)};--accent-ink:${escapeHtml(brand.theme.accentInk)};--page:${escapeHtml(brand.theme.page)}}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;padding:32px 18px;display:grid;place-items:center;background:#f5f2ec;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+    body{margin:0;min-height:100vh;padding:32px 18px;display:grid;place-items:center;background:var(--page);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
     main{width:min(100%,560px)}
     .eyebrow{margin:0 0 14px;text-align:center;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
     .card{position:relative;overflow:hidden;padding:clamp(28px,7vw,56px);background:var(--paper);border:1px solid var(--line);box-shadow:0 18px 60px #30281912}
@@ -95,7 +102,7 @@ export function renderPublicCertificatePage(certificate: PublicCertificate, publ
     @keyframes reveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
     .activation{margin:28px auto 0;text-align:center}
     .activation-note,.used-note{color:var(--muted);font-size:13px;line-height:1.6;text-align:center}
-    .activation button{margin-top:12px;padding:15px 24px;border:0;border-radius:4px;background:#526b57;color:white;font:600 12px Arial,sans-serif;letter-spacing:.08em;cursor:pointer}
+    .activation button{margin-top:12px;padding:15px 24px;border:0;border-radius:4px;background:var(--accent);color:var(--accent-ink);font:600 12px Arial,sans-serif;letter-spacing:.08em;cursor:pointer}
     .used-note{margin-top:28px;padding:16px;border-top:1px solid var(--line)}
     @media(prefers-reduced-motion:reduce){.gift-content{animation:none}}
     footer{margin:20px 0 0;text-align:center;color:var(--muted);font-size:11px;line-height:1.5}
@@ -112,7 +119,7 @@ export function renderPublicCertificatePage(certificate: PublicCertificate, publ
         <span class="opening-action">Открыть подарок</span>
       </summary>
       <div class="gift-content">
-        <p class="eyebrow">Подарочный сертификат</p>
+        <p class="eyebrow">${brandName}</p><p class="description">${brandTagline}</p>
         <section class="card" aria-label="Информация о сертификате">
           <h1>${escapeHtml(certificate.title)}</h1>
           <p class="code">№ ${escapeHtml(certificate.code)}</p>
@@ -129,7 +136,7 @@ export function renderPublicCertificatePage(certificate: PublicCertificate, publ
           </div>
         </section>
         ${activation}
-        <footer>Эта страница сохраняет историю вашего подарка. Само открытие сертификата не меняет его статус.</footer>
+        <footer>${brandName}. Эта страница сохраняет историю вашего подарка. Само открытие сертификата не меняет его статус.</footer>
       </div>
     </details>
   </main>
