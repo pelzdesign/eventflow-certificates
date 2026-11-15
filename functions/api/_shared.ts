@@ -17,7 +17,11 @@ export class DemoPlatformAccess implements PlatformAccessPort{
     return {userId:s.userId};
   }
   async assertOrganizationPermission(input:{actor:AuthenticatedActor;organizationId:string;permission:CertificatePermission}):Promise<void>{
-    const s=await getDemoSession(this.request,this.env),allowed=input.permission==="certificate:issue"||input.permission==="certificate:read";
+    const s=await getDemoSession(this.request,this.env);
+    const allowed=input.permission==="certificate:issue"||
+      input.permission==="certificate:read"||
+      input.permission==="certificate:redeem"||
+      input.permission==="certificate:revoke_public_link";
     if(!s||!allowed||s.userId!==input.actor.userId||s.userId!==this.env.DEMO_USER_ID||
       s.organizationId!==this.env.DEMO_ORGANIZATION_ID||input.organizationId!==s.organizationId)throw new Error("ORGANIZATION_ACCESS_DENIED");
   }

@@ -18,6 +18,12 @@ export interface Certificate {
   description?: string;
   recipientName?: string;
   recipientEmail?: string;
+  giftDate?: string;
+  greetingText?: string;
+  senderSignature?: string;
+  activationUrl?: string;
+  activationRequestedAt?: string;
+  publicAccessRevokedAt?: string;
   status: CertificateStatus;
   issuedAt: string;
   expiresAt?: string;
@@ -25,7 +31,7 @@ export interface Certificate {
   version: number;
 }
 /** Client-supplied draft. Identity, lifecycle and issuance time are server-owned. */
-export type NewCertificate = Omit<Certificate, "id" | "publicToken" | "status" | "version" | "createdBy" | "issuedAt">;
+export type NewCertificate = Omit<Certificate, "id" | "publicToken" | "status" | "version" | "createdBy" | "issuedAt" | "activationUrl" | "activationRequestedAt" | "publicAccessRevokedAt">;
 /** Complete record passed from the authorized use case to persistence. */
 export type CertificateCreateRecord = Omit<Certificate, "id" | "status" | "version" | "issuedAt">;
 export interface PublicCertificate {
@@ -35,6 +41,11 @@ export interface PublicCertificate {
   title: string;
   description?: string;
   recipientName?: string;
+  giftDate?: string;
+  greetingText?: string;
+  senderSignature?: string;
+  activationUrl?: string;
+  activationRequestedAt?: string;
   status: CertificateStatus;
   issuedAt: string;
   expiresAt?: string;

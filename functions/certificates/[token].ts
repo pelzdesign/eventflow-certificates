@@ -23,7 +23,7 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
     );
     const certificate = await readPublicCertificate(token, { repository });
     if (!certificate) return htmlResponse(NOT_FOUND_PAGE, 404);
-    return htmlResponse(renderPublicCertificatePage(certificate), 200);
+    return htmlResponse(renderPublicCertificatePage(certificate, token), 200);
   } catch {
     return htmlResponse(ERROR_PAGE, 500);
   }
@@ -35,7 +35,7 @@ function htmlResponse(html: string, status: number): Response {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
-      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "DENY",
