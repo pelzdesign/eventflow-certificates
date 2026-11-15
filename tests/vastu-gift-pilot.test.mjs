@@ -89,7 +89,7 @@ test('Vastu public certificate uses the brand profile without exposing the purch
   assert.match(html, /Практические рекомендации/);
   assert.match(html, /Этот подарок для/);
   assert.match(html, /href=\"#gift-story\"/);
-  assert.match(html, /персональная карта Васту в PDF/);
+  assert.match(html, /Индивидуальная карта вашего пространства в PDF/);
   assert.match(html, /Активировать подарок/);
   assert.doesNotMatch(html, /4\s?900/);
   assert.doesNotMatch(html, /₽/);
