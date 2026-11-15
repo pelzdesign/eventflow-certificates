@@ -51,6 +51,13 @@ export const VASTU_BRAND_PROFILE: BrandProfile = {
   },
 };
 
+/** Sample personalization shown only in the isolated DEMO buyer journey. */
+export const VASTU_DEMO_PERSONALIZATION = {
+  recipientName: "Илья и Анна",
+  greetingText: "Дорогие Илья и Анна! Пусть ваш дом будет местом, где спокойно, тепло и легко быть собой.",
+  senderSignature: "С теплом, ваши друзья",
+} as const;
+
 export const VASTU_DEMO_CATALOG_ITEM = {
   serviceId: "vastu-express-space-review",
   serviceSlug: "express-space-review",
