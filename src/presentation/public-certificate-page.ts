@@ -122,7 +122,13 @@ export function renderPublicCertificatePage(
     main{width:min(100%,680px);margin:0 auto}
     .eyebrow{margin:0 0 14px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.2em;text-align:center;text-transform:uppercase}
     .opening{overflow:hidden;min-height: min(680px, calc(100svh - 56px));display:flex;align-items:center;justify-content:center;padding:48px 26px;background:linear-gradient(155deg,#fffefa 0%,#f1eee5 100%);border:1px solid var(--line);text-align:center}
-    .opening-inner{max-width:480px}\n    .legacy-opening>summary{list-style:none;cursor:pointer;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:52px 28px;text-align:center}\n    .legacy-opening>summary::-webkit-details-marker{display:none}\n    .legacy-opening .opening-title{max-width:380px;font:400 clamp(30px,7vw,44px)/1.2 Georgia,serif}\n    .legacy-opening[open]>summary{display:none}\n    .legacy-opening .gift-content{animation:reveal .6s ease both}\n    @keyframes reveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .opening-inner{max-width:480px}
+    .legacy-opening>summary{list-style:none;cursor:pointer;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:52px 28px;text-align:center}
+    .legacy-opening>summary::-webkit-details-marker{display:none}
+    .legacy-opening .opening-title{max-width:380px;font:400 clamp(30px,7vw,44px)/1.2 Georgia,serif}
+    .legacy-opening[open]>summary{display:none}
+    .legacy-opening .gift-content{animation:reveal .6s ease both}
+    @keyframes reveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
     .opening-mark{width:68px;height:68px;margin:0 auto 28px;border:1px solid #b6ad92;border-radius:50%;display:grid;place-items:center;color:#8b876e;font:30px Georgia,serif}
     .opening h1{max-width:440px;margin:0 auto 18px;font:400 clamp(38px,8vw,62px)/1.08 Georgia,serif;letter-spacing:-.035em}
     .opening-copy{max-width:390px;margin:0 auto;color:var(--muted);font:16px/1.8 Georgia,serif}
@@ -139,6 +145,7 @@ export function renderPublicCertificatePage(
     .service-panel{max-width:560px;margin:0 auto;padding:clamp(28px,6vw,48px);background:var(--paper);border:1px solid var(--line);box-shadow:0 18px 60px #3028190b}
     .service-panel h2{margin-bottom:12px}
     .service-name{margin:0 0 7px;text-align:center;font:400 19px/1.5 Georgia,serif}
+    .service-variant{margin:0 0 14px;color:var(--muted);text-align:center;font:italic 14px Georgia,serif}
     .service-variant{margin:0 0 14px;color:var(--muted);text-align:center;font:italic 14px Georgia,serif}
     .service-description{max-width:470px;margin:0 auto 28px;color:var(--muted);font-size:13px;line-height:1.75;text-align:center}
     .inclusions{display:grid;gap:0;margin:28px 0 0;padding:0;list-style:none}
@@ -222,6 +229,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
         <div class="opening-mark" aria-hidden="true">✧</div>
         <h1 id="gift-opening-title">${escapeHtml(story.openingTitle)}</h1>
         <p class="opening-copy">${escapeHtml(story.openingText)}</p>
+        <p class="brand-caption">${brandName} · ${brandTagline}</p>
         <a class="opening-action" href="#gift-story">${escapeHtml(story.openingAction)}</a>
       </div>
     </section>
@@ -237,6 +245,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
           <p class="eyebrow">${escapeHtml(story.serviceEyebrow)}</p>
           <h2>${escapeHtml(story.serviceTitle)}</h2>
           <p class="service-name">${escapeHtml(certificate.title)}</p>
+          <p class="service-variant">${input.value}</p>
           <p class="service-description">${escapeHtml(story.serviceText)}</p>
           <p class="eyebrow">В состав подарка входит</p>
           <ul class="inclusions">${inclusions}</ul>
