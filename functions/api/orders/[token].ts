@@ -74,20 +74,8 @@ export async function onRequestPut(context: PagesContext): Promise<Response> {
   }
   if (!isRecord(body)) return jsonResponse({ error: "INVALID_ORDER_DETAILS" }, 400);
 
-  const certificateDate = typeof body.certificateDate === "string" ? body.certificateDate : "";
-  const recipientName = typeof body.recipientName === "string" ? body.recipientName.trim() : "";
-  const greetingText = typeof body.greetingText === "string" ? body.greetingText.trim() : "";
-  const senderSignature = typeof body.senderSignature === "string" ? body.senderSignature.trim() : "";
-  const parsedDate = new Date(`${certificateDate}T00:00:00.000Z`);
-  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(certificateDate) &&
-    !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === certificateDate;
-
-  if (!validDate ||
-      !recipientName || recipientName.length > 180 ||
-      !greetingText || greetingText.length > 2000 ||
-      !senderSignature || senderSignature.length > 180) {
-    return jsonResponse({ error: "INVALID_PERSONALIZATION" }, 400);
-  }
+  const personalization = normalizeOrderPersonalization(body);
+  if (!personalization) return jsonResponse({ error: "INVALID_PERSONALIZATION" }, 400);
 
   try {
     const now = new Date().toISOString();
@@ -97,7 +85,10 @@ export async function onRequestPut(context: PagesContext): Promise<Response> {
           sender_signature = ?, updated_at = ?
       WHERE public_token = ? AND payment_status IN ('payment_reported', 'confirmed')
         AND certificate_id IS NULL
-    `).bind(certificateDate, recipientName, greetingText, senderSignature, now, token).run();
+    `).bind(
+      personalization.certificateDate, personalization.recipientName,
+      personalization.greetingText, personalization.senderSignature, now, token,
+    ).run();
     if ((result.meta?.changes ?? 0) !== 1) {
       const existing = await env.CERTIFICATES_DB.prepare(
         "SELECT payment_status, certificate_id FROM gift_orders WHERE public_token = ? LIMIT 1",
@@ -114,4 +105,37 @@ export async function onRequestPut(context: PagesContext): Promise<Response> {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+
+export interface NormalizedOrderPersonalization {
+  certificateDate: string | null;
+  recipientName: string | null;
+  greetingText: string | null;
+  senderSignature: string | null;
+}
+
+/** All gift-personalization fields are optional; empty input is stored as NULL. */
+export function normalizeOrderPersonalization(
+  body: Record<string, unknown>,
+): NormalizedOrderPersonalization | null {
+  const certificateDate = typeof body.certificateDate === "string" ? body.certificateDate.trim() : "";
+  const recipientName = typeof body.recipientName === "string" ? body.recipientName.trim() : "";
+  const greetingText = typeof body.greetingText === "string" ? body.greetingText.trim() : "";
+  const senderSignature = typeof body.senderSignature === "string" ? body.senderSignature.trim() : "";
+
+  if (certificateDate) {
+    const parsedDate = new Date(`${certificateDate}T00:00:00.000Z`);
+    const validDate = /^\\d{4}-\\d{2}-\\d{2}$/.test(certificateDate) &&
+      !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === certificateDate;
+    if (!validDate) return null;
+  }
+  if (recipientName.length > 180 || greetingText.length > 2000 || senderSignature.length > 180) return null;
+
+  return {
+    certificateDate: certificateDate || null,
+    recipientName: recipientName || null,
+    greetingText: greetingText || null,
+    senderSignature: senderSignature || null,
+  };
 }
