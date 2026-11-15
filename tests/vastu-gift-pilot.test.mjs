@@ -80,7 +80,7 @@ test('Vastu public certificate uses the brand profile without exposing the purch
 
   assert.match(html, /PelzDesign \| пространство по васту/);
   assert.match(html, /Подарок, который помогает по-новому почувствовать свой дом/);
-  assert.match(html, /Персональная карта Васту в PDF/);
+  assert.match(html, /персональная карта Васту в PDF/);
   assert.match(html, /Активировать подарок/);
   assert.doesNotMatch(html, /4\s?900/);
   assert.doesNotMatch(html, /₽/);
