@@ -33,3 +33,4 @@ Architecture and operations: [architecture overview](docs/architecture/overview.
 - Cloudflare Pages build output directory: `public`.
 - Use the Pages Functions directory at repository root (`functions/`); do not move it inside `public/`.
 
+Рабочий процесс: [правила медиатеки и хранения визуальных материалов](docs/workflow/media-library.md).
