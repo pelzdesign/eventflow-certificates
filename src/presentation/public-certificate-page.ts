@@ -24,6 +24,7 @@ export function renderPublicCertificatePage(
 ): string {
   const brandName = escapeHtml(brand.displayName);
   const brandTagline = escapeHtml(brand.tagline);
+  const providerName = brand.providerName ? escapeHtml(brand.providerName) : "";
   const story = brand.giftStory;
   const certificateExpired = Boolean(certificate.expiresAt && new Date(certificate.expiresAt).getTime() <= Date.now());
   const displayStatus = certificateExpired ? "Истёк" : STATUS_LABELS[certificate.status];
@@ -262,7 +263,7 @@ export function renderPublicCertificatePage(
 <body>
   <main>
     ${storyContent}
-    <footer>${brandName}. Эта страница сохраняет историю вашего подарка. ${story ? "Просмотр сертификата не активирует и не погашает его." : "Само открытие сертификата не меняет его статус."}</footer>
+    <footer><strong>${brandName}</strong>${providerName ? ` · Услугу оказывает ${providerName}.` : "."} Эта страница работает на платформе EventFlow Certificates и сохраняет историю вашего подарка. ${story ? "Просмотр сертификата не активирует и не погашает его." : "Само открытие сертификата не меняет его статус."}</footer>
   </main>
 </body>
 </html>`;
