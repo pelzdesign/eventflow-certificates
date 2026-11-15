@@ -168,11 +168,65 @@ test('brand story includes keyboard navigation, focus visibility and print-frien
       accentInk: '#ffffff',
     },
   });
-  assert.match(html, /class="skip-link" href="#gift-story"/);
+  assert.match(html, /class="skip-link" href="#gift-stage-3"/);
   assert.match(html, /a:focus-visible,button:focus-visible/);
   assert.match(html, /@media print/);
   assert.match(html, /aria-label="История подарка"/);
   assert.doesNotMatch(html, /Личный кабинет/);
+});
+
+test('Vastu gift story is revealed as five sequential stages with a skippable envelope animation', () => {
+  const html = renderPublicCertificatePage({
+    ...baseCertificate,
+    recipientName: 'Илья и Анна',
+    greetingText: 'Дорогие Илья и Анна!',
+    senderSignature: 'С теплом, ваши друзья',
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'g'.repeat(64), {
+    displayName: 'PelzDesign | пространство по васту',
+    tagline: 'Подарок, который помогает по-новому почувствовать свой дом.',
+    giftStory: {
+      openingEyebrow: 'Особенный подарок для вас',
+      openingTitle: 'Дом, который поддерживает',
+      openingText: 'История подарка.',
+      openingAction: 'Открыть подарок',
+      storyEyebrow: 'О вашем доме',
+      storyTitle: 'Место, где начинается ваша жизнь',
+      storyText: 'Дом — это больше, чем стены.',
+      personalMessageTitle: 'Несколько слов от того, кто дарит',
+      serviceEyebrow: 'Ваш подарок',
+      serviceTitle: 'Персональный Васту-разбор дома',
+      serviceText: 'Индивидуальные ориентиры для работы с пространством.',
+      inclusions: [
+        { title: 'Персональная Васту-карта', description: 'Индивидуальная карта в PDF.' },
+        { title: 'Голосовой разбор', description: 'Аудиоразбор планировки.' },
+        { title: 'Практические рекомендации', description: 'Идеи для вашего пространства.' },
+      ],
+      closingEyebrow: 'С чего начинается гармония',
+      closingTitle: 'Пусть дома вам будет хорошо',
+      closingText: 'Свяжитесь со специалистом.',
+      activationActionLabel: 'Активировать подарок',
+    },
+    theme: {
+      page: '#f3f0e8', surface: '#fffdf8', ink: '#303329',
+      muted: '#77796e', line: '#e4dfd2', accent: '#68765d',
+      accentInk: '#ffffff',
+    },
+  });
+  assert.match(html, /data-gift-stage="0"/);
+  assert.match(html, /data-gift-stage="1"/);
+  assert.match(html, /data-gift-stage="2"/);
+  assert.match(html, /data-gift-stage="3"/);
+  assert.match(html, /data-gift-stage="4"/);
+  assert.match(html, /Для Илья и Анна\. Один особенный подарок для вашего дома/);
+  assert.match(html, /data-open-envelope/);
+  assert.match(html, /data-skip-envelope/);
+  assert.match(html, /Персональная Васту-карта/);
+  assert.match(html, /Голосовой разбор/);
+  assert.match(html, /Практические рекомендации/);
+  assert.match(html, /Активировать подарок/);
+  assert.match(html, /Этап 1 из 5/);
+  assert.match(html, /Просмотр сертификата не активирует и не погашает его/);
 });
 
 test('neutral certificate without a custom story does not render a broken skip link', () => {
