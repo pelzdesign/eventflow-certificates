@@ -6,6 +6,7 @@ import type { BrandProfile } from "../src/presentation/brand-profile.js";
  */
 export const VASTU_BRAND_PROFILE: BrandProfile = {
   displayName: "PelzDesign | пространство по васту",
+  providerName: "Васту-специалист Пельц Татьяна",
   tagline: "Подарок, который помогает по-новому почувствовать свой дом.",
   contactUrl: "https://vk.me/pelts_tatyana_vastu",
   contactLabel: "Связаться со специалистом",
