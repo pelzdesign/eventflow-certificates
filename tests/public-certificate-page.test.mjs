@@ -219,6 +219,7 @@ test('Vastu gift story is revealed as five sequential stages with a skippable en
   assert.match(html, /data-gift-stage="3"/);
   assert.match(html, /data-gift-stage="4"/);
   assert.match(html, /Для Ильи и Анны\. Один особенный подарок для вашего дома/);
+  assert.match(html, /Дом, который поддерживает/);
   assert.match(html, /data-open-envelope/);
   assert.match(html, /data-skip-envelope/);
   assert.match(html, /Персональная Васту-карта/);
