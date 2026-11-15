@@ -514,7 +514,8 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
         <div class="stage-inner">
           <p class="chapter-index">03 — ИСТОРИЯ ПОДАРКА</p>
           <p class="eyebrow">${escapeHtml(story.storyEyebrow)}</p>
-          <h2 id="story-title">${escapeHtml(story.storyTitle)}</h2>
+          <h2 id="story-title">${escapeHtml(story.openingTitle)}</h2>
+          <p class="story-subtitle">${escapeHtml(story.storyTitle)}</p>
           <p class="story-copy">${escapeHtml(story.storyText)}</p>
           <div class="story-art" aria-hidden="true">✧</div>
           <p class="brand-caption">${brandName} · ${brandTagline}</p>
