@@ -115,7 +115,7 @@ export function renderPublicCertificatePage(
     .opening-inner{max-width:480px}
     .opening-mark{width:68px;height:68px;margin:0 auto 28px;border:1px solid #b6ad92;border-radius:50%;display:grid;place-items:center;color:#8b876e;font:30px Georgia,serif}
     .opening h1{max-width:440px;margin:0 auto 18px;font:400 clamp(38px,8vw,62px)/1.08 Georgia,serif;letter-spacing:-.035em}
-    .opening-copy{max-width:390px;margin:0 auto;color:var(--muted);font:16px/1.8 Georgia,serif}
+    .opening-copy{max-width:390px;margin:0 auto;color:var(--muted);font:16px/1.8 Georgia,serif}\n    .brand-caption{margin:34px 0 0;color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
     .opening-action{display:inline-block;margin-top:34px;padding:15px 25px;border:1px solid var(--accent);color:var(--ink);font-size:11px;letter-spacing:.13em;text-decoration:none;text-transform:uppercase}
     .story{padding:0 8px}
     .story-section{padding:clamp(58px,10vw,94px) clamp(12px,5vw,42px);border-bottom:1px solid var(--line)}
@@ -127,7 +127,7 @@ export function renderPublicCertificatePage(
     .personal-message .signature{margin:18px 0 0;text-align:right;font:italic 16px Georgia,serif}
     .service-panel{max-width:560px;margin:0 auto;padding:clamp(28px,6vw,48px);background:var(--paper);border:1px solid var(--line);box-shadow:0 18px 60px #3028190b}
     .service-panel h2{margin-bottom:12px}
-    .service-name{margin:0 0 12px;text-align:center;font:400 19px/1.5 Georgia,serif}
+    .service-name{margin:0 0 7px;text-align:center;font:400 19px/1.5 Georgia,serif}\n    .service-variant{margin:0 0 14px;color:var(--muted);text-align:center;font:italic 14px Georgia,serif}
     .service-description{max-width:470px;margin:0 auto 28px;color:var(--muted);font-size:13px;line-height:1.75;text-align:center}
     .inclusions{display:grid;gap:0;margin:28px 0 0;padding:0;list-style:none}
     .inclusions li{padding:19px 0;border-top:1px solid var(--line)}
