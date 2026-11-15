@@ -49,11 +49,11 @@ export function renderPublicCertificatePage(
     && Boolean(certificate.activationUrl && (publicToken || options.previewMode));
   const activation = activationAvailable
     ? options.previewMode
-      ? `<section class="activation">
+      ? `<section class="activation" aria-label="Связь со специалистом">
           <p class="activation-note">В готовом сертификате получатель сможет связаться со специалистом прямо отсюда.</p>
           <a class="activation-link" href="${escapeHtml(certificate.activationUrl ?? "")}" target="_blank" rel="noopener">Связаться со специалистом</a>
         </section>`
-      : `<section class="activation">
+      : `<section class="activation" aria-label="Активация подарка">
           <p class="activation-note">${certificate.activationRequestedAt
             ? "Вы уже начали активацию подарка. Можно продолжить общение со специалистом."
             : "Чтобы воспользоваться подарком, свяжитесь со специалистом."}</p>
@@ -64,10 +64,14 @@ export function renderPublicCertificatePage(
           </form>
         </section>`
     : certificate.status === "redeemed"
-      ? '<p class="used-note">Этот подарок уже подарил свои впечатления. Спасибо, что воспользовались им!</p>'
-      : certificateExpired
-        ? '<p class="used-note">Срок действия сертификата завершён.</p>'
-        : "";
+      ? '<p class="used-note" role="status">Этот подарок уже подарил свои впечатления. Спасибо, что воспользовались им!</p>'
+      : certificate.status === "cancelled"
+        ? '<p class="used-note" role="status">Этот сертификат отменён. Если у вас есть вопросы, обратитесь к отправителю подарка.</p>'
+        : certificateExpired || certificate.status === "expired"
+          ? '<p class="used-note" role="status">Срок действия сертификата завершён.</p>'
+          : certificate.status === "active" && !certificate.activationUrl
+            ? '<p class="used-note" role="status">Чтобы воспользоваться подарком, обратитесь к организации, которая его выдала.</p>'
+            : "";
 
   const legacyContent = `
     <details class="opening legacy-opening">
@@ -125,6 +129,9 @@ export function renderPublicCertificatePage(
     :root{color-scheme:light;--ink:${escapeHtml(brand.theme.ink)};--muted:${escapeHtml(brand.theme.muted)};--paper:${escapeHtml(brand.theme.surface)};--line:${escapeHtml(brand.theme.line)};--accent:${escapeHtml(brand.theme.accent)};--accent-ink:${escapeHtml(brand.theme.accentInk)};--page:${escapeHtml(brand.theme.page)}}
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
+    .skip-link{position:absolute;z-index:20;top:12px;left:12px;padding:12px 16px;transform:translateY(-160%);border-radius:99px;background:var(--ink);color:#fff;text-decoration:none}
+    .skip-link:focus{transform:translateY(0)}
+    a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
     body{margin:0;min-height:100vh;padding:0 18px 64px;background:radial-gradient(ellipse at 50% 0%,#fffdf7 0%,var(--page) 62%);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
     main{width:min(100%,920px);margin:0 auto}
     .hero-art{width:min(100%,390px);height:190px;margin:0 auto 12px;display:grid;place-items:center}
@@ -255,12 +262,14 @@ export function renderPublicCertificatePage(
     .legacy .greeting{max-width:420px;margin:24px auto 0;text-align:center;white-space:pre-wrap;font:16px/1.7 Georgia,serif}
     .legacy .signature{margin:20px 0 0;text-align:right;font:italic 16px Georgia,serif}
     footer{margin:28px 0 0;color:var(--muted);font-size:10px;line-height:1.6;text-align:center}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-art .orbit{animation:none}.opening-action,.closing .activation button,.closing .activation-link{transition:none}}
+    @media print{body{padding:0;background:#fff}.opening,.story-section.closing,.service-panel,.certificate-meta{box-shadow:none;break-inside:avoid}.opening{min-height:auto;padding:48px 20px}.hero-art .orbit{animation:none}a{color:inherit;text-decoration:none}.activation button{display:none}footer{padding-bottom:0}}
     @media(max-width:640px){body{padding:0 10px 42px}.opening{min-height:calc(100svh - 20px);margin:10px auto 18px;padding:48px 18px}.hero-art{height:150px}.story-section{padding:58px 16px}.inclusions{grid-template-columns:1fr}.inclusions li{display:grid;grid-template-columns:32px 1fr;column-gap:12px}.inclusions li:before{grid-row:span 2;margin:0}.certificate-meta{padding:20px}.closing.story-section{padding:58px 20px;border-radius:18px}.date-row{font-size:10px}}
     @media(prefers-reduced-motion:reduce){.hero-art .orbit{animation:none}.opening-action,.closing .activation button,.closing .activation-link{transition:none}}
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#gift-story">Перейти к истории подарка</a>
   <main>
     ${storyContent}
     <footer><strong>${brandName}</strong>${providerName ? ` · Услугу оказывает ${providerName}.` : "."} Эта страница работает на платформе EventFlow Certificates и сохраняет историю вашего подарка. ${story ? "Просмотр сертификата не активирует и не погашает его." : "Само открытие сертификата не меняет его статус."}</footer>
@@ -329,7 +338,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
         <a class="opening-action" href="#gift-story">${escapeHtml(story.openingAction)}</a>
       </div>
     </section>
-    <div class="story" id="gift-story">
+    <div class="story" id="gift-story" aria-label="История подарка">
       <section class="story-section">
         <p class="chapter-index">01 — О ВАШЕМ ПРОСТРАНСТВЕ</p>
         <p class="eyebrow">${escapeHtml(story.storyEyebrow)}</p>
