@@ -81,9 +81,47 @@ test('Vastu public certificate uses the brand profile without exposing the purch
   }, 'a'.repeat(64), VASTU_BRAND_PROFILE);
 
   assert.match(html, /PelzDesign \| пространство по васту/);
-  assert.match(html, /Подарок, который помогает по-новому почувствовать свой дом/);
+  assert.match(html, /Дом, который поддерживает/);\n  assert.match(html, /Подарок, который помогает по-новому почувствовать свой дом/);\n  assert.match(html, /Место, где начинается ваша жизнь/);\n  assert.match(html, /Персональная Васту-карта/);\n  assert.match(html, /Голосовой разбор/);\n  assert.match(html, /Практические рекомендации/);\n  assert.match(html, /Этот подарок для/);\n  assert.match(html, /href=\"#gift-story\"/);
   assert.match(html, /персональная карта Васту в PDF/);
   assert.match(html, /Активировать подарок/);
   assert.doesNotMatch(html, /4\s?900/);
   assert.doesNotMatch(html, /₽/);
+});
+
+test('Vastu story keeps gift activation as an explicit POST and does not expose internal purchase data', () => {
+  const html = renderPublicCertificatePage({
+    code: 'VASTU-002',
+    kind: 'service',
+    value: { kind: 'service', description: 'Персональный экспресс-разбор' },
+    title: 'Экспресс-разбор пространства по Васту',
+    description: VASTU_DEMO_CATALOG_ITEM.variantDescription,
+    recipientName: 'Илья и Анна',
+    greetingText: 'Пусть ваш дом будет местом силы.',
+    senderSignature: 'С теплом, друзья',
+    status: 'active',
+    issuedAt: '2026-11-15T12:00:00.000Z',
+    activationUrl: VASTU_BRAND_PROFILE.contactUrl,
+  }, 'b'.repeat(64), VASTU_BRAND_PROFILE);
+
+  assert.match(html, /method="post"/);
+  assert.match(html, /api\/public\/certificates\/[a-f0-9]{64}\/activate/);
+  assert.match(html, /Активировать подарок/);
+  assert.match(html, /Персональный экспресс-разбор/);
+  assert.doesNotMatch(html, /4\s?900/);
+  assert.doesNotMatch(html, /₽/);
+});
+
+test('brand-neutral certificate rendering remains available without a custom gift story', () => {
+  const html = renderPublicCertificatePage({
+    code: 'GENERIC-001',
+    kind: 'service',
+    value: { kind: 'service', description: 'Консультация' },
+    title: 'Подарочный сертификат',
+    status: 'active',
+    issuedAt: '2026-11-15T12:00:00.000Z',
+  });
+
+  assert.match(html, /Подарочный сертификат/);
+  assert.match(html, /Консультация/);
+  assert.doesNotMatch(html, /Дом, который поддерживает/);
 });
