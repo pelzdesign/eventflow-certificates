@@ -1,8 +1,34 @@
+export interface GiftStoryItem {
+  title: string;
+  description: string;
+}
+
+/** Optional, brand-specific narrative for the public gift reveal. */
+export interface GiftStory {
+  openingEyebrow: string;
+  openingTitle: string;
+  openingText: string;
+  openingAction: string;
+  storyEyebrow: string;
+  storyTitle: string;
+  storyText: string;
+  personalMessageTitle: string;
+  serviceEyebrow: string;
+  serviceTitle: string;
+  serviceText: string;
+  inclusions: GiftStoryItem[];
+  closingEyebrow: string;
+  closingTitle: string;
+  closingText: string;
+  activationActionLabel: string;
+}
+
 export interface BrandProfile {
   displayName: string;
   tagline: string;
   contactUrl?: string;
   contactLabel?: string;
+  giftStory?: GiftStory;
   theme: {
     page: string;
     surface: string;
