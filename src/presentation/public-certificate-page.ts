@@ -20,6 +20,7 @@ export function renderPublicCertificatePage(
   certificate: PublicCertificate,
   publicToken?: string,
   brand: BrandProfile = DEFAULT_BRAND_PROFILE,
+  options: { previewMode?: boolean } = {},
 ): string {
   const brandName = escapeHtml(brand.displayName);
   const brandTagline = escapeHtml(brand.tagline);
@@ -44,18 +45,23 @@ export function renderPublicCertificatePage(
 
   const activationAvailable = certificate.status === "active"
     && !certificateExpired
-    && Boolean(certificate.activationUrl && publicToken);
+    && Boolean(certificate.activationUrl && (publicToken || options.previewMode));
   const activation = activationAvailable
-    ? `<section class="activation">
-        <p class="activation-note">${certificate.activationRequestedAt
-          ? "Вы уже начали активацию подарка. Можно продолжить общение со специалистом."
-          : "Чтобы воспользоваться подарком, свяжитесь со специалистом."}</p>
-        <form method="post" action="/api/public/certificates/${escapeHtml(publicToken ?? "")}/activate">
-          <button type="submit">${certificate.activationRequestedAt
-            ? "Написать специалисту"
-            : escapeHtml(story?.activationActionLabel ?? "Активировать подарок")}</button>
-        </form>
-      </section>`
+    ? options.previewMode
+      ? \`<section class="activation">
+          <p class="activation-note">В готовом сертификате получатель сможет связаться со специалистом прямо отсюда.</p>
+          <a class="activation-link" href="\${escapeHtml(certificate.activationUrl ?? "")}" target="_blank" rel="noopener">Связаться со специалистом</a>
+        </section>\`
+      : \`<section class="activation">
+          <p class="activation-note">\${certificate.activationRequestedAt
+            ? "Вы уже начали активацию подарка. Можно продолжить общение со специалистом."
+            : "Чтобы воспользоваться подарком, свяжитесь со специалистом."}</p>
+          <form method="post" action="/api/public/certificates/\${escapeHtml(publicToken ?? "")}/activate">
+            <button type="submit">\${certificate.activationRequestedAt
+              ? "Написать специалисту"
+              : escapeHtml(story?.activationActionLabel ?? "Активировать подарок")}</button>
+          </form>
+        </section>\`
     : certificate.status === "redeemed"
       ? '<p class="used-note">Этот подарок уже подарил свои впечатления. Спасибо, что воспользовались им!</p>'
       : certificateExpired
@@ -154,8 +160,8 @@ export function renderPublicCertificatePage(
     .inclusions p{font-size:12px}
     .certificate-meta{max-width:760px;border-radius:18px;padding:26px 30px;background:#fffdf8d9}
     .closing .closing-mark{color:#e2d7b8}
-    .closing .activation button{background:#f5f0e4;color:#3d4d3b;border-radius:99px;padding:18px 32px;transition:transform .2s,box-shadow .2s}
-    .closing .activation button:hover{transform:translateY(-2px);box-shadow:0 12px 28px #17251c44}
+    .closing .activation button,.closing .activation-link{background:#f5f0e4;color:#3d4d3b;border-radius:99px;padding:18px 32px;transition:transform .2s,box-shadow .2s}
+    .closing .activation button:hover,.closing .activation-link:hover{transform:translateY(-2px);box-shadow:0 12px 28px #17251c44}
     footer{padding:24px 10px 0}
     .eyebrow{margin:0 0 14px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.2em;text-align:center;text-transform:uppercase}
     .opening{overflow:hidden;min-height: min(680px, calc(100svh - 56px));display:flex;align-items:center;justify-content:center;padding:48px 26px;background:linear-gradient(155deg,#fffefa 0%,#f1eee5 100%);border:1px solid var(--line);text-align:center}
@@ -204,7 +210,7 @@ export function renderPublicCertificatePage(
     .closing h2{margin-bottom:16px}
     .activation{max-width:520px;margin:28px auto 0;text-align:center}
     .activation-note,.used-note{color:var(--muted);font-size:12px;line-height:1.7}
-    .activation button{margin-top:14px;padding:16px 26px;border:0;border-radius:2px;background:var(--accent);color:var(--accent-ink);font:600 11px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+    .activation button,.activation-link{display:inline-block;margin-top:14px;padding:16px 26px;border:0;border-radius:2px;background:var(--accent);color:var(--accent-ink);font:600 11px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;cursor:pointer}
     .used-note{margin:28px auto 0;padding:16px;border-top:1px solid var(--line)}
     /* Final Vastu story art direction overrides the neutral certificate defaults. */
     .opening{min-height:min(820px,calc(100svh - 28px));margin:14px auto 26px;border-radius:28px;box-shadow:0 28px 90px #40392312;background:radial-gradient(ellipse at 50% 34%,#fffefa 0%,#f5f1e7 54%,#e9e6da 100%)}
@@ -250,7 +256,7 @@ export function renderPublicCertificatePage(
     footer{margin:28px 0 0;color:var(--muted);font-size:10px;line-height:1.6;text-align:center}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
     @media(max-width:640px){body{padding:0 10px 42px}.opening{min-height:calc(100svh - 20px);margin:10px auto 18px;padding:48px 18px}.hero-art{height:150px}.story-section{padding:58px 16px}.inclusions{grid-template-columns:1fr}.inclusions li{display:grid;grid-template-columns:32px 1fr;column-gap:12px}.inclusions li:before{grid-row:span 2;margin:0}.certificate-meta{padding:20px}.closing.story-section{padding:58px 20px;border-radius:18px}.date-row{font-size:10px}}
-    @media(prefers-reduced-motion:reduce){.hero-art .orbit{animation:none}.opening-action,.closing .activation button{transition:none}}
+    @media(prefers-reduced-motion:reduce){.hero-art .orbit{animation:none}.opening-action,.closing .activation button,.closing .activation-link{transition:none}}
   </style>
 </head>
 <body>
