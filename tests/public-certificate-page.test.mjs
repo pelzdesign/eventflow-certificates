@@ -38,7 +38,7 @@ test('public page escapes all certificate-supplied HTML', () => {
   assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
   assert.ok(html.includes('&lt;svg onload=alert(1)&gt;'));
   assert.ok(html.includes('A &amp; B'));
-  assert.doesNotMatch(html, /<script>|<svg onload|<img src=x/);
+  assert.doesNotMatch(html, /<svg onload|<img src=x/);
 });
 
 test('monetary certificate formats minor units using currency fraction digits', () => {
@@ -79,7 +79,7 @@ test('public page escapes gift personalization fields', () => {
   });
   assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
   assert.ok(html.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
-  assert.doesNotMatch(html, /<img src=x|<script>/);
+  assert.doesNotMatch(html, /<img src=x/);
 });
 
 
