@@ -432,23 +432,23 @@ interface GiftStoryRenderInput {
 function renderGiftStory(input: GiftStoryRenderInput): string {
   const { story, brandName, brandTagline, certificate } = input;
   const inclusions = story.inclusions.map((item) =>
-    \`<li><h3>\${escapeHtml(item.title)}</h3><p>\${escapeHtml(item.description)}</p></li>\`
+    `<li><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p></li>`
   ).join("");
   const personalMessage = input.greeting || input.signature
-    ? \`<div class="letter-copy" id="letter-copy">
-        <p class="eyebrow">\${escapeHtml(story.personalMessageTitle)}</p>
-        \${input.greeting ? \`<p class="greeting">\${input.greeting}</p>\` : ""}
-        \${input.signature ? \`<p class="signature">\${input.signature}</p>\` : ""}
-      </div>\`
-    : \`<div class="letter-copy" id="letter-copy"><p class="eyebrow">\${escapeHtml(story.personalMessageTitle)}</p><p class="greeting">Для вас приготовили особенный подарок.</p></div>\`;
+    ? `<div class="letter-copy" id="letter-copy">
+        <p class="eyebrow">${escapeHtml(story.personalMessageTitle)}</p>
+        ${input.greeting ? `<p class="greeting">${input.greeting}</p>` : ""}
+        ${input.signature ? `<p class="signature">${input.signature}</p>` : ""}
+      </div>`
+    : `<div class="letter-copy" id="letter-copy"><p class="eyebrow">${escapeHtml(story.personalMessageTitle)}</p><p class="greeting">Для вас приготовили особенный подарок.</p></div>`;
   const recipient = input.recipientName
-    ? \`<p class="recipient"><span>Этот подарок для</span>\${input.recipientName}</p>\`
+    ? `<p class="recipient"><span>Этот подарок для</span>${input.recipientName}</p>`
     : "";
   const coverTitle = input.recipientName
-    ? \`Для \${input.recipientName}. Один особенный подарок для вашего дома\`
+    ? `Для ${input.recipientName}. Один особенный подарок для вашего дома`
     : "Один особенный подарок для вашего дома";
 
-  return \`
+  return `
     <div class="gift-experience" data-gift-experience>
       <nav class="gift-progress" aria-label="Этапы открытия подарка">
         <ol>
@@ -463,7 +463,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
 
       <section class="opening gift-stage is-active" data-gift-stage="0" id="gift-stage-1" aria-labelledby="gift-opening-title" tabindex="-1">
         <div class="opening-inner">
-          <p class="eyebrow">\${escapeHtml(story.openingEyebrow)}</p>
+          <p class="eyebrow">${escapeHtml(story.openingEyebrow)}</p>
           <div class="hero-art" aria-hidden="true">
             <svg viewBox="0 0 420 260" role="presentation">
               <g class="orbit">
@@ -481,9 +481,9 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
               <path d="M210 115v-15M210 160v-15M195 130h-15M240 130h-15" class="fine-line"/>
             </svg>
           </div>
-          <h1 id="gift-opening-title">\${escapeHtml(coverTitle)}</h1>
-          <p class="opening-copy">\${escapeHtml(story.openingText)}</p>
-          <p class="brand-caption">\${brandName} · \${brandTagline}</p>
+          <h1 id="gift-opening-title">${escapeHtml(coverTitle)}</h1>
+          <p class="opening-copy">${escapeHtml(story.openingText)}</p>
+          <p class="brand-caption">${brandName} · ${brandTagline}</p>
           <button class="opening-action" type="button" data-next-stage>Открыть подарок</button>
         </div>
       </section>
@@ -500,7 +500,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
               <div class="envelope-flap"></div>
             </div>
           </div>
-          \${personalMessage}
+          ${personalMessage}
           <div class="stage-actions envelope-actions">
             <button class="primary-action" type="button" data-open-envelope>Открыть конверт</button>
             <button class="text-action" type="button" data-skip-envelope>Показать письмо без анимации</button>
@@ -513,11 +513,11 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
       <section class="gift-stage story-stage" data-gift-stage="2" id="gift-stage-3" aria-labelledby="story-title" tabindex="-1">
         <div class="stage-inner">
           <p class="chapter-index">03 — ИСТОРИЯ ПОДАРКА</p>
-          <p class="eyebrow">\${escapeHtml(story.storyEyebrow)}</p>
-          <h2 id="story-title">\${escapeHtml(story.storyTitle)}</h2>
-          <p class="story-copy">\${escapeHtml(story.storyText)}</p>
+          <p class="eyebrow">${escapeHtml(story.storyEyebrow)}</p>
+          <h2 id="story-title">${escapeHtml(story.storyTitle)}</h2>
+          <p class="story-copy">${escapeHtml(story.storyText)}</p>
           <div class="story-art" aria-hidden="true">✧</div>
-          <p class="brand-caption">\${brandName} · \${brandTagline}</p>
+          <p class="brand-caption">${brandName} · ${brandTagline}</p>
           <div class="stage-navigation">
             <button type="button" class="text-action" data-prev-stage>Назад</button>
             <button type="button" class="primary-action" data-next-stage>Узнать, что внутри</button>
@@ -529,21 +529,21 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
         <div class="stage-inner">
           <p class="chapter-index">04 — ЧТО ВНУТРИ ПОДАРКА</p>
           <div class="service-panel">
-            <p class="eyebrow">\${escapeHtml(story.serviceEyebrow)}</p>
-            <h2 id="contents-title">\${escapeHtml(story.serviceTitle)}</h2>
-            <p class="service-name">\${escapeHtml(certificate.title)}</p>
-            <p class="service-variant">\${input.value}</p>
-            <p class="service-description">\${escapeHtml(story.serviceText)}</p>
+            <p class="eyebrow">${escapeHtml(story.serviceEyebrow)}</p>
+            <h2 id="contents-title">${escapeHtml(story.serviceTitle)}</h2>
+            <p class="service-name">${escapeHtml(certificate.title)}</p>
+            <p class="service-variant">${input.value}</p>
+            <p class="service-description">${escapeHtml(story.serviceText)}</p>
             <p class="eyebrow">В состав подарка входит</p>
-            <ul class="inclusions">\${inclusions}</ul>
+            <ul class="inclusions">${inclusions}</ul>
           </div>
           <div class="certificate-meta">
             <div class="certificate-meta-top">
-              <p class="code">СЕРТИФИКАТ № \${escapeHtml(certificate.code)}</p>
-              <span class="status \${input.displayStatusClass}">\${escapeHtml(input.displayStatus)}</span>
+              <p class="code">СЕРТИФИКАТ № ${escapeHtml(certificate.code)}</p>
+              <span class="status ${input.displayStatusClass}">${escapeHtml(input.displayStatus)}</span>
             </div>
-            \${recipient}
-            \${renderDates(certificate, input.giftDate, input.expiry)}
+            ${recipient}
+            ${renderDates(certificate, input.giftDate, input.expiry)}
           </div>
           <div class="stage-navigation">
             <button type="button" class="text-action" data-prev-stage>Назад</button>
@@ -555,18 +555,18 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
       <section class="gift-stage closing-stage" data-gift-stage="4" id="gift-stage-5" aria-labelledby="activation-title" tabindex="-1">
         <div class="stage-inner closing">
           <p class="chapter-index">05 — ПЕРВЫЙ ШАГ</p>
-          <p class="eyebrow">\${escapeHtml(story.closingEyebrow)}</p>
+          <p class="eyebrow">${escapeHtml(story.closingEyebrow)}</p>
           <div class="closing-mark" aria-hidden="true">✧</div>
-          <h2 id="activation-title">\${escapeHtml(story.closingTitle)}</h2>
-          <p class="story-copy">\${escapeHtml(story.closingText)}</p>
-          \${input.activation}
+          <h2 id="activation-title">${escapeHtml(story.closingTitle)}</h2>
+          <p class="story-copy">${escapeHtml(story.closingText)}</p>
+          ${input.activation}
           <p class="stage-footnote">Открытие истории подарка не активирует сертификат. Активация — отдельный шаг; сама услуга будет оказана специалистом после согласования с вами.</p>
           <div class="stage-navigation">
             <button type="button" class="text-action" data-prev-stage>Назад</button>
           </div>
         </div>
       </section>
-    </div>\`;
+    </div>`;
 }
 
 function renderDates(certificate: PublicCertificate, giftDate: string, expiry: string): string {
