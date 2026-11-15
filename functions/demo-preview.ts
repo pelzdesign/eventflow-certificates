@@ -22,7 +22,7 @@ export async function onRequestGet(_context: PagesContext): Promise<Response> {
     giftDate: today,
     greetingText: VASTU_DEMO_PERSONALIZATION.greetingText,
     senderSignature: VASTU_DEMO_PERSONALIZATION.senderSignature,
-    activationUrl: VASTU_BRAND_PROFILE.contactUrl,
+    activationUrl: VASTU_BRAND_PROFILE.contactUrl!,
     status: "active",
     issuedAt: now.toISOString(),
   };
