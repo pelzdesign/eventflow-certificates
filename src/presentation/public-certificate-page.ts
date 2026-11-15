@@ -63,7 +63,7 @@ export function renderPublicCertificatePage(
         : "";
 
   const legacyContent = `
-    <section class="certificate-card" aria-label="Информация о сертификате">
+    <section class="legacy certificate-card" aria-label="Информация о сертификате">
       <p class="eyebrow">${brandName}</p>
       <p class="brand-tagline">${brandTagline}</p>
       <h1>${escapeHtml(certificate.title)}</h1>
