@@ -12,7 +12,7 @@ async function authorize(request: Request, env: CertificatesEnv) {
   }
   try {
     await new DemoPlatformAccess(request, env).assertOrganizationPermission({
-      actor: { userId: session.userId }, organizationId: session.organizationId, permission: "certificate:edit",
+      actor: { userId: session.userId }, organizationId: session.organizationId, permission: "catalog:edit",
     });
   } catch {
     return { error: jsonResponse({ error: "ORGANIZATION_ACCESS_DENIED" }, 403) };
