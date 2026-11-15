@@ -339,7 +339,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
         <a class="opening-action" href="#gift-story">${escapeHtml(story.openingAction)}</a>
       </div>
     </section>
-    <div class="story" id="gift-story" aria-label="История подарка">
+    <div class="story" id="gift-story" role="region" aria-label="История подарка" tabindex="-1">
       <section class="story-section">
         <p class="chapter-index">01 — О ВАШЕМ ПРОСТРАНСТВЕ</p>
         <p class="eyebrow">${escapeHtml(story.storyEyebrow)}</p>
