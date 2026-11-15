@@ -21,7 +21,7 @@ Independent digital certificates module for EventFlow. The module owns certifica
 
 The Preview login uses one synthetic actor and organization configured server-side. It is not EventFlow production authentication and does not connect to production Supabase. The browser never receives a bearer API token or trusted actor/organization IDs. Opening the public certificate page and JSON endpoint is read-only. The separate explicit activation POST records recipient intent; it does not redeem the certificate. Full redemption is a specialist action in the DEMO cabinet; partial-use and monetary redemption rules remain deferred.
 
-See [architecture overview](docs/architecture/overview.md), [Vastu-gift scenarios and pilot flow](docs/products/vastu-gift.md), [ADR-001](docs/decisions/ADR-001-demo-boundaries.md), and [Cloudflare Pages DEMO setup](docs/setup/cloudflare-pages-demo.md).
+Product documentation: [business model and roles](docs/products/eventflow-business-model.md), [participant journey maps](docs/products/eventflow-user-journeys.md), [functional architecture](docs/products/eventflow-functional-architecture.md), [order and certificate lifecycle](docs/products/eventflow-order-certificate-lifecycle.md), and [Vastu-gift pilot](docs/products/vastu-gift.md).\n\nArchitecture and operations: [architecture overview](docs/architecture/overview.md), [ADR-001](docs/decisions/ADR-001-demo-boundaries.md), and [Cloudflare Pages DEMO setup](docs/setup/cloudflare-pages-demo.md).
 
 ## Development
 
