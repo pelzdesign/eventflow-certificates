@@ -25,6 +25,8 @@ export interface GiftStory {
 
 export interface BrandProfile {
   displayName: string;
+  /** Public-facing person or team delivering the service. */
+  providerName?: string;
   tagline: string;
   contactUrl?: string;
   contactLabel?: string;
