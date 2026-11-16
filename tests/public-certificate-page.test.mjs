@@ -222,7 +222,7 @@ test('Vastu gift story is revealed as five sequential stages with a skippable en
   assert.match(html, /<p class="eyebrow cover-eyebrow">Дорогие<\/p>/);
   assert.match(html, /<h1 id="gift-opening-title">Илья и Анна<\/h1>/);
   assert.match(html, /<p class="opening-copy">История подарка\.<\/p>/);
-  assert.match(html, /\.hero-art\\{[^}]*overflow:hidden;contain:paint/);
+  assert.match(html, /\.hero-art\{[^}]*overflow:hidden;contain:paint/);
   assert.match(html, /Дом, который поддерживает/);
   assert.match(html, /data-open-envelope/);
   assert.match(html, /data-skip-envelope/);
@@ -246,11 +246,11 @@ test('Vastu gift story is revealed as five sequential stages with a skippable en
   assert.match(html, /Практические рекомендации/);
   assert.match(html, /Активировать подарок/);
   assert.match(html, /Экран 1 из 5/);
-  const inlineScript = html.match(/<script>([\\s\\S]*?)<\\/script>/)?.[1];
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(inlineScript, 'gift experience inline script is rendered');
   assert.doesNotThrow(() => new vm.Script(inlineScript), 'generated inline navigation script must be valid JavaScript');
-  assert.match(inlineScript, /progress\\.forEach/);
-  assert.match(inlineScript, /showStage\\(current \\+ 1\\)/);
+  assert.match(inlineScript, /progress\.forEach/);
+  assert.match(inlineScript, /showStage\(current \+ 1\)/);
   assert.match(html, /Просмотр сертификата не активирует и не погашает его/);
 });
 
