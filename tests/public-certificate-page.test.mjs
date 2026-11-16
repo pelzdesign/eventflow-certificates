@@ -251,7 +251,14 @@ test('Vastu gift story is revealed as five sequential stages with a skippable en
   assert.doesNotThrow(() => new vm.Script(inlineScript), 'generated inline navigation script must be valid JavaScript');
   assert.match(inlineScript, /progress\.forEach/);
   assert.match(inlineScript, /showStage\(current \+ 1\)/);
-  assert.match(html, /Просмотр сертификата не активирует и не погашает его/);
+  assert.doesNotMatch(html, /Услугу оказывает Васту-специалист/);
+  assert.doesNotMatch(html, /сохраняет историю вашего подарка/);
+  assert.match(html, /Подарок ещё не активирован\. Нажмите кнопку ниже, чтобы перейти к активации/);
+  assert.match(html, /<footer class="platform-credit">Платформа EventFlow Certificates<\/footer>/);
+  assert.match(html, /gift-stage\.is-active\{animation:stage-arrive \.72s cubic-bezier\(\.22,1,\.36,1\) both\}/);
+  assert.match(html, /transition:left \.95s cubic-bezier\(\.22,1,\.36,1\)/);
+  assert.match(html, /index \* 180/);
+  assert.doesNotMatch(html, /Просмотр сертификата не активирует и не погашает его/);
 });
 
 test('neutral certificate without a custom story does not render a broken skip link', () => {
