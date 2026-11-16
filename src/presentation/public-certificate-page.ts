@@ -301,6 +301,7 @@ export function renderPublicCertificatePage(
     .letter-sheet.is-expanded{left:0;top:0;width:100vw;height:100dvh;max-height:100dvh;border:0;border-radius:0;opacity:1;visibility:visible;transform:none}
     .letter-sheet-content{width:min(100%,620px);min-height:100%;margin:0 auto;padding:clamp(64px,12vh,110px) 8px 110px;display:flex;flex-direction:column;justify-content:center;opacity:0;transition:opacity .55s ease}
     .letter-sheet.is-visible .letter-sheet-content{opacity:1}
+    .letter-sheet.is-leaving{opacity:0;transform:scale(1.035);}
     .letter-sheet .eyebrow{margin-bottom:26px}
     .letter-sheet .greeting{margin:0;color:var(--ink);font:clamp(17px,3vw,20px)/1.9 Georgia,serif;text-align:center}
     .letter-sheet .signature{margin:24px 0 0;text-align:right;color:var(--muted);font:italic 16px Georgia,serif}
@@ -310,6 +311,8 @@ export function renderPublicCertificatePage(
     @keyframes line-arrive{to{opacity:1;transform:translateY(0)}}
     .story-art{margin:34px auto 12px;color:var(--accent);font:54px Georgia,serif}
     .story-stage .story-copy{font-size:17px}
+    .story-stage.is-active{animation:paper-arrive .68s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes paper-arrive{from{opacity:.35;transform:scale(.94);border-radius:38px}to{opacity:1;transform:scale(1);border-radius:28px}}
     .story-subtitle{margin:0 auto 22px;color:var(--muted);font:italic 16px/1.6 Georgia,serif}
     .contents-stage{display:block;min-height:0;align-items:stretch;justify-content:flex-start;padding-top:clamp(40px,8vh,80px);padding-bottom:110px}
     .contents-stage .stage-inner{padding-bottom:24px}
@@ -404,7 +407,14 @@ export function renderPublicCertificatePage(
         if (!target) return;
         if (target.matches("[data-next-stage]")) {
           event.preventDefault();
-          if (current === 1 && !experience.querySelector("#letter-copy")?.classList.contains("is-visible")) return;
+          if (current === 1) {
+            const letter = experience.querySelector("#letter-copy");
+            if (!letter?.classList.contains("is-visible")) return;
+            letter.classList.add("is-leaving");
+            const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 380;
+            window.setTimeout(() => showStage(2), delay);
+            return;
+          }
           showStage(current + 1);
         } else if (target.matches("[data-prev-stage]")) {
           event.preventDefault();
@@ -451,7 +461,7 @@ interface GiftStoryRenderInput {
 }
 
 function renderRevealLines(value: string, alreadyEscaped = false): string {
-  return value.split(/\\r?\\n/).map((line, index) =>
+  return value.split(/\r?\n/).map((line, index) =>
     `<span class="reveal-line" style="--reveal-delay: ${index * 130}ms">${alreadyEscaped ? line : escapeHtml(line) || "&nbsp;"}</span>`
   ).join("");
 }
@@ -466,7 +476,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
       <div class="letter-sheet-content">
         <p class="eyebrow">${escapeHtml(story.personalMessageTitle)}</p>
         <p class="greeting">${renderRevealLines(greetingText, true)}</p>
-        ${input.signature ? `<p class="signature reveal-line" style="--reveal-delay: ${greetingText.split(/\\r?\\n/).length * 130}ms">${input.signature}</p>` : ""}
+        ${input.signature ? `<p class="signature reveal-line" style="--reveal-delay: ${greetingText.split(/\r?\n/).length * 130}ms">${input.signature}</p>` : ""}
         <div class="stage-actions"><button class="primary-action" type="button" data-next-stage data-letter-next hidden>Продолжить</button></div>
       </div>
     </div>`;
