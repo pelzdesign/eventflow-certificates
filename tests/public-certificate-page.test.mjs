@@ -225,7 +225,9 @@ test('Vastu gift story is revealed as five sequential stages with a skippable en
   assert.match(html, /data-letter-next/);
   assert.match(html, /class="letter-sheet" id="letter-copy"/);
   assert.match(html, /class="envelope-letter"><\/div>/);
-  assert.match(html, /class="reveal-line"/);
+  assert.match(html, /data-wrap-lines/);
+  assert.match(html, /function prepareVisualLines/);
+  assert.match(html, /measureText/);
   assert.match(html, /Перейти к активации/);
   assert.match(html, /class="gift-dot"/);
   assert.equal((html.match(/class="gift-dot"/g) ?? []).length, 5);
