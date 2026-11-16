@@ -281,7 +281,7 @@ export function renderPublicCertificatePage(
     .gift-stage{min-height:min(760px,calc(100svh - 34px));display:flex;align-items:center;justify-content:center;margin:14px auto 28px;padding:clamp(30px,6vw,64px) clamp(16px,5vw,44px);border:1px solid var(--line);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,#fffefa 0%,#f4f1e8 72%);box-shadow:0 24px 70px #4039230d}
     .gift-stage[hidden]{display:none!important}
     .gift-experience.is-enhanced [data-gift-stage]:not(.is-active){display:none}
-    .gift-stage.is-active{animation:stage-arrive .42s ease both}
+    .gift-stage.is-active{animation:stage-arrive .72s cubic-bezier(.22,1,.36,1) both}
     @keyframes stage-arrive{from{opacity:0}to{opacity:1}}
     .stage-inner{width:min(100%,650px);margin:0 auto;text-align:center}
     .gift-stage h2{max-width:620px;margin:0 auto 20px;font:400 clamp(30px,6vw,46px)/1.18 Georgia,serif;letter-spacing:-.025em}
@@ -291,16 +291,16 @@ export function renderPublicCertificatePage(
     .text-action{padding:12px 16px;border:0;background:transparent;color:var(--muted);font:12px Arial,sans-serif;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
     .primary-action:hover,.opening-action:hover{filter:brightness(.96);transform:translateY(-1px)}
     .envelope-scene{height:190px;display:grid;place-items:center;margin:34px auto 18px;perspective:900px}
-    .envelope{position:relative;width:min(280px,78vw);height:160px;border:1px solid #c9bea5;border-radius:5px;background:#e9e1cf;box-shadow:0 18px 38px #40392318;transition:transform .85s cubic-bezier(.2,.7,.2,1),opacity .65s ease}
+    .envelope{position:relative;width:min(280px,78vw);height:160px;border:1px solid #c9bea5;border-radius:5px;background:#e9e1cf;box-shadow:0 18px 38px #40392318;transition:transform 1.05s cubic-bezier(.22,1,.36,1),opacity .85s ease}
     .envelope-pocket{position:absolute;inset:0;background:linear-gradient(145deg,#e7dfcd,#d9ceb7);clip-path:polygon(0 0,50% 62%,100% 0,100% 100%,0 100%);z-index:3}
-    .envelope-flap{position:absolute;inset:0;background:#f3ecdc;clip-path:polygon(0 0,100% 0,50% 66%);transform-origin:50% 0;transition:transform .8s ease;z-index:4;backface-visibility:hidden}
-    .envelope-letter{position:absolute;left:9%;right:9%;top:12px;height:128px;border:1px solid #d8cfbd;background:#fffdf7;transition:transform .85s ease;z-index:2}
+    .envelope-flap{position:absolute;inset:0;background:#f3ecdc;clip-path:polygon(0 0,100% 0,50% 66%);transform-origin:50% 0;transition:transform 1s cubic-bezier(.22,1,.36,1);z-index:4;backface-visibility:hidden}
+    .envelope-letter{position:absolute;left:9%;right:9%;top:12px;height:128px;border:1px solid #d8cfbd;background:#fffdf7;transition:transform 1.05s cubic-bezier(.22,1,.36,1);z-index:2}
     .envelope.is-open .envelope-flap{transform:rotateX(180deg);z-index:1}
     .envelope.is-open .envelope-letter{transform:translateY(-78px);z-index:5}
-    .envelope-stage.is-letter-opening .envelope{transform:translateY(230px);opacity:0}
-    .letter-sheet{position:fixed;left:50%;top:50%;z-index:50;width:min(320px,82vw);height:190px;overflow:auto;padding:28px 24px;border:1px solid #d8cfbd;border-radius:4px;background:#fffdf7;box-shadow:0 22px 70px #30281930;opacity:0;visibility:hidden;transform:translate(-50%,-12%);transition:left .72s cubic-bezier(.2,.7,.2,1),top .72s cubic-bezier(.2,.7,.2,1),width .72s cubic-bezier(.2,.7,.2,1),height .72s cubic-bezier(.2,.7,.2,1),border-radius .72s ease,opacity .35s ease,transform .72s ease}
+    .envelope-stage.is-letter-opening .envelope{transform:translateY(230px);opacity:0;transition-delay:.12s}
+    .letter-sheet{position:fixed;left:50%;top:50%;z-index:50;width:min(320px,82vw);height:190px;overflow:auto;padding:28px 24px;border:1px solid #d8cfbd;border-radius:4px;background:#fffdf7;box-shadow:0 22px 70px #30281930;opacity:0;visibility:hidden;transform:translate(-50%,-12%);transition:left .95s cubic-bezier(.22,1,.36,1),top .95s cubic-bezier(.22,1,.36,1),width .95s cubic-bezier(.22,1,.36,1),height .95s cubic-bezier(.22,1,.36,1),border-radius .95s cubic-bezier(.22,1,.36,1),opacity .65s ease,transform .95s cubic-bezier(.22,1,.36,1)}
     .letter-sheet.is-expanded{left:0;top:0;width:100vw;height:100dvh;max-height:100dvh;border:0;border-radius:0;opacity:1;visibility:visible;transform:none}
-    .letter-sheet-content{width:min(100%,620px);min-height:100%;margin:0 auto;padding:clamp(64px,12vh,110px) 8px 110px;display:flex;flex-direction:column;justify-content:center;opacity:0;transition:opacity .55s ease}
+    .letter-sheet-content{width:min(100%,620px);min-height:100%;margin:0 auto;padding:clamp(64px,12vh,110px) 8px 110px;display:flex;flex-direction:column;justify-content:center;opacity:0;transition:opacity .8s ease}
     .letter-sheet.is-visible .letter-sheet-content{opacity:1}
     .letter-sheet.is-leaving{opacity:0;transform:scale(1.035);}
     .letter-sheet .eyebrow{margin-bottom:26px}
@@ -308,12 +308,12 @@ export function renderPublicCertificatePage(
     .letter-sheet .signature{margin:24px 0 0;text-align:right;color:var(--muted);font:italic 16px Georgia,serif}
     .letter-sheet .stage-actions{margin-top:38px}
     .letter-sheet [data-letter-next][hidden]{display:none}
-    .reveal-line{display:block;opacity:0;transform:translateY(8px);animation:line-arrive .55s ease forwards;animation-delay:calc(var(--reveal-delay,0ms) + .2s)}
+    .reveal-line{display:block;opacity:0;transform:translateY(8px);animation:line-arrive .78s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--reveal-delay,0ms) + .32s)}
     @keyframes line-arrive{to{opacity:1;transform:translateY(0)}}
     .story-art{margin:34px auto 12px;color:var(--accent);font:54px Georgia,serif}
     .story-stage .story-copy{font-size:17px}
-    .story-stage.is-active{animation:paper-arrive .68s cubic-bezier(.2,.7,.2,1) both}
-    @keyframes paper-arrive{from{opacity:.35;transform:scale(.94);border-radius:38px}to{opacity:1;transform:scale(1);border-radius:28px}}
+    .story-stage.is-active{animation:paper-arrive .9s cubic-bezier(.22,1,.36,1) both}
+    @keyframes paper-arrive{from{opacity:.35}to{opacity:1}}
     .story-subtitle{margin:0 auto 22px;color:var(--muted);font:italic 16px/1.6 Georgia,serif}
     .contents-stage{display:block;min-height:0;align-items:stretch;justify-content:flex-start;padding-top:clamp(40px,8vh,80px);padding-bottom:110px}
     .contents-stage .stage-inner{padding-bottom:24px}
@@ -325,7 +325,7 @@ export function renderPublicCertificatePage(
     .closing-stage .eyebrow,.closing-stage .story-copy{color:#e7e8dd}
     .closing-stage .closing-mark{color:#e2d7b8}
     .closing-stage .activation button,.closing-stage .activation-link{background:#f5f0e4;color:#3d4d3b;border-radius:99px;padding:18px 32px}
-    .stage-footnote{max-width:470px;margin:30px auto 0;color:#e7e8dd;font-size:11px;line-height:1.7}
+    .stage-footnote{max-width:470px;margin:30px auto 0;color:#e7e8dd;font-size:12px;line-height:1.8}.platform-credit{margin:42px auto 0;padding-top:18px;border-top:1px solid #ffffff2b;color:#e7e8dd;font-size:10px;letter-spacing:.14em;text-align:center}
     .closing-stage .text-action{color:#f5f0e4}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.gift-stage.is-active{animation:none}.envelope,.envelope-flap,.envelope-letter,.letter-sheet,.letter-sheet-content,.reveal-line,.gift-dot{transition:none;animation:none}.reveal-line{opacity:1;transform:none}.primary-action,.opening-action{transition:none}}
     @media(max-width:640px){.gift-stage{min-height:calc(100svh - 30px);margin:8px auto 18px;padding:38px 18px;border-radius:20px}.hero-art{height:142px;width:min(100%,260px);margin-bottom:26px}.envelope-scene{height:170px}.letter-sheet-content{padding:58px 22px 104px}.contents-stage{min-height:0;padding:34px 18px 110px}.gift-progress{bottom:10px}}
@@ -336,7 +336,7 @@ export function renderPublicCertificatePage(
   ${skipLink}
   <main>
     ${storyContent}
-    <footer><strong>${brandName}</strong>${providerName ? ` · Услугу оказывает ${providerName}.` : "."} Эта страница работает на платформе EventFlow Certificates и сохраняет историю вашего подарка. ${story ? "Просмотр сертификата не активирует и не погашает его." : "Само открытие сертификата не меняет его статус."}</footer>
+    ${story ? "" : `<footer><strong>${brandName}</strong>${providerName ? ` · Услугу оказывает ${providerName}.` : "."} Эта страница работает на платформе EventFlow Certificates. Само открытие сертификата не меняет его статус.</footer>`}
   </main>
 
   <script>
@@ -401,7 +401,7 @@ export function renderPublicCertificatePage(
           element.replaceChildren(...lines.map((line, index) => {
             const span = document.createElement("span");
             span.className = "reveal-line";
-            span.style.setProperty("--reveal-delay", (index * 130) + "ms");
+            span.style.setProperty("--reveal-delay", (index * 180) + "ms");
             span.textContent = line;
             return span;
           }));
@@ -429,14 +429,14 @@ export function renderPublicCertificatePage(
             prepareVisualLines(letter);
             letter.classList.add("is-visible");
             const lineCount = letter.querySelectorAll(".reveal-line").length;
-            const delay = animate && !reducedMotion ? 850 + lineCount * 130 + 700 : 0;
+            const delay = animate && !reducedMotion ? 1100 + lineCount * 180 + 850 : 0;
             window.setTimeout(() => { if (nextButton) nextButton.hidden = false; }, delay);
           });
         };
         if (!animate || reducedMotion) {
           expandAndReveal();
         } else {
-          window.setTimeout(expandAndReveal, 420);
+          window.setTimeout(expandAndReveal, 700);
         }
       }
 
@@ -449,7 +449,7 @@ export function renderPublicCertificatePage(
             const letter = experience.querySelector("#letter-copy");
             if (!letter?.classList.contains("is-visible")) return;
             letter.classList.add("is-leaving");
-            const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 380;
+            const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 620;
             window.setTimeout(() => showStage(2), delay);
             return;
           }
@@ -631,10 +631,11 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
           <h2 id="activation-title">${escapeHtml(story.closingTitle)}</h2>
           <p class="story-copy">${escapeHtml(story.closingText)}</p>
           ${input.activation}
-          <p class="stage-footnote">Открытие истории подарка не активирует сертификат. Активация — отдельный шаг; сама услуга будет оказана специалистом после согласования с вами.</p>
+          <p class="stage-footnote">Подарок ещё не активирован. Нажмите кнопку ниже, чтобы перейти к активации и связаться со специалистом.</p>
           <div class="stage-navigation">
             <button type="button" class="text-action" data-prev-stage>Назад</button>
           </div>
+          <footer class="platform-credit">Платформа EventFlow Certificates</footer>
         </div>
       </section>
     </div>`;
