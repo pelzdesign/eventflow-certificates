@@ -362,6 +362,7 @@ export function renderPublicCertificatePage(
           else item.removeAttribute("aria-current");
         });
         if (progressLabel) progressLabel.textContent = "Экран " + (current + 1) + " из " + stages.length;
+        if (current === 2) requestAnimationFrame(() => prepareVisualLines(stages[current]));
         if (moveFocus) {
           const heading = stages[current].querySelector("h1,h2");
           if (heading) {
@@ -370,6 +371,41 @@ export function renderPublicCertificatePage(
           } else stages[current].focus({ preventScroll: true });
         }
         window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }
+
+      function prepareVisualLines(root) {
+        const nodes = root.querySelectorAll("[data-wrap-lines]");
+        nodes.forEach((element) => {
+          if (element.dataset.linesReady === "true") return;
+          const text = element.textContent || "";
+          const style = window.getComputedStyle(element);
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          if (!context) return;
+          context.font = [style.fontStyle, style.fontWeight, style.fontSize, style.fontFamily].join(" ");
+          const maxWidth = Math.max(120, element.clientWidth || 480);
+          const lines = [];
+          text.split(/\\r?\\n/).forEach((paragraph) => {
+            const words = paragraph.trim().split(/\\s+/).filter(Boolean);
+            let line = "";
+            words.forEach((word) => {
+              const candidate = line ? line + " " + word : word;
+              if (line && context.measureText(candidate).width > maxWidth) {
+                lines.push(line);
+                line = word;
+              } else line = candidate;
+            });
+            if (line) lines.push(line);
+          });
+          element.replaceChildren(...lines.map((line, index) => {
+            const span = document.createElement("span");
+            span.className = "reveal-line";
+            span.style.setProperty("--reveal-delay", (index * 130) + "ms");
+            span.textContent = line;
+            return span;
+          }));
+          element.dataset.linesReady = "true";
+        });
       }
 
       function revealLetter(animate) {
@@ -389,6 +425,7 @@ export function renderPublicCertificatePage(
         const expandAndReveal = () => {
           letter.classList.add("is-expanded");
           requestAnimationFrame(() => {
+            prepareVisualLines(letter);
             letter.classList.add("is-visible");
             const lineCount = letter.querySelectorAll(".reveal-line").length;
             const delay = animate && !reducedMotion ? 850 + lineCount * 130 + 700 : 0;
@@ -460,12 +497,6 @@ interface GiftStoryRenderInput {
   activation: string;
 }
 
-function renderRevealLines(value: string, alreadyEscaped = false): string {
-  return value.split(/\r?\n/).map((line, index) =>
-    `<span class="reveal-line" style="--reveal-delay: ${index * 130}ms">${alreadyEscaped ? line : escapeHtml(line) || "&nbsp;"}</span>`
-  ).join("");
-}
-
 function renderGiftStory(input: GiftStoryRenderInput): string {
   const { story, brandName, brandTagline, certificate } = input;
   const inclusions = story.inclusions.map((item) =>
@@ -475,8 +506,8 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
   const personalMessage = `<div class="letter-sheet" id="letter-copy" aria-hidden="true">
       <div class="letter-sheet-content">
         <p class="eyebrow">${escapeHtml(story.personalMessageTitle)}</p>
-        <p class="greeting">${renderRevealLines(greetingText, true)}</p>
-        ${input.signature ? `<p class="signature reveal-line" style="--reveal-delay: ${greetingText.split(/\r?\n/).length * 130}ms">${input.signature}</p>` : ""}
+        <p class="greeting" data-wrap-lines>${greetingText}</p>
+        ${input.signature ? `<p class="signature" data-wrap-lines>${input.signature}</p>` : ""}
         <div class="stage-actions"><button class="primary-action" type="button" data-next-stage data-letter-next hidden>Продолжить</button></div>
       </div>
     </div>`;
@@ -553,9 +584,9 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
         <div class="stage-inner">
           
           <p class="eyebrow">${escapeHtml(story.storyEyebrow)}</p>
-          <h2 id="story-title">${renderRevealLines(story.openingTitle)}</h2>
-          <p class="story-subtitle">${renderRevealLines(story.storyTitle)}</p>
-          <p class="story-copy">${renderRevealLines(story.storyText)}</p>
+          <h2 id="story-title" data-wrap-lines>${escapeHtml(story.openingTitle)}</h2>
+          <p class="story-subtitle" data-wrap-lines>${escapeHtml(story.storyTitle)}</p>
+          <p class="story-copy" data-wrap-lines>${escapeHtml(story.storyText)}</p>
           <div class="story-art" aria-hidden="true">✧</div>
           <p class="brand-caption">${brandName} · ${brandTagline}</p>
           <div class="stage-navigation">
