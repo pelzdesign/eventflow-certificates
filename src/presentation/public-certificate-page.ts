@@ -268,17 +268,16 @@ export function renderPublicCertificatePage(
     @media(max-width:640px){body{padding:0 10px 42px}.opening{min-height:calc(100svh - 20px);margin:10px auto 18px;padding:48px 18px}.hero-art{height:150px}.story-section{padding:58px 16px}.inclusions{grid-template-columns:1fr}.inclusions li{display:grid;grid-template-columns:32px 1fr;column-gap:12px}.inclusions li:before{grid-row:span 2;margin:0}.certificate-meta{padding:20px}.closing.story-section{padding:58px 20px;border-radius:18px}.date-row{font-size:10px}}
     @media(prefers-reduced-motion:reduce){.hero-art .orbit{animation:none}.opening-action,.closing .activation button,.closing .activation-link{transition:none}}
 
-    /* Sequential gift-opening experience: one deliberate stage at a time. */
+    /* Five-stage gift reveal: quiet progress, an unfolding letter, then a distinct activation finale. */
+    body{padding-bottom:92px}
     .gift-experience{max-width:820px;margin:0 auto}
-    .gift-progress{position:sticky;top:0;z-index:10;padding:14px 10px 12px;background:#f3f0e8ed;backdrop-filter:blur(12px)}
-    .gift-progress ol{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:650px;margin:0 auto;padding:0;list-style:none}
-    .gift-progress li{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--muted);font-size:9px;letter-spacing:.06em;text-transform:uppercase;text-align:center}
-    .gift-progress li:before{content:"";display:block;width:100%;height:3px;border-radius:9px;background:#d8d4c8}
-    .gift-progress li.is-current,.gift-progress li.is-complete{color:var(--ink)}
-    .gift-progress li.is-current:before,.gift-progress li.is-complete:before{background:var(--accent)}
-    .gift-progress li span:first-child{font-weight:700}
-    .gift-progress-count{margin:8px 0 0;color:var(--muted);font-size:10px;text-align:center}
-    .gift-stage{min-height:min(760px,calc(100svh - 92px));display:flex;align-items:center;justify-content:center;margin:14px auto 28px;padding:clamp(30px,6vw,64px) clamp(16px,5vw,44px);border:1px solid var(--line);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,#fffefa 0%,#f4f1e8 72%);box-shadow:0 24px 70px #4039230d}
+    .gift-progress{position:fixed;left:50%;bottom:14px;z-index:100;transform:translateX(-50%);padding:9px 14px;border:1px solid #d9d2c2;border-radius:99px;background:#fffdf0e8;box-shadow:0 8px 28px #30281918;backdrop-filter:blur(12px)}
+    .gift-progress ol{display:flex;align-items:center;justify-content:center;gap:11px;margin:0;padding:0;list-style:none}
+    .gift-progress li{display:grid;place-items:center;width:8px;height:8px}
+    .gift-dot{display:block;width:6px;height:6px;border-radius:50%;background:#c9c4b7;transition:width .25s ease,height .25s ease,background .25s ease,box-shadow .25s ease}
+    .gift-progress li.is-current .gift-dot{width:8px;height:8px;background:var(--accent);box-shadow:0 0 0 3px #78856e26,0 0 12px #78856eaa}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .gift-stage{min-height:min(760px,calc(100svh - 34px));display:flex;align-items:center;justify-content:center;margin:14px auto 28px;padding:clamp(30px,6vw,64px) clamp(16px,5vw,44px);border:1px solid var(--line);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,#fffefa 0%,#f4f1e8 72%);box-shadow:0 24px 70px #4039230d}
     .gift-stage[hidden]{display:none!important}
     .gift-experience.is-enhanced [data-gift-stage]:not(.is-active){display:none}
     .gift-stage.is-active{animation:stage-arrive .42s ease both}
@@ -291,23 +290,32 @@ export function renderPublicCertificatePage(
     .text-action{padding:12px 16px;border:0;background:transparent;color:var(--muted);font:12px Arial,sans-serif;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
     .primary-action:hover,.opening-action:hover{filter:brightness(.96);transform:translateY(-1px)}
     .envelope-scene{height:190px;display:grid;place-items:center;margin:34px auto 18px;perspective:900px}
-    .envelope{position:relative;width:min(280px,78vw);height:160px;border:1px solid #c9bea5;border-radius:5px;background:#e9e1cf;box-shadow:0 18px 38px #40392318}
+    .envelope{position:relative;width:min(280px,78vw);height:160px;border:1px solid #c9bea5;border-radius:5px;background:#e9e1cf;box-shadow:0 18px 38px #40392318;transition:transform .85s cubic-bezier(.2,.7,.2,1),opacity .65s ease}
     .envelope-pocket{position:absolute;inset:0;background:linear-gradient(145deg,#e7dfcd,#d9ceb7);clip-path:polygon(0 0,50% 62%,100% 0,100% 100%,0 100%);z-index:3}
     .envelope-flap{position:absolute;inset:0;background:#f3ecdc;clip-path:polygon(0 0,100% 0,50% 66%);transform-origin:50% 0;transition:transform .8s ease;z-index:4;backface-visibility:hidden}
-    .envelope-letter{position:absolute;left:9%;right:9%;top:12px;height:128px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:1px solid #d8cfbd;background:#fffdf7;color:#7b806d;font:italic 16px Georgia,serif;transition:transform .85s ease;z-index:2}
+    .envelope-letter{position:absolute;left:9%;right:9%;top:12px;height:128px;border:1px solid #d8cfbd;background:#fffdf7;transition:transform .85s ease;z-index:2}
     .envelope.is-open .envelope-flap{transform:rotateX(180deg);z-index:1}
     .envelope.is-open .envelope-letter{transform:translateY(-78px);z-index:5}
-    .letter-copy{max-width:520px;margin:10px auto 0;padding:26px 28px;border:1px solid #ded6c5;border-radius:3px 16px 16px 16px;background:#fffdf8;box-shadow:0 16px 42px #4039230c;opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
-    .letter-copy.is-visible{opacity:1;transform:translateY(0)}
-    .letter-copy .greeting{margin:0;color:var(--ink);font:17px/1.8 Georgia,serif;white-space:pre-wrap}
-    .letter-copy .signature{margin:18px 0 0;text-align:right;color:var(--muted);font:italic 15px Georgia,serif}
-    .envelope-actions [data-next-stage][hidden]{display:none}
+    .envelope-stage.is-letter-opening .envelope{transform:translateY(230px);opacity:0}
+    .letter-sheet{position:fixed;left:50%;top:50%;z-index:50;width:min(320px,82vw);height:190px;overflow:auto;padding:28px 24px;border:1px solid #d8cfbd;border-radius:4px;background:#fffdf7;box-shadow:0 22px 70px #30281930;opacity:0;visibility:hidden;transform:translate(-50%,-12%);transition:left .72s cubic-bezier(.2,.7,.2,1),top .72s cubic-bezier(.2,.7,.2,1),width .72s cubic-bezier(.2,.7,.2,1),height .72s cubic-bezier(.2,.7,.2,1),border-radius .72s ease,opacity .35s ease,transform .72s ease}
+    .letter-sheet.is-expanded{left:0;top:0;width:100vw;height:100dvh;max-height:100dvh;border:0;border-radius:0;opacity:1;visibility:visible;transform:none}
+    .letter-sheet-content{width:min(100%,620px);min-height:100%;margin:0 auto;padding:clamp(64px,12vh,110px) 8px 110px;display:flex;flex-direction:column;justify-content:center;opacity:0;transition:opacity .55s ease}
+    .letter-sheet.is-visible .letter-sheet-content{opacity:1}
+    .letter-sheet .eyebrow{margin-bottom:26px}
+    .letter-sheet .greeting{margin:0;color:var(--ink);font:clamp(17px,3vw,20px)/1.9 Georgia,serif;text-align:center}
+    .letter-sheet .signature{margin:24px 0 0;text-align:right;color:var(--muted);font:italic 16px Georgia,serif}
+    .letter-sheet .stage-actions{margin-top:38px}
+    .letter-sheet [data-letter-next][hidden]{display:none}
+    .reveal-line{display:block;opacity:0;transform:translateY(8px);animation:line-arrive .55s ease forwards;animation-delay:calc(var(--reveal-delay,0ms) + .2s)}
+    @keyframes line-arrive{to{opacity:1;transform:translateY(0)}}
     .story-art{margin:34px auto 12px;color:var(--accent);font:54px Georgia,serif}
     .story-stage .story-copy{font-size:17px}
     .story-subtitle{margin:0 auto 22px;color:var(--muted);font:italic 16px/1.6 Georgia,serif}
-    .contents-stage{align-items:flex-start}
+    .contents-stage{display:block;min-height:0;align-items:stretch;justify-content:flex-start;padding-top:clamp(40px,8vh,80px);padding-bottom:110px}
+    .contents-stage .stage-inner{padding-bottom:24px}
     .contents-stage .service-panel{margin:0 auto}
     .contents-stage .certificate-meta{margin:22px auto 0}
+    .contents-stage .stage-navigation{margin-top:36px}
     .closing-stage{background:linear-gradient(145deg,#58694f,#344637);color:#fffdf7;border-color:#58694f}
     .closing-stage .closing{padding:0;background:transparent}
     .closing-stage .eyebrow,.closing-stage .story-copy{color:#e7e8dd}
@@ -315,8 +323,8 @@ export function renderPublicCertificatePage(
     .closing-stage .activation button,.closing-stage .activation-link{background:#f5f0e4;color:#3d4d3b;border-radius:99px;padding:18px 32px}
     .stage-footnote{max-width:470px;margin:30px auto 0;color:#e7e8dd;font-size:11px;line-height:1.7}
     .closing-stage .text-action{color:#f5f0e4}
-    @media(prefers-reduced-motion:reduce){.gift-stage.is-active{animation:none}.envelope-flap,.envelope-letter,.letter-copy{transition:none}.primary-action,.opening-action{transition:none}}
-    @media(max-width:640px){.gift-progress{padding:10px 2px}.gift-progress li{font-size:8px}.gift-stage{min-height:calc(100svh - 90px);margin:8px auto 18px;padding:38px 18px;border-radius:20px}.envelope-scene{height:170px}.letter-copy{padding:22px 18px}.contents-stage{align-items:flex-start}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.gift-stage.is-active{animation:none}.envelope,.envelope-flap,.envelope-letter,.letter-sheet,.letter-sheet-content,.reveal-line,.gift-dot{transition:none;animation:none}.reveal-line{opacity:1;transform:none}.primary-action,.opening-action{transition:none}}
+    @media(max-width:640px){.gift-stage{min-height:calc(100svh - 30px);margin:8px auto 18px;padding:38px 18px;border-radius:20px}.envelope-scene{height:170px}.letter-sheet-content{padding:58px 22px 104px}.contents-stage{min-height:0;padding:34px 18px 110px}.gift-progress{bottom:10px}}
 
   </style>
 </head>
@@ -333,7 +341,7 @@ export function renderPublicCertificatePage(
       if (!experience) return;
       const stages = Array.from(experience.querySelectorAll("[data-gift-stage]"));
       const progress = Array.from(experience.querySelectorAll("[data-progress-step]"));
-      const count = experience.querySelector(".gift-progress-count");
+      const progressLabel = experience.querySelector(".gift-progress-label");
       let current = 0;
       experience.classList.add("is-enhanced");
 
@@ -347,11 +355,10 @@ export function renderPublicCertificatePage(
         });
         progress.forEach((item, i) => {
           item.classList.toggle("is-current", i === current);
-          item.classList.toggle("is-complete", i < current);
           if (i === current) item.setAttribute("aria-current", "step");
           else item.removeAttribute("aria-current");
         });
-        if (count) count.textContent = "Этап " + (current + 1) + " из " + stages.length;
+        if (progressLabel) progressLabel.textContent = "Экран " + (current + 1) + " из " + stages.length;
         if (moveFocus) {
           const heading = stages[current].querySelector("h1,h2");
           if (heading) {
@@ -363,20 +370,33 @@ export function renderPublicCertificatePage(
       }
 
       function revealLetter(animate) {
+        const stage = experience.querySelector('[data-gift-stage="1"]');
         const envelope = experience.querySelector("[data-envelope]");
         const letter = experience.querySelector("#letter-copy");
         const openButton = experience.querySelector("[data-open-envelope]");
         const skipButton = experience.querySelector("[data-skip-envelope]");
-        const nextButton = experience.querySelector(".envelope-actions [data-next-stage]");
+        const nextButton = experience.querySelector("[data-letter-next]");
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (stage) stage.classList.add("is-letter-opening");
         if (envelope) envelope.classList.add("is-open");
-        if (letter) {
-          if (!animate) letter.style.transition = "none";
-          letter.classList.add("is-visible");
-          if (!animate) requestAnimationFrame(() => { letter.style.transition = ""; });
-        }
         if (openButton) openButton.hidden = true;
         if (skipButton) skipButton.hidden = true;
-        if (nextButton) nextButton.hidden = false;
+        if (!letter) return;
+        letter.setAttribute("aria-hidden", "false");
+        const expandAndReveal = () => {
+          letter.classList.add("is-expanded");
+          requestAnimationFrame(() => {
+            letter.classList.add("is-visible");
+            const lineCount = letter.querySelectorAll(".reveal-line").length;
+            const delay = animate && !reducedMotion ? 850 + lineCount * 130 + 700 : 0;
+            window.setTimeout(() => { if (nextButton) nextButton.hidden = false; }, delay);
+          });
+        };
+        if (!animate || reducedMotion) {
+          expandAndReveal();
+        } else {
+          window.setTimeout(expandAndReveal, 420);
+        }
       }
 
       experience.addEventListener("click", (event) => {
@@ -430,18 +450,26 @@ interface GiftStoryRenderInput {
   activation: string;
 }
 
+function renderRevealLines(value: string, alreadyEscaped = false): string {
+  return value.split(/\\r?\\n/).map((line, index) =>
+    `<span class="reveal-line" style="--reveal-delay: ${index * 130}ms">${alreadyEscaped ? line : escapeHtml(line) || "&nbsp;"}</span>`
+  ).join("");
+}
+
 function renderGiftStory(input: GiftStoryRenderInput): string {
   const { story, brandName, brandTagline, certificate } = input;
   const inclusions = story.inclusions.map((item) =>
     `<li><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p></li>`
   ).join("");
-  const personalMessage = input.greeting || input.signature
-    ? `<div class="letter-copy" id="letter-copy">
+  const greetingText = input.greeting || "Для вас приготовили особенный подарок.";
+  const personalMessage = `<div class="letter-sheet" id="letter-copy" aria-hidden="true">
+      <div class="letter-sheet-content">
         <p class="eyebrow">${escapeHtml(story.personalMessageTitle)}</p>
-        ${input.greeting ? `<p class="greeting">${input.greeting}</p>` : ""}
-        ${input.signature ? `<p class="signature">${input.signature}</p>` : ""}
-      </div>`
-    : `<div class="letter-copy" id="letter-copy"><p class="eyebrow">${escapeHtml(story.personalMessageTitle)}</p><p class="greeting">Для вас приготовили особенный подарок.</p></div>`;
+        <p class="greeting">${renderRevealLines(greetingText, true)}</p>
+        ${input.signature ? `<p class="signature reveal-line" style="--reveal-delay: ${greetingText.split(/\\r?\\n/).length * 130}ms">${input.signature}</p>` : ""}
+        <div class="stage-actions"><button class="primary-action" type="button" data-next-stage data-letter-next hidden>Продолжить</button></div>
+      </div>
+    </div>`;
   const recipient = input.recipientName
     ? `<p class="recipient"><span>Этот подарок для</span>${input.recipientName}</p>`
     : "";
@@ -451,15 +479,15 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
 
   return `
     <div class="gift-experience" data-gift-experience role="region" aria-label="История подарка">
-      <nav class="gift-progress" aria-label="Этапы открытия подарка">
+      <nav class="gift-progress" aria-label="Прогресс раскрытия подарка">
         <ol>
-          <li class="is-current" data-progress-step="0"><span>01</span><span>Приглашение</span></li>
-          <li data-progress-step="1"><span>02</span><span>Открытие</span></li>
-          <li data-progress-step="2"><span>03</span><span>История</span></li>
-          <li data-progress-step="3"><span>04</span><span>Подарок</span></li>
-          <li data-progress-step="4"><span>05</span><span>Активация</span></li>
+          <li class="is-current" data-progress-step="0" aria-current="step"><span class="gift-dot"></span></li>
+          <li data-progress-step="1"><span class="gift-dot"></span></li>
+          <li data-progress-step="2"><span class="gift-dot"></span></li>
+          <li data-progress-step="3"><span class="gift-dot"></span></li>
+          <li data-progress-step="4"><span class="gift-dot"></span></li>
         </ol>
-        <p class="gift-progress-count" aria-live="polite">Этап 1 из 5</p>
+        <span class="sr-only gift-progress-label" aria-live="polite">Экран 1 из 5</span>
       </nav>
 
       <section class="opening gift-stage is-active" data-gift-stage="0" id="gift-stage-1" aria-labelledby="gift-opening-title" tabindex="-1">
@@ -491,12 +519,12 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
 
       <section class="gift-stage envelope-stage" data-gift-stage="1" id="gift-stage-2" aria-labelledby="envelope-title" tabindex="-1">
         <div class="stage-inner">
-          <p class="chapter-index">ВАШ ПОДАРОК НАЧИНАЕТСЯ С НЕСКОЛЬКИХ СЛОВ</p>
+          <p class="eyebrow">Личное послание</p>
           <h2 id="envelope-title">Для вас есть послание</h2>
           <p class="stage-intro">Прежде чем узнать, что скрывает подарок, откройте письмо от того, кто его подготовил.</p>
           <div class="envelope-scene">
             <div class="envelope" data-envelope aria-hidden="true">
-              <div class="envelope-letter"><span>С теплом</span><span>✧</span></div>
+              <div class="envelope-letter"></div>
               <div class="envelope-pocket"></div>
               <div class="envelope-flap"></div>
             </div>
@@ -505,7 +533,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
           <div class="stage-actions envelope-actions">
             <button class="primary-action" type="button" data-open-envelope>Открыть конверт</button>
             <button class="text-action" type="button" data-skip-envelope>Показать письмо без анимации</button>
-            <button class="primary-action" type="button" data-next-stage hidden>Перейти дальше</button>
+            
           </div>
           <div class="stage-navigation"><button type="button" class="text-action" data-prev-stage>Назад</button></div>
         </div>
@@ -513,11 +541,11 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
 
       <section class="gift-stage story-stage" data-gift-stage="2" id="gift-stage-3" aria-labelledby="story-title" tabindex="-1">
         <div class="stage-inner">
-          <p class="chapter-index">03 — ИСТОРИЯ ПОДАРКА</p>
+          
           <p class="eyebrow">${escapeHtml(story.storyEyebrow)}</p>
-          <h2 id="story-title">${escapeHtml(story.openingTitle)}</h2>
-          <p class="story-subtitle">${escapeHtml(story.storyTitle)}</p>
-          <p class="story-copy">${escapeHtml(story.storyText)}</p>
+          <h2 id="story-title">${renderRevealLines(story.openingTitle)}</h2>
+          <p class="story-subtitle">${renderRevealLines(story.storyTitle)}</p>
+          <p class="story-copy">${renderRevealLines(story.storyText)}</p>
           <div class="story-art" aria-hidden="true">✧</div>
           <p class="brand-caption">${brandName} · ${brandTagline}</p>
           <div class="stage-navigation">
@@ -529,7 +557,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
 
       <section class="gift-stage contents-stage" data-gift-stage="3" id="gift-stage-4" aria-labelledby="contents-title" tabindex="-1">
         <div class="stage-inner">
-          <p class="chapter-index">04 — ЧТО ВНУТРИ ПОДАРКА</p>
+          
           <div class="service-panel">
             <p class="eyebrow">${escapeHtml(story.serviceEyebrow)}</p>
             <h2 id="contents-title">${escapeHtml(story.serviceTitle)}</h2>
@@ -549,14 +577,14 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
           </div>
           <div class="stage-navigation">
             <button type="button" class="text-action" data-prev-stage>Назад</button>
-            <button type="button" class="primary-action" data-next-stage>Как воспользоваться подарком</button>
+            <button type="button" class="primary-action" data-next-stage>Перейти к активации</button>
           </div>
         </div>
       </section>
 
       <section class="gift-stage closing-stage" data-gift-stage="4" id="gift-stage-5" aria-labelledby="activation-title" tabindex="-1">
         <div class="stage-inner closing">
-          <p class="chapter-index">05 — ПЕРВЫЙ ШАГ</p>
+          
           <p class="eyebrow">${escapeHtml(story.closingEyebrow)}</p>
           <div class="closing-mark" aria-hidden="true">✧</div>
           <h2 id="activation-title">${escapeHtml(story.closingTitle)}</h2>
