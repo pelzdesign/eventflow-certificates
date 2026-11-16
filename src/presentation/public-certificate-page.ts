@@ -135,8 +135,8 @@ export function renderPublicCertificatePage(
     a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
     body{margin:0;min-height:100vh;padding:0 18px 64px;background:radial-gradient(ellipse at 50% 0%,#fffdf7 0%,var(--page) 62%);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
     main{width:min(100%,920px);margin:0 auto}
-    .hero-art{width:min(100%,390px);height:190px;margin:0 auto 12px;display:grid;place-items:center}
-    .hero-art svg{width:100%;height:100%;overflow:visible}
+    .hero-art{width:min(100%,300px);height:166px;margin:0 auto 30px;display:grid;place-items:center;overflow:hidden;contain:paint;isolation:isolate;flex:none}
+    .hero-art svg{display:block;width:100%;height:100%;overflow:hidden}
     .hero-art .orbit{transform-origin:210px 130px;animation:orbit 36s linear infinite}
     .hero-art .house-line{fill:none;stroke:#78856e;stroke-width:1.35}
     .hero-art .fine-line{fill:none;stroke:#b7ad91;stroke-width:1}
@@ -152,8 +152,9 @@ export function renderPublicCertificatePage(
     .opening:before{inset:18px}.opening:after{inset:28px;border-style:dashed;opacity:.45}
     .opening-inner{position:relative;z-index:1;max-width:560px}
     .opening-mark{display:none}
-    .opening h1{max-width:540px}
-    .opening-copy{max-width:430px}
+    .opening h1{max-width:540px;margin:0 auto 16px;font-size:clamp(42px,9vw,68px);line-height:1.04}
+    .opening .cover-eyebrow{margin:0 0 12px;font-size:12px;letter-spacing:.16em;text-transform:none}
+    .opening-copy{max-width:390px;margin:0 auto;font-size:clamp(15px,2.6vw,18px);line-height:1.75}
     .brand-caption{letter-spacing:.18em}
     .opening-action{border-radius:99px;padding:16px 30px;transition:background .25s,color .25s,transform .25s}
     .opening-action:hover{background:var(--accent);color:var(--accent-ink);transform:translateY(-2px)}
@@ -281,7 +282,7 @@ export function renderPublicCertificatePage(
     .gift-stage[hidden]{display:none!important}
     .gift-experience.is-enhanced [data-gift-stage]:not(.is-active){display:none}
     .gift-stage.is-active{animation:stage-arrive .42s ease both}
-    @keyframes stage-arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes stage-arrive{from{opacity:0}to{opacity:1}}
     .stage-inner{width:min(100%,650px);margin:0 auto;text-align:center}
     .gift-stage h2{max-width:620px;margin:0 auto 20px;font:400 clamp(30px,6vw,46px)/1.18 Georgia,serif;letter-spacing:-.025em}
     .stage-intro{max-width:430px;margin:0 auto;color:var(--muted);font:15px/1.8 Georgia,serif}
@@ -327,7 +328,7 @@ export function renderPublicCertificatePage(
     .stage-footnote{max-width:470px;margin:30px auto 0;color:#e7e8dd;font-size:11px;line-height:1.7}
     .closing-stage .text-action{color:#f5f0e4}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.gift-stage.is-active{animation:none}.envelope,.envelope-flap,.envelope-letter,.letter-sheet,.letter-sheet-content,.reveal-line,.gift-dot{transition:none;animation:none}.reveal-line{opacity:1;transform:none}.primary-action,.opening-action{transition:none}}
-    @media(max-width:640px){.gift-stage{min-height:calc(100svh - 30px);margin:8px auto 18px;padding:38px 18px;border-radius:20px}.envelope-scene{height:170px}.letter-sheet-content{padding:58px 22px 104px}.contents-stage{min-height:0;padding:34px 18px 110px}.gift-progress{bottom:10px}}
+    @media(max-width:640px){.gift-stage{min-height:calc(100svh - 30px);margin:8px auto 18px;padding:38px 18px;border-radius:20px}.hero-art{height:142px;width:min(100%,260px);margin-bottom:26px}.envelope-scene{height:170px}.letter-sheet-content{padding:58px 22px 104px}.contents-stage{min-height:0;padding:34px 18px 110px}.gift-progress{bottom:10px}}
 
   </style>
 </head>
@@ -385,8 +386,8 @@ export function renderPublicCertificatePage(
           context.font = [style.fontStyle, style.fontWeight, style.fontSize, style.fontFamily].join(" ");
           const maxWidth = Math.max(120, element.clientWidth || 480);
           const lines = [];
-          text.split(/\r?\n/).forEach((paragraph) => {
-            const words = paragraph.trim().split(/\s+/).filter(Boolean);
+          text.split(/\\r?\\n/).forEach((paragraph) => {
+            const words = paragraph.trim().split(/\\s+/).filter(Boolean);
             let line = "";
             words.forEach((word) => {
               const candidate = line ? line + " " + word : word;
@@ -514,9 +515,8 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
   const recipient = input.recipientName
     ? `<p class="recipient"><span>Этот подарок для</span>${input.recipientName}</p>`
     : "";
-  const coverTitle = input.recipientName === "Илья и Анна"
-    ? "Для Ильи и Анны. Один особенный подарок для вашего дома"
-    : "Один особенный подарок для вас";
+  const coverEyebrow = input.recipientName ? "Дорогие" : "Для вас";
+  const coverTitle = input.recipientName || "Вас ждёт особенный подарок";
 
   return `
     <div class="gift-experience" data-gift-experience role="region" aria-label="История подарка">
@@ -533,7 +533,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
 
       <section class="opening gift-stage is-active" data-gift-stage="0" id="gift-stage-1" aria-labelledby="gift-opening-title" tabindex="-1">
         <div class="opening-inner">
-          <p class="eyebrow">${escapeHtml(story.openingEyebrow)}</p>
+          <p class="eyebrow cover-eyebrow">${escapeHtml(coverEyebrow)}</p>
           <div class="hero-art" aria-hidden="true">
             <svg viewBox="0 0 420 260" role="presentation">
               <g class="orbit">
