@@ -533,7 +533,6 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
 
       <section class="opening gift-stage is-active" data-gift-stage="0" id="gift-stage-1" aria-labelledby="gift-opening-title" tabindex="-1">
         <div class="opening-inner">
-          <p class="eyebrow cover-eyebrow">${escapeHtml(coverEyebrow)}</p>
           <div class="hero-art" aria-hidden="true">
             <svg viewBox="0 0 420 260" role="presentation">
               <g class="orbit">
@@ -551,6 +550,7 @@ function renderGiftStory(input: GiftStoryRenderInput): string {
               <path d="M210 115v-15M210 160v-15M195 130h-15M240 130h-15" class="fine-line"/>
             </svg>
           </div>
+          <p class="eyebrow cover-eyebrow">${escapeHtml(coverEyebrow)}</p>
           <h1 id="gift-opening-title">${escapeHtml(coverTitle)}</h1>
           <p class="opening-copy">${escapeHtml(story.openingText)}</p>
           <p class="brand-caption">${brandName} · ${brandTagline}</p>
