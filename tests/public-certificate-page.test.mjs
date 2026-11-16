@@ -222,11 +222,24 @@ test('Vastu gift story is revealed as five sequential stages with a skippable en
   assert.match(html, /Дом, который поддерживает/);
   assert.match(html, /data-open-envelope/);
   assert.match(html, /data-skip-envelope/);
+  assert.match(html, /data-letter-next/);
+  assert.match(html, /class="letter-sheet" id="letter-copy"/);
+  assert.match(html, /class="envelope-letter"><\/div>/);
+  assert.match(html, /class="reveal-line"/);
+  assert.match(html, /Перейти к активации/);
+  assert.match(html, /class="gift-dot"/);
+  assert.equal((html.match(/class="gift-dot"/g) ?? []).length, 5);
+  assert.doesNotMatch(html, /gift-progress-count|Этап 1 из 5|Приглашение<\/span>/);
+  const contentsScreen = html.indexOf('data-gift-stage="3"');
+  const activationScreen = html.indexOf('data-gift-stage="4"');
+  assert.ok(contentsScreen >= 0 && activationScreen > contentsScreen);
+  assert.ok(html.indexOf('Перейти к активации', contentsScreen) < activationScreen);
+  assert.ok(html.indexOf('method="post"', activationScreen) > activationScreen);
   assert.match(html, /Персональная Васту-карта/);
   assert.match(html, /Голосовой разбор/);
   assert.match(html, /Практические рекомендации/);
   assert.match(html, /Активировать подарок/);
-  assert.match(html, /Этап 1 из 5/);
+  assert.match(html, /Экран 1 из 5/);
   assert.match(html, /Просмотр сертификата не активирует и не погашает его/);
 });
 
