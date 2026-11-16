@@ -83,8 +83,9 @@ test('Vastu public certificate uses the brand profile without exposing the purch
     activationUrl: VASTU_BRAND_PROFILE.contactUrl,
   }, 'a'.repeat(64), VASTU_BRAND_PROFILE);
 
-  assert.match(html, /Васту-специалист Пельц Татьяна/);
-  assert.match(html, /платформе EventFlow Certificates/);
+  assert.doesNotMatch(html, /Услугу оказывает Васту-специалист Пельц Татьяна/);
+  assert.match(html, /Платформа EventFlow Certificates/);
+  assert.match(html, /Подарок ещё не активирован/);
   assert.match(html, /PelzDesign \| пространство по васту/);
   assert.match(html, /Дом, который поддерживает/);
   assert.match(html, /Подарок, который помогает по-новому почувствовать свой дом/);
