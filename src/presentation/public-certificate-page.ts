@@ -385,8 +385,8 @@ export function renderPublicCertificatePage(
           context.font = [style.fontStyle, style.fontWeight, style.fontSize, style.fontFamily].join(" ");
           const maxWidth = Math.max(120, element.clientWidth || 480);
           const lines = [];
-          text.split(/\\r?\\n/).forEach((paragraph) => {
-            const words = paragraph.trim().split(/\\s+/).filter(Boolean);
+          text.split(/\r?\n/).forEach((paragraph) => {
+            const words = paragraph.trim().split(/\s+/).filter(Boolean);
             let line = "";
             words.forEach((word) => {
               const candidate = line ? line + " " + word : word;
