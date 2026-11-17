@@ -36,6 +36,7 @@ Apply all migrations in order to that dedicated D1 database:
 3. `migrations/0003_gift_orders_and_catalog.sql`
 4. `migrations/0004_gift_certificate_personalization.sql`
 5. `migrations/0005_public_certificate_lifecycle.sql`
+6. `migrations/0006_organization_brand_profiles.sql`
 
 Configure these values in the **Preview environment only**:
 
