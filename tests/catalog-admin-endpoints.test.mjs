@@ -118,6 +118,7 @@ test('authenticated seller can create an organization-scoped service with its fi
   assert.equal(writes.length, 3);
   assert.match(writes[0].sql, /INSERT INTO catalog_services/);
   assert.equal(writes[0].values[1], 'demo-org');
+  assert.equal(writes[0].values[6], 'https://vk.me/pelts_tatyana_vastu');
   assert.match(writes[0].sql, /VALUES \(\?, \?, \?, \?, \?, \?, \?, 0, 0, \?, \?\)/);
   assert.match(writes[1].sql, /INSERT INTO catalog_variants/);
   assert.equal(writes[1].values[4], 500000);
