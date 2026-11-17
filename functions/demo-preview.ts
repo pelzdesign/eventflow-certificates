@@ -1,15 +1,17 @@
 import type { PublicCertificate } from "../src/domain/certificate.js";
 import { renderPublicCertificatePage } from "../src/presentation/public-certificate-page.js";
 import { VASTU_BRAND_PROFILE, VASTU_DEMO_CATALOG_ITEM, VASTU_DEMO_PERSONALIZATION } from "./vastu-brand.js";
-import { htmlResponse } from "./api/_shared.js";
+import { htmlResponse, type CertificatesEnv } from "./api/_shared.js";
+import { loadBrandProfile } from "./brand-profile.js";
 
-interface PagesContext { env: Record<string, unknown>; }
+interface PagesContext { env: CertificatesEnv; }
 
 /**
  * Read-only, non-issuing preview for prospective customers.
  * It creates no order, payment record or certificate and cannot be redeemed.
  */
-export async function onRequestGet(_context: PagesContext): Promise<Response> {
+export async function onRequestGet(context: PagesContext): Promise<Response> {
+  const brand = await loadBrandProfile(context.env.CERTIFICATES_DB, context.env.DEMO_ORGANIZATION_ID!, VASTU_BRAND_PROFILE);
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
   const sample: PublicCertificate = {
@@ -22,9 +24,9 @@ export async function onRequestGet(_context: PagesContext): Promise<Response> {
     giftDate: today,
     greetingText: VASTU_DEMO_PERSONALIZATION.greetingText,
     senderSignature: VASTU_DEMO_PERSONALIZATION.senderSignature,
-    activationUrl: VASTU_BRAND_PROFILE.contactUrl!,
+    activationUrl: brand.contactUrl ?? VASTU_BRAND_PROFILE.contactUrl!,
     status: "active",
     issuedAt: now.toISOString(),
   };
-  return htmlResponse(renderPublicCertificatePage(sample, undefined, VASTU_BRAND_PROFILE, { previewMode: true }));
+  return htmlResponse(renderPublicCertificatePage(sample, undefined, brand, { previewMode: true }));
 }
