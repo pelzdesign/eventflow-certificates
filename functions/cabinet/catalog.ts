@@ -1,9 +1,17 @@
 import { demoConfigurationReady, getDemoSession, htmlResponse, type CertificatesEnv } from "../api/_shared.js";
 import { VASTU_BRAND_PROFILE } from "../vastu-brand.js";
+import type { BrandProfile } from "../../src/presentation/brand-profile.js";
+import { escapeHtml, loadBrandProfile } from "../brand-profile.js";
 interface PagesContext { request: Request; env: CertificatesEnv; }
-const PAGE = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Каталог услуг — ${VASTU_BRAND_PROFILE.displayName}</title><style>
+function renderPage(brand: BrandProfile): string {
+  const displayName = escapeHtml(brand.displayName);
+  const providerName = escapeHtml(brand.providerName ?? "");
+  const tagline = escapeHtml(brand.tagline);
+  const contactUrl = escapeHtml(brand.contactUrl ?? "");
+  const contactLabel = escapeHtml(brand.contactLabel ?? "Связаться со специалистом");
+  const PAGE = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Каталог услуг — ${displayName}</title><style>
 *{box-sizing:border-box}body{margin:0;background:#f5f3ee;color:#26251f;font:14px Arial,sans-serif}.top{background:white;border-bottom:1px solid #e8e4dc}.topin{max-width:1000px;margin:auto;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}.brand{font:22px Georgia,serif}.brand small{display:block;font:10px Arial,sans-serif;color:#827d72;letter-spacing:.14em;text-transform:uppercase;margin-top:5px}.wrap{max-width:1000px;margin:36px auto;padding:0 24px}h1{font:400 34px Georgia,serif;margin:0 0 8px}.muted{color:#827d72;line-height:1.6}.panel{background:white;border:1px solid #e8e4dc;border-radius:14px;padding:24px;margin-top:22px}.panel h2{font:400 23px Georgia,serif;margin:0 0 18px}.field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:12px;color:#625e55}.field input,.field textarea,.field select{width:100%;padding:11px;border:1px solid #ded8ce;border-radius:8px;font:inherit;background:white}.field textarea{min-height:90px;resize:vertical}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.variant{border:1px solid #eee9e1;border-radius:10px;padding:16px;margin:12px 0}.varianthead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.toggle{display:flex;align-items:center;gap:8px;color:#625e55;font-size:12px}.button{border:0;border-radius:8px;padding:12px 16px;background:#292820;color:white;cursor:pointer}.button.secondary{background:white;color:#292820;border:1px solid #ded8ce}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.notice{background:#f5f3ee;border-radius:8px;padding:13px;margin:12px 0 18px;color:#706b61;line-height:1.6;font-size:12px}.error{color:#a33;min-height:20px;margin-top:12px}.success{color:#426a4d;min-height:20px;margin-top:12px}a{color:#756044}@media(max-width:650px){.grid{grid-template-columns:1fr}.panel{padding:18px}.wrap{margin:24px auto}.topin{padding:15px 18px}}
-</style></head><body><header class="top"><div class="topin"><div class="brand">${VASTU_BRAND_PROFILE.displayName}<small>Кабинет продавца · EventFlow Certificates</small></div><a href="/cabinet">← Вернуться в кабинет</a></div></header><main class="wrap"><h1>Каталог услуг</h1><p class="muted">Управляйте предложениями, которые покупатели видят в вашей витрине. Изменения применяются к новым заказам; уже созданные заказы сохраняют прежние условия.</p><div class="notice">Первоначальную структуру и визуальное оформление каталога подготовил EventFlow. Здесь вы можете актуализировать содержание, варианты и цены. Сложные изменения оформления выполняются при поддержке EventFlow.</div><div id="root"><section class="panel">Загружаем каталог…</section></div><div id="message" role="status"></div></main><script>
+</style></head><body><header class="top"><div class="topin"><div class="brand">${displayName}<small>Кабинет продавца · EventFlow Certificates</small></div><nav><a href="/cabinet">← Вернуться в кабинет</a> · <a href="/cabinet/brand">Профиль бренда</a></nav></div></header><main class="wrap"><h1>Каталог услуг</h1><p class="muted">Управляйте предложениями, которые покупатели видят в вашей витрине. Изменения применяются к новым заказам; уже созданные заказы сохраняют прежние условия.</p><div class="notice">Первоначальную структуру и визуальное оформление каталога подготовил EventFlow. Здесь вы можете актуализировать содержание, варианты и цены. Сложные изменения оформления выполняются при поддержке EventFlow.</div><div id="root"><section class="panel">Загружаем каталог…</section></div><div id="message" role="status"></div></main><script>
 const root=document.querySelector('#root'),message=document.querySelector('#message');let services=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function render(){
@@ -24,11 +32,14 @@ async function save(event){event.preventDefault();const form=event.currentTarget
 async function load(){try{const response=await fetch('/api/catalog/admin'),data=await response.json();if(response.status===401){location.assign('/login');return}if(!response.ok)throw new Error('Не удалось загрузить каталог');services=data.services||[];render()}catch(error){root.innerHTML='<section class="panel">'+esc(error.message)+'</section>'}}
 load();
 </script></body></html>`;
+  return PAGE;
+}
 export async function onRequestGet(context: PagesContext): Promise<Response> {
   const session = await getDemoSession(context.request, context.env);
   if (!demoConfigurationReady(context.env) || !session ||
       session.userId !== context.env.DEMO_USER_ID || session.organizationId !== context.env.DEMO_ORGANIZATION_ID) {
     return Response.redirect(new URL("/login", context.request.url).toString(), 302);
   }
-  return htmlResponse(PAGE);
+  const brand = await loadBrandProfile(context.env.CERTIFICATES_DB, session.organizationId, VASTU_BRAND_PROFILE);
+  return htmlResponse(renderPage(brand));
 }
