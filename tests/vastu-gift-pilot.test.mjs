@@ -41,6 +41,23 @@ test('Vastu pilot catalogue bootstrap inserts one service and one variant for th
   assert.equal(db.statements[2].values[1], VASTU_DEMO_CATALOG_ITEM.serviceId);
 });
 
+class LegacyBootstrapDb extends BootstrapDb {
+  async batch(statements) {
+    if (statements.some(statement => statement.sql.includes('organization_brand_profiles'))) {
+      throw new Error('no such table: organization_brand_profiles');
+    }
+    return super.batch(statements);
+  }
+}
+
+test('catalog bootstrap still seeds the pilot catalogue before migration 0006 is applied', async () => {
+  const db = new LegacyBootstrapDb();
+  await bootstrapVastuCatalog(db, 'demo-org', '2026-11-15T12:00:00.000Z');
+  assert.equal(db.statements.length, 2);
+  assert.match(db.statements[0].sql, /INSERT OR IGNORE INTO catalog_services/);
+  assert.match(db.statements[1].sql, /INSERT OR IGNORE INTO catalog_variants/);
+});
+
 test('catalog bootstrap endpoint is same-origin protected and idempotent by SQL contract', async () => {
   const db = new BootstrapDb();
   const env = {
