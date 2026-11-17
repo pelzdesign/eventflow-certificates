@@ -184,7 +184,14 @@ test('gift personalization still validates supplied values and field limits', ()
 
 
 test('instant Vastu demo preview is read-only and creates no activation or payment action', async () => {
-  const response = await renderDemoPreview({});
+  const response = await renderDemoPreview({
+    env: {
+      DEMO_ORGANIZATION_ID: 'demo-org',
+      CERTIFICATES_DB: {
+        prepare() { return { bind() { return this; }, async first() { return null; } }; }
+      }
+    }
+  });
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /Дом, который поддерживает/);
