@@ -15,6 +15,7 @@ interface OrderRow {
   sender_signature: string | null;
   certificate_id: string | null;
   certificate_public_token: string | null;
+  activation_url: string | null;
 }
 
 export async function onRequestGet(context: PagesContext): Promise<Response> {
@@ -28,7 +29,7 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
       SELECT service_title_snapshot, variant_title_snapshot, description_snapshot,
              amount_minor, currency, payment_status, payment_reported_at,
              certificate_date, recipient_name, greeting_text, sender_signature, certificate_id,
-             c.public_token AS certificate_public_token
+             activation_url, c.public_token AS certificate_public_token
       FROM gift_orders o LEFT JOIN certificates c ON c.id = o.certificate_id
       WHERE o.public_token = ? LIMIT 1
     `).bind(token).first<OrderRow>();
@@ -42,6 +43,7 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
         currency: row.currency,
         paymentStatus: row.payment_status,
         paymentReportedAt: row.payment_reported_at,
+        activationUrl: row.activation_url,
         certificateDate: row.certificate_date,
         recipientName: row.recipient_name,
         greetingText: row.greeting_text,
