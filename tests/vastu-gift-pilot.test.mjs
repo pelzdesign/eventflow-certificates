@@ -26,15 +26,19 @@ class BootstrapDb {
 test('Vastu pilot catalogue bootstrap inserts one service and one variant for the DEMO organization', async () => {
   const db = new BootstrapDb();
   await bootstrapVastuCatalog(db, 'demo-org', '2026-11-15T12:00:00.000Z');
-  assert.equal(db.statements.length, 2);
-  assert.match(db.statements[0].sql, /INSERT OR IGNORE INTO catalog_services/);
-  assert.match(db.statements[0].sql, /activation_url/);
-  assert.equal(db.statements[0].values[5], VASTU_DEMO_CATALOG_ITEM.activationUrl);
-  assert.match(db.statements[1].sql, /INSERT OR IGNORE INTO catalog_variants/);
-  assert.equal(db.statements[0].values[1], 'demo-org');
-  assert.equal(db.statements[1].values[4], 490000);
-  assert.equal(db.statements[1].values[5], 'RUB');
-  assert.equal(db.statements[1].values[1], VASTU_DEMO_CATALOG_ITEM.serviceId);
+  assert.equal(db.statements.length, 3);
+  assert.match(db.statements[0].sql, /INSERT OR IGNORE INTO organization_brand_profiles/);
+  assert.equal(db.statements[0].values[0], 'demo-org');
+  assert.equal(db.statements[0].values[1], VASTU_BRAND_PROFILE.displayName);
+  assert.equal(db.statements[0].values[4], VASTU_BRAND_PROFILE.contactUrl);
+  assert.match(db.statements[1].sql, /INSERT OR IGNORE INTO catalog_services/);
+  assert.match(db.statements[1].sql, /activation_url/);
+  assert.equal(db.statements[1].values[5], VASTU_DEMO_CATALOG_ITEM.activationUrl);
+  assert.match(db.statements[2].sql, /INSERT OR IGNORE INTO catalog_variants/);
+  assert.equal(db.statements[1].values[1], 'demo-org');
+  assert.equal(db.statements[2].values[4], 490000);
+  assert.equal(db.statements[2].values[5], 'RUB');
+  assert.equal(db.statements[2].values[1], VASTU_DEMO_CATALOG_ITEM.serviceId);
 });
 
 test('catalog bootstrap endpoint is same-origin protected and idempotent by SQL contract', async () => {
@@ -65,7 +69,7 @@ test('catalog bootstrap endpoint is same-origin protected and idempotent by SQL 
   });
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { initialized: true });
-  assert.equal(db.statements.length, 2);
+  assert.equal(db.statements.length, 3);
 });
 
 test('Vastu public certificate uses the brand profile without exposing the purchase price', () => {
