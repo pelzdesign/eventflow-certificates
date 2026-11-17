@@ -6,7 +6,9 @@ export type CertificatePermission =
   | "certificate:edit"
   | "certificate:redeem"
   | "certificate:revoke_public_link"
-  | "certificate:cancel";
+  | "certificate:cancel"
+  | "catalog:edit"
+  | "brand:edit";
 
 export interface AuthenticatedActor {
   /** User identity resolved from a trusted server-side session, never from request JSON. */

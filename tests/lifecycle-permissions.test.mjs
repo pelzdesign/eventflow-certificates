@@ -51,6 +51,8 @@ test('DEMO adapter grants only explicit issue/read/redeem/revoke permissions to 
     'certificate:read',
     'certificate:redeem',
     'certificate:revoke_public_link',
+    'catalog:edit',
+    'brand:edit',
   ]) {
     await assert.doesNotReject(() => access.assertOrganizationPermission({
       actor, organizationId: env.DEMO_ORGANIZATION_ID, permission,

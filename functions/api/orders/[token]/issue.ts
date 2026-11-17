@@ -10,10 +10,10 @@ interface IssuableOrder {
   amount_minor: number;
   currency: string;
   payment_status: string;
-  certificate_date: string;
-  recipient_name: string;
-  greeting_text: string;
-  sender_signature: string;
+  certificate_date: string | null;
+  recipient_name: string | null;
+  greeting_text: string | null;
+  sender_signature: string | null;
   activation_url: string | null;
   certificate_id: string | null;
   issuance_status: string;
@@ -51,9 +51,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
     }
 
     if (order.organization_id !== env.DEMO_ORGANIZATION_ID ||
-        order.issuance_status !== "not_started" ||
-        !order.certificate_date || !order.recipient_name ||
-        !order.greeting_text || !order.sender_signature) {
+        order.issuance_status !== "not_started") {
       return jsonResponse({ error: "ORDER_NOT_READY" }, 409);
     }
     if (order.payment_status !== "confirmed") {
@@ -83,8 +81,6 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
         FROM gift_orders
         WHERE id = ? AND organization_id = ? AND payment_status = 'confirmed'
           AND certificate_id IS NULL AND issuance_status = 'not_started'
-          AND certificate_date IS NOT NULL AND recipient_name IS NOT NULL
-          AND greeting_text IS NOT NULL AND sender_signature IS NOT NULL
       `).bind(
         certificateId, order.organization_id, publicToken, code, valueJson,
         order.service_title_snapshot, order.description_snapshot,

@@ -20,6 +20,12 @@ The platform's organization model and server-side context contract are not yet i
 - Certificate operation history
 - Module-specific persistence adapter
 
+## 1.1 Brand and product configuration
+
+The first DEMO product is the Vastu-gift pilot. Brand copy, contact destination and visual tokens live in a replaceable presentation configuration, not in certificate business rules. Service-specific content, price, currency and activation destination live in the organization-scoped catalogue; orders snapshot these values so later catalogue changes do not rewrite existing gifts.
+
+The first Preview uses one configured DEMO organization and one Vastu brand profile. This is a practical pilot configuration, not a claim that multi-brand administration or multi-tenant organization switching is already implemented. A future platform adapter must resolve the organization from trusted server-side context before selecting its brand profile and catalogue.
+
 ## 2. Core invariants
 
 1. A certificate belongs to an organization.

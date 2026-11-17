@@ -19,6 +19,12 @@ Connect the private `PelzA83/eventflow-certificates` repository to a separate Cl
 
 Cloudflare's Pages Preview Access policy protects preview deployment URLs (hash-based and branch aliases); it does not automatically protect the base `<project>.pages.dev` hostname. Keep production deployments disabled and verify that the base hostname does not expose the application. Enable the project's Preview access policy before sharing any Preview URL. Restrict the Access policy to the account owner / explicitly authorized testers. Do not rely on an unguessable URL.
 
+## Refreshing Preview after configuration changes
+
+Cloudflare Pages is connected to this repository through its Git integration. A pull request or a new commit on a non-production feature branch can create/update that branch's Preview deployment without a separate paid deployment service or a Wrangler API token. After changing Preview-only environment variables, secrets or D1 bindings, a fresh Preview build is required before testing the new configuration.
+
+For this pilot, use only the `feat/vastu-gift-pilot` branch Preview. Confirm the resulting deployment is labeled Preview and points to that branch. Never select Production, change the production branch, or merge this PR as a way to refresh Preview. Keep the Preview Access policy enabled while testing.
+
 ## Required Preview bindings
 
 Create a D1 database exclusively for the certificates DEMO and add a binding named `CERTIFICATES_DB` to the **Preview environment only**.
@@ -30,6 +36,7 @@ Apply all migrations in order to that dedicated D1 database:
 3. `migrations/0003_gift_orders_and_catalog.sql`
 4. `migrations/0004_gift_certificate_personalization.sql`
 5. `migrations/0005_public_certificate_lifecycle.sql`
+6. `migrations/0006_organization_brand_profiles.sql`
 
 Configure these values in the **Preview environment only**:
 

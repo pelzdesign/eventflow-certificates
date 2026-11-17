@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import vm from 'node:vm';
 import { renderPublicCertificatePage } from '../dist/presentation/public-certificate-page.js';
 
 const baseCertificate = {
@@ -38,7 +39,7 @@ test('public page escapes all certificate-supplied HTML', () => {
   assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
   assert.ok(html.includes('&lt;svg onload=alert(1)&gt;'));
   assert.ok(html.includes('A &amp; B'));
-  assert.doesNotMatch(html, /<script>|<svg onload|<img src=x/);
+  assert.doesNotMatch(html, /<svg onload|<img src=x/);
 });
 
 test('monetary certificate formats minor units using currency fraction digits', () => {
@@ -79,7 +80,7 @@ test('public page escapes gift personalization fields', () => {
   });
   assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
   assert.ok(html.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
-  assert.doesNotMatch(html, /<img src=x|<script>/);
+  assert.doesNotMatch(html, /<img src=x/);
 });
 
 
@@ -108,4 +109,159 @@ test('repeated activation keeps a way to contact the specialist and used gifts r
   assert.match(used, /Подарок использован/);
   assert.match(used, /Этот подарок уже подарил свои впечатления/);
   assert.doesNotMatch(used, /Активировать подарок/);
+});
+
+
+test('public certificate explains cancelled, expired and contact-unavailable states', () => {
+  const cancelled = renderPublicCertificatePage({
+    ...baseCertificate,
+    status: 'cancelled',
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'c'.repeat(64));
+  assert.match(cancelled, /Этот сертификат отменён/);
+  assert.doesNotMatch(cancelled, /Активировать подарок/);
+
+  const expired = renderPublicCertificatePage({
+    ...baseCertificate,
+    status: 'expired',
+    expiresAt: undefined,
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'd'.repeat(64));
+  assert.match(expired, /Срок действия сертификата завершён/);
+  assert.doesNotMatch(expired, /Активировать подарок/);
+
+  const noContact = renderPublicCertificatePage({
+    ...baseCertificate,
+    activationUrl: undefined,
+  }, 'e'.repeat(64));
+  assert.match(noContact, /обратитесь к организации, которая его выдала/);
+  assert.doesNotMatch(noContact, /Активировать подарок/);
+});
+
+test('brand story includes keyboard navigation, focus visibility and print-friendly output', () => {
+  const html = renderPublicCertificatePage({
+    ...baseCertificate,
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'f'.repeat(64), {
+    displayName: 'Тестовый бренд',
+    tagline: 'Подарок с историей',
+    giftStory: {
+      openingEyebrow: 'Подарок',
+      openingTitle: 'Дом, который поддерживает',
+      openingText: 'История подарка.',
+      openingAction: 'Открыть подарок',
+      storyEyebrow: 'О доме',
+      storyTitle: 'Место для жизни',
+      storyText: 'Текст истории.',
+      personalMessageTitle: 'Отправитель',
+      serviceEyebrow: 'Ваш подарок',
+      serviceTitle: 'Разбор дома',
+      serviceText: 'Описание.',
+      inclusions: [{ title: 'Карта', description: 'PDF' }],
+      closingEyebrow: 'Первый шаг',
+      closingTitle: 'Пусть дома будет хорошо',
+      closingText: 'Свяжитесь со специалистом.',
+      activationActionLabel: 'Активировать подарок',
+    },
+    theme: {
+      page: '#f3f0e8', surface: '#fffdf8', ink: '#303329',
+      muted: '#77796e', line: '#e4dfd2', accent: '#68765d',
+      accentInk: '#ffffff',
+    },
+  });
+  assert.match(html, /class="skip-link" href="#gift-stage-3"/);
+  assert.match(html, /a:focus-visible,button:focus-visible/);
+  assert.match(html, /@media print/);
+  assert.match(html, /aria-label="История подарка"/);
+  assert.doesNotMatch(html, /Личный кабинет/);
+});
+
+test('Vastu gift story is revealed as five sequential stages with a skippable envelope animation', () => {
+  const html = renderPublicCertificatePage({
+    ...baseCertificate,
+    recipientName: 'Илья и Анна',
+    greetingText: 'Дорогие Илья и Анна!',
+    senderSignature: 'С теплом, ваши друзья',
+    activationUrl: 'https://vk.me/example_specialist',
+  }, 'g'.repeat(64), {
+    displayName: 'PelzDesign | пространство по васту',
+    tagline: 'Подарок, который помогает по-новому почувствовать свой дом.',
+    giftStory: {
+      openingEyebrow: 'Особенный подарок для вас',
+      openingTitle: 'Дом, который поддерживает',
+      openingText: 'История подарка.',
+      openingAction: 'Открыть подарок',
+      storyEyebrow: 'О вашем доме',
+      storyTitle: 'Место, где начинается ваша жизнь',
+      storyText: 'Дом — это больше, чем стены.',
+      personalMessageTitle: 'Несколько слов от того, кто дарит',
+      serviceEyebrow: 'Ваш подарок',
+      serviceTitle: 'Персональный Васту-разбор дома',
+      serviceText: 'Индивидуальные ориентиры для работы с пространством.',
+      inclusions: [
+        { title: 'Персональная Васту-карта', description: 'Индивидуальная карта в PDF.' },
+        { title: 'Голосовой разбор', description: 'Аудиоразбор планировки.' },
+        { title: 'Практические рекомендации', description: 'Идеи для вашего пространства.' },
+      ],
+      closingEyebrow: 'С чего начинается гармония',
+      closingTitle: 'Пусть дома вам будет хорошо',
+      closingText: 'Свяжитесь со специалистом.',
+      activationActionLabel: 'Активировать подарок',
+    },
+    theme: {
+      page: '#f3f0e8', surface: '#fffdf8', ink: '#303329',
+      muted: '#77796e', line: '#e4dfd2', accent: '#68765d',
+      accentInk: '#ffffff',
+    },
+  });
+  assert.match(html, /data-gift-stage="0"/);
+  assert.match(html, /data-gift-stage="1"/);
+  assert.match(html, /data-gift-stage="2"/);
+  assert.match(html, /data-gift-stage="3"/);
+  assert.match(html, /data-gift-stage="4"/);
+  assert.match(html, /<p class="eyebrow cover-eyebrow">Дорогие<\/p>/);
+  assert.match(html, /<h1 id="gift-opening-title">Илья и Анна<\/h1>/);
+  assert.match(html, /<p class="opening-copy">История подарка\.<\/p>/);
+  assert.match(html, /\.hero-art\{[^}]*overflow:hidden;contain:paint/);
+  assert.match(html, /Дом, который поддерживает/);
+  assert.match(html, /data-open-envelope/);
+  assert.match(html, /data-skip-envelope/);
+  assert.match(html, /data-letter-next/);
+  assert.match(html, /class="letter-sheet" id="letter-copy"/);
+  assert.match(html, /class="envelope-letter"><\/div>/);
+  assert.match(html, /data-wrap-lines/);
+  assert.match(html, /function prepareVisualLines/);
+  assert.match(html, /measureText/);
+  assert.match(html, /Перейти к активации/);
+  assert.match(html, /class="gift-dot"/);
+  assert.equal((html.match(/class="gift-dot"/g) ?? []).length, 5);
+  assert.doesNotMatch(html, /gift-progress-count|Этап 1 из 5|Приглашение<\/span>/);
+  const contentsScreen = html.indexOf('data-gift-stage="3"');
+  const activationScreen = html.indexOf('data-gift-stage="4"');
+  assert.ok(contentsScreen >= 0 && activationScreen > contentsScreen);
+  assert.ok(html.indexOf('Перейти к активации', contentsScreen) < activationScreen);
+  assert.ok(html.indexOf('method="post"', activationScreen) > activationScreen);
+  assert.match(html, /Персональная Васту-карта/);
+  assert.match(html, /Голосовой разбор/);
+  assert.match(html, /Практические рекомендации/);
+  assert.match(html, /Активировать подарок/);
+  assert.match(html, /Экран 1 из 5/);
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript, 'gift experience inline script is rendered');
+  assert.doesNotThrow(() => new vm.Script(inlineScript), 'generated inline navigation script must be valid JavaScript');
+  assert.match(inlineScript, /progress\.forEach/);
+  assert.match(inlineScript, /showStage\(current \+ 1\)/);
+  assert.doesNotMatch(html, /Услугу оказывает Васту-специалист/);
+  assert.doesNotMatch(html, /сохраняет историю вашего подарка/);
+  assert.match(html, /Подарок ещё не активирован\. Нажмите кнопку ниже, чтобы перейти к активации/);
+  assert.match(html, /<footer class="platform-credit">Платформа EventFlow Certificates<\/footer>/);
+  assert.match(html, /gift-stage\.is-active\{animation:stage-arrive \.72s cubic-bezier\(\.22,1,\.36,1\) both\}/);
+  assert.match(html, /transition:left \.95s cubic-bezier\(\.22,1,\.36,1\)/);
+  assert.match(html, /index \* 180/);
+  assert.doesNotMatch(html, /Просмотр сертификата не активирует и не погашает его/);
+});
+
+test('neutral certificate without a custom story does not render a broken skip link', () => {
+  const html = renderPublicCertificatePage(baseCertificate);
+  assert.doesNotMatch(html, /class="skip-link"/);
 });
