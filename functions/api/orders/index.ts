@@ -1,5 +1,6 @@
 import { demoConfigurationReady, jsonResponse, sameOrigin, type CertificatesEnv } from "../_shared.js";
-import { VASTU_DEMO_PERSONALIZATION } from "../../vastu-brand.js";
+import { VASTU_BRAND_PROFILE, VASTU_DEMO_PERSONALIZATION } from "../../vastu-brand.js";
+import { loadBrandProfile } from "../../brand-profile.js";
 
 interface PagesContext { request: Request; env: CertificatesEnv; }
 interface VariantRow {
@@ -45,6 +46,8 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
     `).bind(body.variantId.trim(), env.DEMO_ORGANIZATION_ID).first<VariantRow>();
 
     if (!variant) return jsonResponse({ error: "CATALOG_VARIANT_NOT_AVAILABLE" }, 404);
+    const brandProfile = await loadBrandProfile(env.CERTIFICATES_DB, env.DEMO_ORGANIZATION_ID!, VASTU_BRAND_PROFILE);
+    const activationUrl = brandProfile.contactUrl ?? variant.activation_url;
 
     const now = new Date().toISOString();
     const id = crypto.randomUUID();
@@ -61,7 +64,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
       id, env.DEMO_ORGANIZATION_ID, token, variant.service_id, variant.variant_id,
       variant.service_title, variant.variant_title,
       variant.variant_description ?? variant.service_description,
-      variant.amount_minor, variant.currency, variant.activation_url,
+      variant.amount_minor, variant.currency, activationUrl,
       now.slice(0, 10), VASTU_DEMO_PERSONALIZATION.recipientName,
       VASTU_DEMO_PERSONALIZATION.greetingText, VASTU_DEMO_PERSONALIZATION.senderSignature,
       now, now,
