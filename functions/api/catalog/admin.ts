@@ -1,4 +1,5 @@
-import { VASTU_DEMO_CATALOG_ITEM } from "../../vastu-brand.js";
+import { VASTU_BRAND_PROFILE, VASTU_DEMO_CATALOG_ITEM } from "../../vastu-brand.js";
+import { loadBrandProfile } from "../../brand-profile.js";
 import { DemoPlatformAccess, demoConfigurationReady, getDemoSession, jsonResponse, sameOrigin, type CertificatesEnv } from "../_shared.js";
 
 interface PagesContext { request: Request; env: CertificatesEnv; }
@@ -87,6 +88,8 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
   const serviceId = crypto.randomUUID();
   const variantId = crypto.randomUUID();
   const now = new Date().toISOString();
+  const brandProfile = await loadBrandProfile(env.CERTIFICATES_DB, organizationId, VASTU_BRAND_PROFILE);
+  const activationUrl = brandProfile.contactUrl ?? VASTU_DEMO_CATALOG_ITEM.activationUrl;
   const slug = "service-" + serviceId.slice(0, 8);
   const description = typeof body.description === "string" ? body.description.trim() || null : null;
   const category = typeof body.category === "string" ? body.category.trim() || null : null;
@@ -97,7 +100,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
     // Keep the service unpublished until its first valid variant has been inserted.
     await env.CERTIFICATES_DB.prepare(
       "INSERT INTO catalog_services (id, organization_id, slug, title, description, category, activation_url, is_active, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?)",
-    ).bind(serviceId, organizationId, slug, body.title.trim(), description, category, VASTU_DEMO_CATALOG_ITEM.activationUrl, now, now).run();
+    ).bind(serviceId, organizationId, slug, body.title.trim(), description, category, activationUrl, now, now).run();
     await env.CERTIFICATES_DB.prepare(
       "INSERT INTO catalog_variants (id, service_id, title, description, amount_minor, currency, is_active, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, 1, 0, ?, ?)",
     ).bind(variantId, serviceId, body.initialVariant.title.trim(), variantDescription,
