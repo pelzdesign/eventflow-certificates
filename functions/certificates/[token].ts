@@ -2,6 +2,7 @@ import { readPublicCertificate } from "../../src/application/read-public-certifi
 import { D1CertificateRepository } from "../../src/adapters/cloudflare/d1-certificate-repository.js";
 import { renderPublicCertificatePage } from "../../src/presentation/public-certificate-page.js";
 import { VASTU_BRAND_PROFILE } from "../vastu-brand.js";
+import { loadBrandProfile } from "../brand-profile.js";
 import type { CertificatesEnv } from "../api/_shared.js";
 
 interface PagesContext {
@@ -24,7 +25,13 @@ export async function onRequestGet(context: PagesContext): Promise<Response> {
     );
     const certificate = await readPublicCertificate(token, { repository });
     if (!certificate) return htmlResponse(NOT_FOUND_PAGE, 404);
-    return htmlResponse(renderPublicCertificatePage(certificate, token, VASTU_BRAND_PROFILE), 200);
+    const owner = await context.env.CERTIFICATES_DB.prepare(
+      "SELECT organization_id FROM certificates WHERE public_token = ? AND public_access_revoked_at IS NULL LIMIT 1",
+    ).bind(token).first<{ organization_id: string }>();
+    const brand = owner
+      ? await loadBrandProfile(context.env.CERTIFICATES_DB, owner.organization_id, VASTU_BRAND_PROFILE)
+      : VASTU_BRAND_PROFILE;
+    return htmlResponse(renderPublicCertificatePage(certificate, token, brand), 200);
   } catch {
     return htmlResponse(ERROR_PAGE, 500);
   }
