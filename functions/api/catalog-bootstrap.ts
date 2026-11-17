@@ -21,9 +21,15 @@ export async function bootstrapVastuCatalog(
   now = new Date().toISOString(),
 ): Promise<void> {
   const item = VASTU_DEMO_CATALOG_ITEM;
+  try {
+    await database.batch([
+      database.prepare("INSERT OR IGNORE INTO organization_brand_profiles (organization_id, display_name, provider_name, tagline, contact_url, updated_at) VALUES (?, ?, ?, ?, ?, ?)")
+        .bind(organizationId, VASTU_BRAND_PROFILE.displayName, VASTU_BRAND_PROFILE.providerName ?? null, VASTU_BRAND_PROFILE.tagline, VASTU_BRAND_PROFILE.contactUrl!, now),
+    ]);
+  } catch {
+    // Keep the catalogue bootstrap backward-compatible until the Preview-only profile migration is applied.
+  }
   await database.batch([
-    database.prepare("INSERT OR IGNORE INTO organization_brand_profiles (organization_id, display_name, provider_name, tagline, contact_url, updated_at) VALUES (?, ?, ?, ?, ?, ?)")
-      .bind(organizationId, VASTU_BRAND_PROFILE.displayName, VASTU_BRAND_PROFILE.providerName ?? null, VASTU_BRAND_PROFILE.tagline, VASTU_BRAND_PROFILE.contactUrl!, now),
     database.prepare(`
       INSERT OR IGNORE INTO catalog_services (
         id, organization_id, slug, title, description, activation_url, category,
