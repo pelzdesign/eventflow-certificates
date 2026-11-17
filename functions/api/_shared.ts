@@ -18,7 +18,7 @@ export class DemoPlatformAccess implements PlatformAccessPort{
   }
   async assertOrganizationPermission(input:{actor:AuthenticatedActor;organizationId:string;permission:CertificatePermission}):Promise<void>{
     const s=await getDemoSession(this.request,this.env);
-    const allowed=input.permission==="catalog:edit"||
+    const allowed=input.permission==="catalog:edit"||input.permission==="brand:edit"||
       input.permission==="certificate:issue"||
       input.permission==="certificate:read"||
       input.permission==="certificate:redeem"||
